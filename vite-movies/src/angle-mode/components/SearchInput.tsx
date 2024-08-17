@@ -1,30 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoCloseOutline } from "react-icons/io5";
+import { useDebounce } from "../../hooks/useDebounce";
 const SearchInput = () => {
   const navigation = useNavigate();
   const [searchValue, setSearchValue] = React.useState("");
 
+  const debounce = useDebounce(searchValue, 500);
+
   const handleSearch = () => {
-    if (searchValue) {
-      navigation(`/search/${searchValue}?page=1`, {
-        replace: true,
-      });
-    }
+    navigation(`/search/${debounce}?page=1`, {
+      replace: true,
+    });
   };
 
+  useEffect(() => {
+    if (searchValue.length > 0) handleSearch();
+  }, [debounce]);
+
   return (
-    <label className="input input-bordered flex items-center gap-2">
+    <label className="input input-bordered flex items-center gap-2 input-sm">
       <input
         type="text"
         className="grow"
         placeholder="Tìm kiếm phim..."
         value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSearch();
-          }
+        onChange={(event) => {
+          setSearchValue(event.target.value);
         }}
       />
       {!searchValue.length ? (

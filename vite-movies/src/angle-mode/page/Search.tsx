@@ -4,7 +4,7 @@ import { HomeResult } from "../types";
 import m from "../service/MovieService";
 import { MovieCard1 } from "../components/MovieCard";
 import Pagination from "../components/Pagination";
-import SkeletonMovieCard from "../components/SkeletonMovieCard";
+import SkeletonMovieCard from "../../common/SkeletonMovieCard";
 
 const Search = () => {
   const params = useParams();
@@ -52,9 +52,7 @@ const Search = () => {
         ) : (
           <div className="flex flex-row flex-wrap gap-4 mt-4">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="my-4">
-                <SkeletonMovieCard />
-              </div>
+              <SkeletonMovieCard key={i} />
             ))}
           </div>
         )}

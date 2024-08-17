@@ -1,0 +1,42 @@
+const lightThemes = [
+  { name: "light" },
+  { name: "cupcake" },
+  { name: "bumblebee" },
+  { name: "emerald" },
+  { name: "corporate" },
+  { name: "valentine" },
+  { name: "garden" },
+  { name: "aqua" },
+  { name: "pastel" },
+  { name: "fantasy" },
+  { name: "autumn" },
+  { name: "lemonade" },
+  { name: "winter" },
+  { name: "nord" },
+  { name: "retro" },
+  { name: "acid" },
+  { name: "wireframe" },
+  { name: "lofi" },
+  { name: "cmyk" },
+  { name: "cyberpunk" },
+];
+
+const darkThemes = [
+  { name: "dark" },
+  { name: "forest" },
+  { name: "sunset" },
+  { name: "synthwave" },
+  { name: "halloween" },
+  { name: "black" },
+  { name: "luxury" },
+  { name: "dracula" },
+  { name: "business" },
+  { name: "night" },
+  { name: "coffee" },
+  { name: "dim" },
+  { name: "purple" },
+  { name: "orange" },
+  { name: "pink" },
+];
+
+export { lightThemes, darkThemes };

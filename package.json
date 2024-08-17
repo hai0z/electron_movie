@@ -1,21 +1,22 @@
 {
   "name": "electron_movies",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx electronmon ."
+    "start": "npx electronmon .",
+    "build": "npx electron-packager . MoviesHub --platform=win32 --icon=assets/fire.png --overwrite --ignore=vite-movies/node_modules --asar --prune=true "
   },
-  "author": "",
+  "author": "Hai0z",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.7.3",
-    "electron": "^31.3.1",
     "react-router-dom": "^6.26.0"
   },
   "devDependencies": {
     "@electron/packager": "^18.3.3",
+    "electron": "^31.4.0",
     "tailwindcss": "^3.4.9"
   }
 }

@@ -16,11 +16,13 @@
     "axios": "^1.7.3",
     "dayjs": "^1.11.12",
     "framer-motion": "^11.3.24",
+    "html-entities": "^2.5.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
     "react-player": "^2.16.0",
     "react-router-dom": "^6.26.0",
+    "slugify": "^1.6.6",
     "swiper": "^11.1.9",
     "zustand": "^4.5.4"
   },

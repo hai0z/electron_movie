@@ -1,93 +1,51 @@
-import { StrictMode } from "react";
+import { Fragment, StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+import { RouterProvider } from "react-router-dom";
 import "./index.css";
-import { createHashRouter, Outlet, RouterProvider } from "react-router-dom";
-import "./index.css";
-import Navbar from "./components/Navbar.tsx";
-import MovieDetail from "./page/MovieDetail.tsx";
-import { FaRegWindowMinimize, FaRegWindowRestore } from "react-icons/fa6";
-import { FaRegWindowClose } from "react-icons/fa";
-import Search from "./page/Search.tsx";
-import Category from "./page/Category.tsx";
-const MainLayout = () => {
-  const electron = (window as any).electron;
-  const minimize = () => {
-    electron.ipcRenderer.send("minimize");
-  };
+import router from "./angle-mode/router/index.tsx";
+import devilRouter from "./devils-mode/router/index.tsx";
+import { useAppStore } from "./zustand/appState.ts";
+import AppProvider, { useAppContext } from "./provider/AppProvider.tsx";
+import { motion } from "framer-motion";
+const AppRoot = () => {
+  const appMode = useAppStore((state) => state.appMode);
 
-  const close = () => {
-    electron.ipcRenderer.send("close");
-  };
+  const theme = useAppStore((state) => state.theme);
 
-  const maximize = () => {
-    electron.ipcRenderer.send("maximize");
-  };
+  const { isAppModeChange, setIsAppModeChange } = useAppContext();
 
-  return (
-    <div className="w-full h-full">
-      <div
-        className="w-full flex flex-row items-center justify-end backdrop-blur-md"
-        style={{
-          zIndex: "9999",
-          position: "sticky",
-          top: 0,
-          height: 25,
-          backgroundColor: "oklch(var(--b1)/0.9)",
-        }}
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAppModeChange(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [appMode]);
+
+  if (isAppModeChange) {
+    return (
+      <motion.div
+        className="min-h-screen w-full bg-base-100"
+        data-theme={theme}
       >
-        <div className="drag px-4 flex flex-row items-center justify-start backdrop:blur-md w-full flex-1 h-full "></div>
-        <div
-          className="cursor-pointer h-10 w-10 justify-center items-center flex  hover:bg-primary/10 "
-          onClick={minimize}
-        >
-          <FaRegWindowMinimize />
-        </div>
-        <div
-          onClick={maximize}
-          className="cursor-pointer h-10 w-10  justify-center items-center flex hover:bg-primary/10"
-        >
-          <FaRegWindowRestore className="cursor-pointer" />
-        </div>
-        <div
-          onClick={close}
-          className="cursor-pointer h-10 w-10  justify-center items-center flex hover:bg-primary/10"
-        >
-          <FaRegWindowClose />
-        </div>
-      </div>
-      <Navbar />
-      <Outlet />
-    </div>
+        <motion.div className="h-screen w-full flex justify-center items-center">
+          <span className="text-[69px]">
+            {appMode === "angle" ? "😇" : "😈"}
+          </span>
+        </motion.div>
+      </motion.div>
+    );
+  }
+  return (
+    <Fragment>
+      <RouterProvider router={appMode === "angle" ? router : devilRouter} />
+    </Fragment>
   );
 };
-const router = createHashRouter([
-  {
-    path: "/",
-    element: <MainLayout />,
-    children: [
-      {
-        path: "/",
-        element: <App />,
-      },
-      {
-        path: "/movie/:id",
-        element: <MovieDetail />,
-      },
-      {
-        path: "/search/:keyword",
-        element: <Search />,
-      },
-      {
-        path: "/category/:category/:slug/:title",
-        element: <Category />,
-      },
-    ],
-  },
-]);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AppProvider>
+      <AppRoot />
+    </AppProvider>
   </StrictMode>
 );

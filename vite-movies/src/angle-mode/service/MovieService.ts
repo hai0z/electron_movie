@@ -8,6 +8,7 @@ export enum Category {
   the_loai,
   quoc_gia,
   year,
+  phim_dang_chieu,
 }
 enum MovieGenre {
   "hanh-dong" = "hanh-dong",
@@ -122,11 +123,13 @@ export const countries = [
 ];
 
 class MovieService {
-  private getRandomParam = () => `&_=${new Date().getTime()}`;
-
-  public getAll = async (page = 1) => {
+  public getAll = async () => {
+    const response = await api.get<HomeResult>(`/films/phim-moi-cap-nhat`);
+    return response.data;
+  };
+  public getNowPlay = async (page = 1) => {
     const response = await api.get<HomeResult>(
-      `/films/phim-moi-cap-nhat?page=${page}${this.getRandomParam()}`
+      `/films/danh-sach/phim-dang-chieu?page=${page}`
     );
     return response.data;
   };
@@ -154,6 +157,10 @@ class MovieService {
           `films/danh-sach/phim-le?page=${page}`
         );
         return response.data;
+      }
+      case Category.phim_dang_chieu: {
+        const response = await this.getNowPlay(page);
+        return response;
       }
       case Category.phim_bo: {
         const response = await api.get<HomeResult>(
