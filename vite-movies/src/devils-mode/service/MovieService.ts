@@ -9,6 +9,8 @@ export enum Category {
   new,
   other,
   random,
+  amateur,
+  western,
 }
 
 class MovieService {
@@ -60,6 +62,12 @@ class MovieService {
         return response.data;
       }
       case Category.Chinese: {
+        const response = await api.get<HomeResult>(
+          `provide/vod?ac=detail&t=10&pg=${page}${this.getRandomParam()}`
+        );
+        return response.data;
+      }
+      case Category.amateur: {
         const response = await api.get<HomeResult>(
           `provide/vod?ac=detail&t=10&pg=${page}${this.getRandomParam()}`
         );

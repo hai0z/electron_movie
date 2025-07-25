@@ -1,134 +1,135 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BiError } from "react-icons/bi";
-import { HomeResult } from "../types";
 import m, { Category } from "../service/MovieService";
 import HomeSwiper from "../components/HomeSwiper";
 import MediaList from "../components/MediaList";
 import Loading from "../../common/Loading";
+import { useQuery } from "@tanstack/react-query";
+
 const Home = () => {
-  const [home, setHome] = useState({} as HomeResult);
-  const [phimLe, setPhimLe] = useState({} as HomeResult);
-  const [phimBo, setPhimBo] = useState({} as HomeResult);
-  const [phimHoatHinh, setPhimHoatHinh] = useState({} as HomeResult);
-  const [nowPlay, setNowPlay] = useState({} as HomeResult);
-  const [loading, setLoading] = useState(true);
-
   const [modalOpen, setModalOpen] = useState(false);
+  const [error] = useState(false);
 
-  const [error, setError] = useState(false);
-
-  const getMovies = async () => {
-    setLoading(true);
-    try {
-      const [homeRes, phimLeRes, phimHoatHinhRes, phimBoRes, nowPlayRes] =
-        await Promise.all([
-          m.getAll(),
-          m.getByCategory(Category.phim_le, 1),
-          m.getByCategory(Category.hoat_hinh, 1),
-          m.getByCategory(Category.phim_bo, 1),
-          m.getByCategory(Category.phim_dang_chieu, 1),
-        ]).finally(() => {
-          setLoading(false);
-          setError(false);
-        });
-
-      setHome(homeRes as HomeResult);
-      setPhimLe(phimLeRes as HomeResult);
-      setPhimBo(phimBoRes as HomeResult);
-      setPhimHoatHinh(phimHoatHinhRes as HomeResult);
-      setNowPlay(nowPlayRes as HomeResult);
-    } catch (error) {
-      setModalOpen(true);
-      setError(true);
-    }
-  };
-  useEffect(() => {
-    getMovies();
-  }, []);
+  const { data: home, isLoading: loading } = useQuery({
+    queryKey: ["home"],
+    queryFn: () => m.getAll(),
+  });
+  const { data: phimLe } = useQuery({
+    queryKey: ["phimLe"],
+    queryFn: () => m.getByCategory(Category.phim_le, 1),
+  });
+  const { data: phimBo } = useQuery({
+    queryKey: ["phimBo"],
+    queryFn: () => m.getByCategory(Category.phim_bo, 1),
+  });
+  const { data: phimHoatHinh } = useQuery({
+    queryKey: ["phimHoatHinh"],
+    queryFn: () => m.getByCategory(Category.hoat_hinh, 1),
+  });
+  const { data: nowPlay } = useQuery({
+    queryKey: ["nowPlay"],
+    queryFn: () => m.getByCategory(Category.phim_dang_chieu, 1),
+  });
 
   if (loading) return <Loading />;
 
   return (
-    <motion.div className="flex w-full flex-col min-h-screen pt-16 pb-10">
+    <motion.div className="flex  flex-col min-h-screen pt-16 pb-10 bg-base-100">
       {error ? (
-        <div className="text-center flex justify-center items-center h-screen">
-          <div className="flex flex-col justify-center items-center">
-            <BiError className="w-24 h-24" color="primarys" />
-            <p className="text-primarys text-center">
-              Không thể tải được dữ liệu
-            </p>
+        <div className="hero min-h-screen">
+          <div className="hero-content text-center">
+            <div className="max-w-md">
+              <BiError className="w-24 h-24 mx-auto text-error" />
+              <h1 className="text-2xl font-bold text-error mt-4">Lỗi!</h1>
+              <p className="py-6">Không thể tải được dữ liệu</p>
+            </div>
           </div>
         </div>
       ) : (
         <div>
-          <div className="mt-1">
-            <HomeSwiper data={home?.items} />
+          <div>
+            <HomeSwiper data={home?.items!} />
           </div>
 
-          <div className="px-6">
-            <div className="pt-4">
-              <p className="text-4xl font-semibold text-base-content">
-                Phim Đang chiếu
-              </p>
-              <Link
-                to={"/category/6/" + null + "/" + "Phim đang chiếu"}
-                className="btn btn-secondary w-fit btn-sm my-3"
-              >
-                Xem thêm
-              </Link>
-
-              <div className="flex flex-wrap flex-row gap-4 mt-2">
+          <div className="px-4 lg:px-6">
+            <div className="pt-8">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-4xl font-bold text-base-content">
+                  Phim Đang chiếu
+                </h2>
+                <Link
+                  to={"/category/6/" + null + "/" + "Phim đang chiếu"}
+                  className="btn btn-primary btn-sm"
+                >
+                  Xem thêm
+                </Link>
+              </div>
+              <div className="flex flex-row flex-wrap gap-4">
                 {nowPlay?.items?.map((m) => (
                   <MediaList key={m.slug} m={m} />
                 ))}
               </div>
             </div>
-            <div className="pt-4">
-              <p className="text-4xl font-semibold text-base-content">
-                Phim lẻ
-              </p>
-              <Link
-                to={"/category/0/" + null + "/" + "Phim lẻ"}
-                className="btn btn-secondary w-fit btn-sm my-3"
-              >
-                Xem thêm
-              </Link>
 
-              <div className="flex flex-wrap flex-row gap-4 mt-2">
+            <div className="divider my-8"></div>
+
+            <div className="pt-4">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-4xl font-bold text-base-content">
+                  Phim lẻ
+                </h2>
+                <Link
+                  to={"/category/0/" + null + "/" + "Phim lẻ"}
+                  className="btn btn-primary btn-sm"
+                >
+                  Xem thêm
+                </Link>
+              </div>
+              <div className="flex flex-row flex-wrap gap-4">
                 {phimLe?.items?.map((m) => (
                   <MediaList key={m.slug} m={m} />
                 ))}
               </div>
             </div>
+
+            <div className="divider my-8"></div>
+
             <div className="pt-4">
-              <p className="text-4xl font-semibold text-base-content">
-                Phim bộ
-              </p>
-              <Link
-                to={"/category/1/" + null + "/" + "Phim lẻ"}
-                className="btn btn-secondary w-fit btn-sm my-3"
-              >
-                Xem thêm
-              </Link>
-              <div className="flex flex-wrap flex-row gap-4 mt-2">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-4xl font-bold text-base-content">
+                  Phim bộ
+                </h2>
+                <Link
+                  to={"/category/1/" + null + "/" + "Phim bộ"}
+                  className="btn btn-primary btn-sm"
+                >
+                  Xem thêm
+                </Link>
+              </div>
+              <div className="flex flex-row flex-wrap gap-4">
                 {phimBo?.items?.map((m) => (
                   <MediaList key={m.slug} m={m} />
                 ))}
               </div>
             </div>
+
+            <div className="divider my-8"></div>
+
             <div className="pt-4">
-              <p className="text-4xl font-semibold  text-base-content">
-                Phim hoạt hình
-              </p>
-              <Link
-                to={"/category/2/" + null + "/" + "Phim lẻ"}
-                className="btn btn-secondary w-fit btn-sm my-3"
-              >
-                Xem thêm
-              </Link>
-              <div className="flex flex-wrap flex-row gap-4 mt-2">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-4xl font-bold text-base-content">
+                  Phim hoạt hình
+                </h2>
+                <Link
+                  to={"/category/2/" + null + "/" + "Phim hoạt hình"}
+                  className="btn btn-primary btn-sm"
+                >
+                  Xem thêm
+                </Link>
+              </div>
+              <div className="flex flex-row flex-wrap gap-4">
                 {phimHoatHinh?.items?.map((m) => (
                   <MediaList key={m.slug} m={m} />
                 ))}
@@ -140,7 +141,7 @@ const Home = () => {
 
       <dialog
         id="my_modal_1"
-        className={modalOpen ? "modal modal-open" : "modal"}
+        className={`modal ${modalOpen ? "modal-open" : ""}`}
       >
         <div className="modal-box">
           <h3 className="font-bold text-lg">Lỗi!</h3>
@@ -152,7 +153,7 @@ const Home = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => {
-                  getMovies();
+                  window.location.reload();
                   setModalOpen(false);
                 }}
               >

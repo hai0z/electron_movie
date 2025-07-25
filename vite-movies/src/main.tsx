@@ -7,6 +7,7 @@ import devilRouter from "./devils-mode/router/index.tsx";
 import { useAppStore } from "./zustand/appState.ts";
 import AppProvider, { useAppContext } from "./provider/AppProvider.tsx";
 import { motion } from "framer-motion";
+
 const AppRoot = () => {
   const appMode = useAppStore((state) => state.appMode);
 
@@ -19,7 +20,7 @@ const AppRoot = () => {
       setIsAppModeChange(false);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [appMode]);
+  }, [appMode, isAppModeChange, setIsAppModeChange, theme]);
 
   if (isAppModeChange) {
     return (

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Thumbs, Controller } from "swiper/modules";
 // Import Swiper styles
@@ -57,7 +58,7 @@ export default ({ data }: Props) => {
               <div className="z-10 flex flex-row items-center justify-between flex-1">
                 <div className="px-10 flex flex-col gap-y-4 flex-1 h-full">
                   <motion.div
-                    className="text-4xl font-bold shadow-sm text-base-content drop-shadow-2xl"
+                    className="text-4xl font-bold  text-base-content"
                     initial={{
                       opacity: 0,
                       x: 50,

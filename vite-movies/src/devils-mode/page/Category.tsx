@@ -15,6 +15,8 @@ const CategoryScreens = () => {
 
   const [data, setData] = React.useState({} as HomeResult);
 
+  console.log(page);
+
   const getMovies = async () => {
     setLoading(true);
     electron.ipcRenderer.send("get-by-category", {
@@ -25,7 +27,6 @@ const CategoryScreens = () => {
 
     electron.ipcRenderer.on("movie-category", (data: HomeResult) => {
       setData(data);
-      console.log(data);
       setLoading(false);
     });
   };
@@ -39,7 +40,8 @@ const CategoryScreens = () => {
       top: 0,
       behavior: "smooth",
     });
-  }, []);
+  }, [params, page]);
+
   return (
     <div className="pt-20">
       <div className="mt-4 justify-center flex items-center sticky top-[90px] z-10 w-full bg-base-100 bg-opacity-90 backdrop-blur-md py-2">
@@ -48,11 +50,10 @@ const CategoryScreens = () => {
       <div className="px-6">
         <span className="text-3xl font-bold">{params.title}</span>
       </div>
-
       {!loading ? (
         <div className="flex flex-row flex-wrap gap-4 mt-4 px-6">
-          {data?.list?.map((item) => (
-            <MediaList m={item} key={item.slug} />
+          {data?.list?.map((item, i) => (
+            <MediaList m={item} key={i} />
           ))}
         </div>
       ) : (

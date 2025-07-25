@@ -22,7 +22,7 @@ function MovieCard2({ m }: { m: List }) {
             src={m.poster_url ? m.poster_url : m.thumb_url}
             alt="thumb"
             loading="lazy"
-            className="object-cover lg:w-64 h-full md:w-56"
+            className="object-cover transition-all duration-300 h-40 w-96 hover:scale-110"
           />
         </Link>
       </figure>

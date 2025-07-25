@@ -26,7 +26,6 @@ const HomePage = () => {
         uncensoredLeaked: HomeResult;
         chinese: HomeResult;
       }) => {
-        console.log(data);
         setHome({
           ...data.home,
           list: Array.from(

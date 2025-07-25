@@ -100,9 +100,17 @@ const Navbar = () => {
               Chinese AV
             </Link>
           </li>
+          <li>
+            <Link
+              to={"/category/7/" + "Amateur/" + null}
+              className={pathName.includes("/category/7/") ? "active" : ""}
+            >
+              Amateur
+            </Link>
+          </li>
         </ul>
       </div>
-      <div className="flex-none gap-4 mr-4">
+      <div className="flex-none gap-4 mr-4 flex">
         <Link to={"/favourite"} className="cursor-pointer">
           <FaRegHeart
             className="w-6 h-6"

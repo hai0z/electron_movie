@@ -12,6 +12,8 @@ var Category = {
   new: 4,
   other: 5,
   random: 6,
+  amateur: 7,
+  western: 8,
 };
 
 function MovieService() {
@@ -74,7 +76,7 @@ function MovieService() {
 
       case Category.Uncensored_Leaked:
         return api
-          .get("provide/vod?ac=detail&t=9&pg=" + page + this.getRandomParam())
+          .get("provide/vod?ac=detail&t=3&pg=" + page + this.getRandomParam())
           .then(
             function (response) {
               return response.data;
@@ -83,7 +85,23 @@ function MovieService() {
 
       case Category.Chinese:
         return api
-          .get("provide/vod?ac=detail&t=10&pg=" + page + this.getRandomParam())
+          .get("provide/vod?ac=detail&t=5&pg=" + page + this.getRandomParam())
+          .then(
+            function (response) {
+              return response.data;
+            }.bind(this)
+          );
+      case Category.amateur:
+        return api
+          .get("provide/vod?ac=detail&t=4&pg=" + page + this.getRandomParam())
+          .then(
+            function (response) {
+              return response.data;
+            }.bind(this)
+          );
+      case Category.western:
+        return api
+          .get("provide/vod?ac=detail&t=6&pg=" + page + this.getRandomParam())
           .then(
             function (response) {
               return response.data;

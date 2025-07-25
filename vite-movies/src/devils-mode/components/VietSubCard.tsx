@@ -24,7 +24,7 @@ function VietSubCard({ m }: { m: VietSubResult["movies"][0] }) {
             src={m.thumb_url}
             alt="cast"
             loading="lazy"
-            className="object-cover transition-all duration-300 md:w-56 group-hover:scale-110 lg:w-64 h-40 xl:w-72"
+            className="object-cover transition-all duration-300 h-40 w-96 hover:scale-110"
           />
         </Link>
         <div className="absolute top-1 left-1 badge badge-secondary bg-opacity-90 px-1 rounded-md text-xs">

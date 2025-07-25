@@ -13,6 +13,7 @@ import VietSub from "../page/VietSub";
 import VietSubDetails from "../page/VietsubDetail";
 import Setting from "../../common/Setting";
 import Error from "../../common/Error";
+
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
   const lightOff = useAppStore((state) => state.lightOff);
@@ -86,6 +87,7 @@ const router = createHashRouter([
         path: "/",
         element: <HomePage />,
       },
+
       {
         path: "/movie/:id",
         element: <MovieDetail />,

@@ -11,13 +11,17 @@ import Search from "../page/Search";
 import Home from "../page/Home";
 import Setting from "../../common/Setting";
 import Error from "../../common/Error";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import FootballIndex from "../page/football/FootballIndex";
+import WatchFootball from "../page/football/WatchFootball";
 
+const queryClient = new QueryClient();
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
   const lightOff = useAppStore((state) => state.lightOff);
   useEffect(() => {
     document.getElementsByTagName("html")[0].setAttribute("data-theme", theme);
-  }, []);
+  }, [theme]);
 
   const electron = (window as any).electron;
   const minimize = () => {
@@ -33,7 +37,7 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full bg-base-100">
       <div
         className="w-full flex flex-row items-center justify-end backdrop-blur-md"
         style={{
@@ -79,11 +83,23 @@ const MainLayout = () => {
 const router = createHashRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: (
+      <QueryClientProvider client={queryClient}>
+        <MainLayout />
+      </QueryClientProvider>
+    ),
     children: [
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/football",
+        element: <FootballIndex />,
+      },
+      {
+        path: "/watch-football",
+        element: <WatchFootball />,
       },
       {
         path: "/movie/:id",

@@ -1,5 +1,6 @@
 import api from "../api";
 import { HomeResult } from "../types";
+import { MovieDetailResult } from "../types/movieDetail";
 
 export enum Category {
   phim_le,
@@ -123,25 +124,28 @@ export const countries = [
 ];
 
 class MovieService {
+  private ramdomParam = `&_${Math.random()}`;
   public getAll = async () => {
-    const response = await api.get<HomeResult>(`/films/phim-moi-cap-nhat`);
+    const response = await api.get<HomeResult>(
+      `/films/phim-moi-cap-nhat?page=1${this.ramdomParam}`
+    );
     return response.data;
   };
   public getNowPlay = async (page = 1) => {
     const response = await api.get<HomeResult>(
-      `/films/danh-sach/phim-dang-chieu?page=${page}`
+      `/films/danh-sach/phim-dang-chieu?page=${page}${this.ramdomParam}`
     );
     return response.data;
   };
 
-  public getMovieDetail = async (slug: string) => {
+  public getMovieDetail = async (slug: string): Promise<MovieDetailResult> => {
     const response = await api.get(`/film/${slug}`);
     return response.data;
   };
 
   public search = async (keyword: string, page: number) => {
     const response = await api.get(
-      `films/search?keyword=${keyword} &page=${page}`
+      `films/search?keyword=${keyword}&page=${page}`
     );
     return response.data;
   };
@@ -154,7 +158,7 @@ class MovieService {
     switch (category) {
       case Category.phim_le: {
         const response = await api.get<HomeResult>(
-          `films/danh-sach/phim-le?page=${page}`
+          `films/danh-sach/phim-le?page=${page}${this.ramdomParam}`
         );
         return response.data;
       }
@@ -164,31 +168,31 @@ class MovieService {
       }
       case Category.phim_bo: {
         const response = await api.get<HomeResult>(
-          `films/danh-sach/phim-bo?page=${page}`
+          `films/danh-sach/phim-bo?page=${page}${this.ramdomParam}`
         );
         return response.data;
       }
       case Category.hoat_hinh: {
         const response = await api.get<HomeResult>(
-          `films/danh-sach/hoat-hinh?page=${page}`
+          `films/danh-sach/hoat-hinh?page=${page}${this.ramdomParam}`
         );
         return response.data;
       }
       case Category.the_loai: {
         const response = await api.get<HomeResult>(
-          `/films/the-loai/${slug}?page=${page}`
+          `/films/the-loai/${slug}?page=${page}${this.ramdomParam}`
         );
         return response.data;
       }
       case Category.quoc_gia: {
         const response = await api.get<HomeResult>(
-          `films/quoc-gia/${slug}?page=${page}&limit=64`
+          `films/quoc-gia/${slug}?page=${page}&limit=64${this.ramdomParam}`
         );
         return response.data;
       }
       case Category.year: {
         const response = await api.get<HomeResult>(
-          `films/nam-phat-hanh/${slug}?page=${page}&limit=64`
+          `films/nam-phat-hanh/${slug}?page=${page}&limit=64${this.ramdomParam}`
         );
         return response.data;
       }

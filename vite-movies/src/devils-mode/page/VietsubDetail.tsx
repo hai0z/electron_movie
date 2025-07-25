@@ -5,11 +5,21 @@ import { Movie, VietSubResult } from "../types/vietsub";
 import Loading from "../../common/Loading";
 import { MediaListVietSub } from "../components/MediaList";
 import { useAppStore } from "../../zustand/appState";
-import { FaLightbulb } from "react-icons/fa";
+import {
+  FaLightbulb,
+  FaDownload,
+  FaLink,
+  FaPlay,
+  FaStar,
+  FaClock,
+  FaGlobe,
+  FaFilm,
+} from "react-icons/fa";
 
 const VietSubDetails = () => {
   const params = useParams();
 
+  const ipcRenderer = (window as any).electron.ipcRenderer;
   const [movie, setMovie] = useState({} as Movie);
 
   const [relatedMovies, setRelatedMovies] = useState(
@@ -57,135 +67,194 @@ const VietSubDetails = () => {
     getMovieDetail();
   }, [params.id]);
 
+  const handleDownload = async () => {
+    if (ep?.link) {
+      try {
+        ipcRenderer.send("download-m3u8", ep.link);
+      } catch (error) {
+        alert("Có lỗi xảy ra khi tải video" + error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    ipcRenderer.on("find-m3u8-links", (data: any) => {
+      alert(data);
+    });
+  }, []);
+  const handleExtractLinks = async () => {
+    try {
+      ipcRenderer.send("find-m3u8-links", window.location.href);
+    } catch (error) {
+      alert("Có lỗi xảy ra khi tìm link");
+    }
+  };
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <div
-      className="w-full min-h-screen flex-1 pt-[72px] px-6 pb-20"
-      id="#top"
+      className="min-h-screen flex-1 pt-[96px]"
       style={{
         backgroundColor: lightOff ? "#000000" : "oklch(var(--b1))",
       }}
     >
-      <div className={`breadcrumbs text-sm ${lightOff && "hidden"}`}>
-        <ul>
-          <li>
-            <Link to={"/"}>Trang chủ</Link>
-          </li>
-          <li>Phim</li>
-          <li className="line-clamp-1">{movie?.name}</li>
-        </ul>
-      </div>
-      <div className={`breadcrumbs text-sm ${!lightOff && "hidden"}`}>
-        <ul>
-          <li>" "</li>
-        </ul>
-      </div>
-      <iframe
-        allowFullScreen
-        src={ep?.link}
-        className="w-full h-[calc(100vh-140px)]"
-      />
-      <div className="flex flex-row justify-end items-center">
+      {/* Light Toggle Button */}
+      <div className="fixed top-20 right-4 z-50">
         <button
-          className={`btn btn-sm ${
-            lightOff && "opacity-80 hover:opacity-100"
-          } mt-4`}
+          className="btn btn-circle btn-sm"
           onClick={() => {
             setLightOff(!lightOff);
-            window.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            });
+            window.scrollTo({ top: 0, behavior: "smooth" });
           }}
+          title={lightOff ? "Bật đèn" : "Tắt đèn"}
         >
-          {lightOff ? (
-            <FaLightbulb className="text-warning" />
-          ) : (
-            <FaLightbulb />
-          )}
-          {lightOff ? "Bật đèn" : "Tắt đèn"}
+          <FaLightbulb className={lightOff ? "text-warning" : ""} />
         </button>
       </div>
-      <div className={`w-full flex flex-row mt-4 ${lightOff && "hidden"}`}>
-        <img
-          src={movie?.thumb_url}
-          className="object-cover w-[400px] h-[300px] rounded-3xl"
+
+      {/* Video Player Section */}
+      <div className="relative w-full bg-black">
+        <iframe
+          allowFullScreen
+          src={ep?.link}
+          className="w-full h-[calc(100vh-140px)]"
         />
-        <div className="ml-4">
-          <div className="flex flex-row justify-between items-center">
-            <div className="mr-8 flex-1">
-              <h1 className="font-bold text-4xl">{movie?.name}</h1>
-            </div>
-            <LikeButton movie={movie} type="vietsub" />
-          </div>
-          <div className="flex flex-row items-center mt-4 gap-x-4">
-            <div className="badge badge-primary">{movie?.quality}</div>
-            <div className="badge badge-secondary">{movie?.time}</div>
-            {movie?.lang && (
-              <div className="badge badge-accent">{movie?.lang}</div>
-            )}
-            {movie?.status && (
-              <div className="badge badge-info">{movie?.status}</div>
-            )}
-          </div>
-          <div className="mt-4">
-            <p
-              className="text-justify"
-              dangerouslySetInnerHTML={{ __html: movie?.content }}
-            ></p>
-          </div>
-          <div className="mt-2 flex flex-col gap-y-2">
-            <span>Trạng thái: {movie?.status}</span>
-            <span>
-              Thể loại:{" "}
-              {movie?.categories?.map((c, i) => {
-                return (
-                  <span key={i}>
-                    {c.name}
-                    {i < movie?.categories.length - 1 ? ", " : ""}
-                  </span>
-                );
-              })}
-            </span>
-            <span>Quốc gia: {movie?.country?.name}</span>
-            <span>Diễn viên: {movie?.actors} </span>
-          </div>
-        </div>
       </div>
-      <div className={`mt-4 ${lightOff && "hidden"}`}>
-        {movie?.episodes?.map((e) => {
-          return (
-            <div key={e.server_name} className="mt-4">
-              <div className="my-3 font-bold">{e.server_name}</div>
-              <div className="flex flex-row flex-wrap gap-4">
-                {e.server_data.map((i) => {
-                  return (
-                    <div
-                      onClick={() => handleChangeEp(i)}
-                      className={`btn btn-sm w-20 ${
-                        ep.link === i.link && "btn-primary"
-                      }`}
-                      key={i.slug}
-                    >
-                      {i.name}{" "}
-                    </div>
-                  );
-                })}
+
+      {/* Main Content */}
+      <div className="container mx-auto  py-8">
+        {/* Breadcrumbs */}
+        <div className={`text-sm breadcrumbs mb-6 ${lightOff ? "hidden" : ""}`}>
+          <ul>
+            <li>
+              <Link to={"/"}>Trang chủ</Link>
+            </li>
+            <li>Phim</li>
+            <li className="line-clamp-1">{movie?.name}</li>
+          </ul>
+        </div>
+
+        {/* Movie Info Section */}
+        <div
+          className={`grid grid-cols-1 lg:grid-cols-3 gap-8 ${
+            lightOff ? "hidden" : ""
+          }`}
+        >
+          {/* Poster and Basic Info */}
+          <div className="lg:col-span-1">
+            <div className="relative group">
+              <img
+                src={movie?.thumb_url}
+                className="w-full rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-105"
+                alt={movie?.name}
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl" />
+            </div>
+
+            <div className="mt-4 space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <div className="badge badge-primary gap-2">
+                  <FaStar /> {movie?.quality}
+                </div>
+                <div className="badge badge-secondary gap-2">
+                  <FaClock /> {movie?.time}
+                </div>
+                {movie?.lang && (
+                  <div className="badge badge-accent gap-2">
+                    <FaGlobe /> {movie?.lang}
+                  </div>
+                )}
+                {movie?.status && (
+                  <div className="badge badge-info gap-2">
+                    <FaFilm /> {movie?.status}
+                  </div>
+                )}
+              </div>
+
+              <LikeButton movie={movie} type="vietsub" />
+            </div>
+          </div>
+
+          {/* Movie Details */}
+          <div className="lg:col-span-2">
+            <div className="flex justify-between items-start mb-6">
+              <h1 className="text-4xl font-bold">{movie?.name}</h1>
+            </div>
+
+            <div className="prose max-w-none mb-8">
+              <div dangerouslySetInnerHTML={{ __html: movie?.content }} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="card bg-base-200">
+                <div className="card-body">
+                  <h3 className="card-title">Thông tin phim</h3>
+                  <div className="space-y-2">
+                    <p>
+                      <span className="font-semibold">Trạng thái:</span>{" "}
+                      {movie?.status}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Thể loại:</span>{" "}
+                      {movie?.categories?.map((c, i) => (
+                        <span key={i}>
+                          {c.name}
+                          {i < movie?.categories.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Quốc gia:</span>{" "}
+                      {movie?.country?.name}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Diễn viên:</span>{" "}
+                      {movie?.actors}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          );
-        })}
-      </div>
-      <div className={`mt-4 ${lightOff && "hidden"}`}>
-        <span className="font-bold text-3xl">Có thể bạn sẽ thích</span>
-        <div className="flex flex-row flex-wrap gap-4 mt-4">
-          {relatedMovies.length > 0 &&
-            relatedMovies?.map((e) => {
-              return <MediaListVietSub m={e} key={e.slug} />;
-            })}
+
+            {/* Episodes Section */}
+            <div className="space-y-6">
+              {movie?.episodes?.map((e) => (
+                <div key={e.server_name} className="card bg-base-200">
+                  <div className="card-body">
+                    <h3 className="card-title">{e.server_name}</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {e.server_data.map((i) => (
+                        <button
+                          onClick={() => handleChangeEp(i)}
+                          className={`btn btn-sm ${
+                            ep.link === i.link ? "btn-primary" : "btn-ghost"
+                          }`}
+                          key={i.slug}
+                        >
+                          <FaPlay className="mr-2" />
+                          {i.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Related Movies Section */}
+        <div className={`mt-12 ${lightOff ? "hidden" : ""}`}>
+          <h2 className="text-3xl font-bold mb-6">Có thể bạn sẽ thích</h2>
+          <div className="flex flex-row flex-wrap gap-4">
+            {relatedMovies.length > 0 &&
+              relatedMovies?.map((e) => (
+                <MediaListVietSub m={e} key={e.slug} />
+              ))}
+          </div>
         </div>
       </div>
     </div>
