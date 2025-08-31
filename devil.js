@@ -4,6 +4,9 @@ var api = axios.create({
   baseURL: " https://avdbapi.com/api.php/",
 });
 
+var api2 = axios.create({
+  baseURL: "https://api.crawl.team",
+});
 var Category = {
   censored: 0,
   uncensored: 1,
@@ -19,6 +22,14 @@ var Category = {
 function MovieService() {
   this.getRandomParam = function () {
     return "&_=" + new Date().getTime();
+  };
+
+  this.getOtherCate = function (data) {
+    return api2
+      .get(
+        `/xxx/api-posts?cate_ids=${data.cate_ids}&source=${data.source}&limit=99999`
+      )
+      .then((res) => res.data);
   };
 
   this.getAll = function (page) {
@@ -135,7 +146,7 @@ function MovieService() {
   };
 
   this.getRandomVideo = function () {
-    var page = Math.floor(Math.random() * 2003) + 1;
+    var page = Math.floor(Math.random() * 400) + 1;
     return api
       .get("provide/vod?ac=detail&pg=" + page + this.getRandomParam())
       .then(
@@ -172,7 +183,7 @@ const getMovieDetail = async (id) => {
 
   return {
     details,
-    related: related.list.slice(0, 10),
+    related: related.list.slice(0, 8),
   };
 };
 

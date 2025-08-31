@@ -88,8 +88,8 @@ const VietSub = () => {
   }, [page]);
 
   return (
-    <div className="pt-20">
-      <div className="mt-4 justify-center flex items-center sticky top-[90px] z-10 w-full bg-base-100 bg-opacity-90 backdrop-blur-md py-2">
+    <div>
+      <div className="mt-4 justify-center flex items-center sticky top-[40px] z-10 w-full bg-base-100 bg-opacity-90 backdrop-blur-md py-2">
         <Pagination
           to={`theLoai=${theLoai}`}
           page={+page}
@@ -97,7 +97,7 @@ const VietSub = () => {
           initialPage={+page}
         />
       </div>
-      <div className="flex items-center gap-4 px-6">
+      <div className="flex items-center gap-4 px-6 mt-1">
         <span className="text-3xl font-bold">VIP</span>
         <select
           className="select select-bordered select-sm w-full max-w-40"

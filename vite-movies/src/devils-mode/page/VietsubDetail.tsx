@@ -7,8 +7,6 @@ import { MediaListVietSub } from "../components/MediaList";
 import { useAppStore } from "../../zustand/appState";
 import {
   FaLightbulb,
-  FaDownload,
-  FaLink,
   FaPlay,
   FaStar,
   FaClock,
@@ -67,28 +65,11 @@ const VietSubDetails = () => {
     getMovieDetail();
   }, [params.id]);
 
-  const handleDownload = async () => {
-    if (ep?.link) {
-      try {
-        ipcRenderer.send("download-m3u8", ep.link);
-      } catch (error) {
-        alert("Có lỗi xảy ra khi tải video" + error);
-      }
-    }
-  };
-
   useEffect(() => {
     ipcRenderer.on("find-m3u8-links", (data: any) => {
       alert(data);
     });
   }, []);
-  const handleExtractLinks = async () => {
-    try {
-      ipcRenderer.send("find-m3u8-links", window.location.href);
-    } catch (error) {
-      alert("Có lỗi xảy ra khi tìm link");
-    }
-  };
 
   if (loading) {
     return <Loading />;
@@ -96,13 +77,13 @@ const VietSubDetails = () => {
 
   return (
     <div
-      className="min-h-screen flex-1 pt-[96px]"
+      className="min-h-screen flex-1 pt-[20px] pr-4"
       style={{
         backgroundColor: lightOff ? "#000000" : "oklch(var(--b1))",
       }}
     >
       {/* Light Toggle Button */}
-      <div className="fixed top-20 right-4 z-50">
+      <div className="fixed top-20 right-10 z-50">
         <button
           className="btn btn-circle btn-sm"
           onClick={() => {
@@ -125,7 +106,7 @@ const VietSubDetails = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto  py-8">
+      <div className="container py-8">
         {/* Breadcrumbs */}
         <div className={`text-sm breadcrumbs mb-6 ${lightOff ? "hidden" : ""}`}>
           <ul>

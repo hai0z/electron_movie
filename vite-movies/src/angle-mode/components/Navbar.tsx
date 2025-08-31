@@ -22,7 +22,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`navbar fixed z-50 bg-base-100 bg-opacity-90 backdrop-blur-md shadow-lg transition-all duration-300 ${
+      className={`navbar fixed z-50 bg-base-100 bg-opacity-90 backdrop-blur-md  transition-all duration-300 ${
         lightOff ? "opacity-0 hidden" : "opacity-100"
       }`}
     >

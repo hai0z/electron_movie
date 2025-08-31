@@ -26,7 +26,6 @@ const MovieDetail = () => {
   const getMovieDetail = async () => {
     setLoading(true);
     electron.ipcRenderer.send("get-movie-detail", params.id);
-    console.log(params.id);
     electron.ipcRenderer.on(
       "movie-detail",
       (data: { details: MovieDetailResult; related: HomeResult["list"] }) => {
@@ -54,7 +53,7 @@ const MovieDetail = () => {
 
   return (
     <div
-      className="w-full min-h-screen flex-1 pt-[72px] px-6 pb-20"
+      className="w-full min-h-screen flex-1 pr-4 pb-20"
       id="#top"
       style={{
         backgroundColor: lightOff ? "#000000" : "oklch(var(--b1))",

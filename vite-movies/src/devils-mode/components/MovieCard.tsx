@@ -60,7 +60,7 @@ function MovieCard1({ m }: { m: List }) {
       key={m.slug}
       transition={{ duration: 0.5 }}
       layout
-      className="transition-all duration-300 rounded-lg shadow-md cursor-pointer w-[19%] bg-base-200 hover:ring-1 hover:ring-primarys hover:scale-[1.01] hover:shadow-primarys group card my-1 hover:bg-accent/10 card-compact"
+      className="transition-all duration-300 rounded-lg shadow-md cursor-pointer w-[23%] bg-base-200 hover:ring-1 hover:ring-primarys hover:scale-[1.01] hover:shadow-primarys group card my-1 hover:bg-accent/10 card-compact"
     >
       <figure className="overflow-hidden rounded-t-lg">
         <Link to={"/movie/" + m.id + "#top"}>

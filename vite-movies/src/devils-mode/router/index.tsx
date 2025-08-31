@@ -13,6 +13,10 @@ import VietSub from "../page/VietSub";
 import VietSubDetails from "../page/VietsubDetail";
 import Setting from "../../common/Setting";
 import Error from "../../common/Error";
+import Vlxx from "../page/Vlxx";
+import Javhd from "../page/Javhd";
+import Sextop1 from "../page/Sextop1";
+import ScrollToTopButton from "../../common/FloatingButton";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -42,7 +46,7 @@ const MainLayout = () => {
           zIndex: "9999",
           position: "sticky",
           top: 0,
-          height: 25,
+          height: 40,
           backgroundColor: lightOff ? "#000" : "oklch(var(--b1)/0.9)",
         }}
       >
@@ -52,7 +56,7 @@ const MainLayout = () => {
           onClick={minimize}
         >
           <FaRegWindowMinimize
-            className={` cursor-pointer ${lightOff && "text-white"}`}
+            className={` cursor-pointer ${lightOff && "text-white"} mb-3`}
           />
         </div>
         <div
@@ -60,7 +64,7 @@ const MainLayout = () => {
           className="cursor-pointer h-10 w-10  justify-center items-center flex hover:bg-primary/10"
         >
           <BiWindows
-            className={`cursor-pointer mt-3 ${lightOff && "text-white"}`}
+            className={`cursor-pointer mt-3 ${lightOff && "text-white"} mb-3`}
           />
         </div>
         <div
@@ -68,12 +72,19 @@ const MainLayout = () => {
           className="cursor-pointer h-10 w-10  justify-center items-center flex hover:bg-primary/10"
         >
           <BiWindowClose
-            className={`cursor-pointer mt-3 ${lightOff && "text-white"}`}
+            className={`cursor-pointer mt-3 ${lightOff && "text-white"} mb-3`}
           />
         </div>
       </div>
-      <Navbar />
-      <Outlet />
+      <div className={`flex flex-row w-full ${lightOff && "bg-black"} `}>
+        <ScrollToTopButton />
+        <div className={`${lightOff && "invisible"}`}>
+          <Navbar />
+        </div>
+        <div className={`flex flex-1 ${!lightOff && "pl-72"}`}>
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 };
@@ -107,6 +118,18 @@ const router = createHashRouter([
       {
         path: "/vietsub",
         element: <VietSub />,
+      },
+      {
+        path: "/vlxx",
+        element: <Vlxx />,
+      },
+      {
+        path: "/javhd",
+        element: <Javhd />,
+      },
+      {
+        path: "/sextop1",
+        element: <Sextop1 />,
       },
       {
         path: "/category/:category/:title/:keyword",

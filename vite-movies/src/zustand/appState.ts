@@ -4,6 +4,7 @@ import zustandStorage from "./storage";
 import { Movie } from "../angle-mode/types/movieDetail";
 import { List } from "../devils-mode/types/movieDetail";
 import { Movie as MovieVietSub } from "../devils-mode/types/vietsub";
+import { Post } from "../devils-mode/types/other";
 
 interface AppStore {
   theme: string;
@@ -20,6 +21,8 @@ interface AppStore {
   setLikedAnglesMovies: (likedAngles: Movie[]) => void;
   lightOff: boolean;
   setLightOff: (lightOff: boolean) => void;
+  otherLike: Post[];
+  setOtherLike: (likeVideos: Post[]) => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -39,6 +42,8 @@ export const useAppStore = create<AppStore>()(
       setLikeVietSubs: (likeVietSubs) => set({ likeVietSubs }),
       lightOff: false,
       setLightOff: (lightOff) => set({ lightOff }),
+      otherLike: [],
+      setOtherLike: (otherLike) => set({ otherLike }),
     }),
     {
       name: "app-state",

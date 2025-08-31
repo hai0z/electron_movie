@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>waveform-data.js Demo Page</title>
+    <style>
+      body {
+        font-family: "Helvetica neue", Helvetica, Arial, sans-serif;
+      }
+
+      #titles,
+      #waveform-container,
+      #waveform-controls {
+        margin: 24px auto;
+        width: 1000px;
+      }
+
+      #demo-controls {
+        margin: 0 auto 24px auto;
+        width: 1000px;
+        display: flex;
+        align-items: center;
+      }
+
+      #demo-controls button {
+        background: #fff;
+        border: 1px solid #919191;
+        cursor: pointer;
+      }
+
+      #audio {
+        flex: 0 0 30%;
+      }
+
+      #controls {
+        flex: 1;
+        margin-left: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="titles">
+      <h1>waveform-data.js</h1>
+      <p>
+        waveform-data.js is a JavaScript library that allows you to load and
+        manipulate audio waveform data files.
+      </p>
+      <p>
+        It was developed by
+        <a href="https://www.bbc.co.uk/rd">BBC R&amp;D</a> to support
+        <a href="https://github.com/bbc/peaks.js">Peaks.js</a>. You can read
+        more about the project
+        <a href="https://waveform.prototyping.bbc.co.uk/">here</a>.
+      </p>
+
+      <h2>Demo: Scalable Vector Graphics (SVG) using d3.js</h2>
+      <p>
+        This demo shows how to use <a href="https://d3js.org/">d3.js</a> to draw
+        a waveform image using
+        <a href="https://developer.mozilla.org/en-US/docs/Web/SVG">SVG</a>.
+      </p>
+    </div>
+
+    <div id="waveform-container"></div>
+
+    <div id="demo-controls">
+      <audio id="audio" controls="controls">
+        <source src="07023003.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+
+      <div id="controls">
+        <button data-action="load-dat">Load binary waveform data</button>
+        <button data-action="load-json">Load JSON waveform data</button>
+        <button data-action="generate">Generate using Web Audio API</button>
+      </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="waveform-data.js"></script>
+    <script>
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+
+      const drawWaveform = (waveform, color) => {
+        const channel = waveform.channel(0);
+        const container = d3.select("#waveform-container");
+        const x = d3.scaleLinear();
+        const y = d3.scaleLinear();
+        const offsetX = 100;
+
+        const min = channel.min_array();
+        const max = channel.max_array();
+
+        x.domain([0, waveform.length]).rangeRound([0, 1000]);
+        y.domain([d3.min(min), d3.max(max)]).rangeRound([offsetX, -offsetX]);
+
+        const area = d3
+          .area()
+          .x((d, i) => x(i))
+          .y0((d, i) => y(min[i]))
+          .y1((d, i) => y(d));
+
+        container.select("svg").remove();
+
+        const graph = container
+          .append("svg")
+          .style("width", "1000px")
+          .style("height", "200px")
+          .datum(max)
+          .append("path")
+          .attr("transform", () => `translate(0, ${offsetX})`)
+          .attr("d", area)
+          .attr("fill", color)
+          .attr("stroke", color);
+      };
+
+      document
+        .querySelector('button[data-action="load-dat"]')
+        .addEventListener("click", function () {
+          fetch("07023003-2channel.dat")
+            .then((response) => {
+              if (response.ok) {
+                return response.arrayBuffer();
+              } else {
+                throw new Error(`${response.status} ${response.statusText}`);
+              }
+            })
+            .then((buffer) => WaveformData.create(buffer))
+            .then((waveform) => {
+              console.log(`Waveform has ${waveform.channels} channels`);
+              console.log(`Waveform has length ${waveform.length} points`);
+
+              drawWaveform(waveform, "#929982");
+            })
+            .catch((err) => {
+              console.error(err.message);
+            });
+        });
+
+      document
+        .querySelector('button[data-action="load-json"]')
+        .addEventListener("click", function () {
+          fetch("07023003-2channel.json")
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error(`${response.status} ${response.statusText}`);
+              }
+            })
+            .then((json) => WaveformData.create(json))
+            .then((waveform) => {
+              console.log(`Waveform has ${waveform.channels} channels`);
+              console.log(`Waveform has length ${waveform.length} points`);
+
+              drawWaveform(waveform, "#7a93ac");
+            })
+            .catch((err) => {
+              console.error(err.message);
+            });
+        });
+
+      document
+        .querySelector('button[data-action="generate"]')
+        .addEventListener("click", function () {
+          fetch("07023003.mp3")
+            .then((response) => {
+              if (response.ok) {
+                return response.arrayBuffer();
+              } else {
+                throw new Error(`${response.status} ${response.statusText}`);
+              }
+            })
+            .then((buffer) => {
+              const audioContext = new AudioContext();
+
+              const options = {
+                audio_context: audioContext,
+                array_buffer: buffer,
+                scale: 128,
+              };
+
+              return new Promise((resolve, reject) => {
+                WaveformData.createFromAudio(options, (err, waveform) => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    resolve(waveform);
+                  }
+                  audioContext.close();
+                });
+              });
+            })
+            .then((waveform) => {
+              console.log(`Waveform has ${waveform.channels} channels`);
+              console.log(`Waveform has length ${waveform.length} points`);
+
+              drawWaveform(waveform, "#b7999c");
+            })
+            .catch((err) => {
+              console.error(err.message);
+            });
+        });
+    </script>
+  </body>
+</html>
