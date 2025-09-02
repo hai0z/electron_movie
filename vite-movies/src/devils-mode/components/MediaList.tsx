@@ -11,7 +11,11 @@ interface Props {
 
 const MediaList: React.FC<Props> = ({ m }) => {
   const viewMode = useAppStore((state) => state.viewMode);
-  return viewMode === "card" ? <MovieCard1 m={m} /> : <MovieCard2 m={m} />;
+  return viewMode === "card" ? (
+    <MovieCard1 m={m as any} />
+  ) : (
+    <MovieCard2 m={m as any} />
+  );
 };
 const MediaListVietSub = ({ m }: { m: VietSubResult["movies"][0] }) => {
   const viewMode = useAppStore((state) => state.viewMode);

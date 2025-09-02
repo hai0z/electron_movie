@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
-import { List } from "../types";
+import { List } from "../types/movieDetail";
+
 import { motion } from "framer-motion";
 import { decode } from "html-entities";
+import { useAppStore } from "../../zustand/appState";
+import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
+
 function MovieCard2({ m }: { m: List }) {
   return (
     <motion.div
@@ -48,6 +52,18 @@ function MovieCard2({ m }: { m: List }) {
 }
 
 function MovieCard1({ m }: { m: List }) {
+  const likeVideos = useAppStore((state) => state.likeVideos);
+  const isLike = likeVideos.findIndex((i) => i.id === m.id) !== -1;
+
+  const setlikeVideos = useAppStore((state) => state.setLikeVideos);
+
+  const toggleLike = () => {
+    if (isLike) {
+      setlikeVideos(likeVideos.filter((i) => i.id !== m.id));
+    } else {
+      setlikeVideos([m, ...likeVideos]);
+    }
+  };
   return (
     <motion.div
       initial={{
@@ -72,11 +88,19 @@ function MovieCard1({ m }: { m: List }) {
           />
         </Link>
         <div className="absolute top-1 left-1 badge badge-secondary bg-opacity-90 px-1 rounded-md text-xs">
-          {m.quality}
+          {m.quality} {m.year && " | " + m.year}
         </div>
-        <div className="absolute top-1 right-1 px-1 rounded-md text-xs badge badge-accent">
-          {m.year}
-        </div>
+
+        <button
+          onClick={toggleLike}
+          className="absolute top-2 right-2 p-2 rounded-full bg-base-100 shadow-md hover:bg-primary/20 transition"
+        >
+          {isLike ? (
+            <IoHeartSharp size={20} color="red" />
+          ) : (
+            <IoHeartOutline size={20} />
+          )}
+        </button>
       </figure>
       <Link to={"/movie/" + m.id} className="card-body">
         <div>

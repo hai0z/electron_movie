@@ -17,6 +17,7 @@ import Vlxx from "../page/Vlxx";
 import Javhd from "../page/Javhd";
 import Sextop1 from "../page/Sextop1";
 import ScrollToTopButton from "../../common/FloatingButton";
+import Viet69 from "../page/Viet69";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -47,7 +48,7 @@ const MainLayout = () => {
           position: "sticky",
           top: 0,
           height: 40,
-          backgroundColor: lightOff ? "#000" : "oklch(var(--b1)/0.9)",
+          backgroundColor: lightOff ? "#000" : "oklch(var(--b1))",
         }}
       >
         <div className="drag px-4 flex flex-row items-center justify-start backdrop:blur-md w-full flex-1 h-full "></div>
@@ -76,7 +77,11 @@ const MainLayout = () => {
           />
         </div>
       </div>
-      <div className={`flex flex-row w-full ${lightOff && "bg-black"} `}>
+      <div
+        className={`flex flex-row w-full ${
+          lightOff ? "bg-black" : "bg-base-100"
+        } `}
+      >
         <ScrollToTopButton />
         <div className={`${lightOff && "invisible"}`}>
           <Navbar />
@@ -126,6 +131,10 @@ const router = createHashRouter([
       {
         path: "/javhd",
         element: <Javhd />,
+      },
+      {
+        path: "/viet69",
+        element: <Viet69 />,
       },
       {
         path: "/sextop1",

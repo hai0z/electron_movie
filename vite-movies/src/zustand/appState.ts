@@ -36,7 +36,7 @@ export const useAppStore = create<AppStore>()(
       setAppMode: (appMode) => set({ appMode }),
       likedAnglesMovies: [],
       setLikedAnglesMovies: (likedAnglesMovies) => set({ likedAnglesMovies }),
-      viewMode: "list",
+      viewMode: "card",
       setViewMode: (viewMode) => set({ viewMode }),
       likeVietSubs: [],
       setLikeVietSubs: (likeVietSubs) => set({ likeVietSubs }),

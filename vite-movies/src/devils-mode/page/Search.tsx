@@ -32,9 +32,9 @@ const Search = () => {
   }, [params.keyword, page]);
 
   return (
-    <div className="pt-20">
+    <div>
       <div>
-        <div className="mt-4 justify-center flex items-center sticky top-[90px] z-10 w-full bg-base-100 bg-opacity-90 backdrop-blur-md py-2">
+        <div className="mt-4 justify-center flex items-center sticky top-[40px] z-10 w-full bg-base-100 bg-opacity-90 backdrop-blur-md py-2">
           <Pagination
             page={+page}
             total={searchResult?.pagecount}
@@ -47,7 +47,7 @@ const Search = () => {
         {!loading ? (
           <div className="flex flex-row flex-wrap gap-4 mt-4 px-6">
             {searchResult?.list?.map((item) => (
-              <MovieCard1 m={item} key={item.id} />
+              <MovieCard1 m={item as any} key={item.id} />
             ))}
           </div>
         ) : (

@@ -89,7 +89,7 @@ const VietSub = () => {
 
   return (
     <div>
-      <div className="mt-4 justify-center flex items-center sticky top-[40px] z-10 w-full bg-base-100 bg-opacity-90 backdrop-blur-md py-2">
+      <div className="mt-4 justify-center flex items-center sticky top-[40px] z-10 w-full bg-base-100 py-2">
         <Pagination
           to={`theLoai=${theLoai}`}
           page={+page}
@@ -98,7 +98,7 @@ const VietSub = () => {
         />
       </div>
       <div className="flex items-center gap-4 px-6 mt-1">
-        <span className="text-3xl font-bold">VIP</span>
+        <span className="text-3xl font-bold">XXVN</span>
         <select
           className="select select-bordered select-sm w-full max-w-40"
           defaultValue={theLoai}

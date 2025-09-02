@@ -44,7 +44,7 @@ const CategoryScreens = () => {
 
   return (
     <div>
-      <div className="mt-4 justify-center flex items-center sticky top-[40px] z-10 w-full bg-base-100 bg-opacity-90 backdrop-blur-md py-2">
+      <div className="mt-4 justify-center flex items-center sticky top-[40px] z-10 w-full bg-base-100 py-2">
         <Pagination page={+page} total={data?.pagecount} initialPage={+page} />
       </div>
       <div className="px-6">

@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { MovieDetailResult } from "../types/movieDetail";
+import { List, MovieDetailResult } from "../types/movieDetail";
 import { useEffect, useState } from "react";
 
 import { HomeResult } from "../types";
@@ -15,7 +15,7 @@ const MovieDetail = () => {
 
   const electron = (window as any).electron;
 
-  const [movie, setMovie] = useState({} as MovieDetailResult["list"][0]);
+  const [movie, setMovie] = useState({} as List);
 
   const [relatedMovies, setRelatedMovies] = useState({} as HomeResult["list"]);
 
@@ -48,7 +48,11 @@ const MovieDetail = () => {
   }, [params.id]);
 
   if (loading) {
-    return <Loading />;
+    return (
+      <div className="flex justify-center items-center w-full">
+        <Loading />
+      </div>
+    );
   }
 
   return (
@@ -112,10 +116,18 @@ const MovieDetail = () => {
             <LikeButton movie={movie} />
           </div>
           <div className="flex flex-row items-center mt-4 gap-x-4">
-            <div className="badge badge-primary">{movie?.quality}</div>
-            <div className="badge badge-secondary">{movie?.time}</div>
-            <div className="badge badge-neutral">{movie?.tag}</div>
-            <div className="badge badge-error">{movie?.year}</div>
+            {movie?.quality && (
+              <div className="badge badge-primary">{movie.quality}</div>
+            )}
+            {movie?.time && (
+              <div className="badge badge-secondary">{movie.time}</div>
+            )}
+            {movie?.tag && (
+              <div className="badge badge-neutral">{movie.tag}</div>
+            )}
+            {movie?.year && (
+              <div className="badge badge-error">{movie.year}</div>
+            )}
           </div>
           <div className="mt-4">
             <p
@@ -182,7 +194,7 @@ const MovieDetail = () => {
         <div className="flex flex-row flex-wrap gap-4 mt-4">
           {relatedMovies.length > 0 &&
             relatedMovies?.map((e) => {
-              return <MovieCard1 m={e} key={e.slug} />;
+              return <MovieCard1 m={e as List} key={e.slug} />;
             })}
         </div>
       </div>

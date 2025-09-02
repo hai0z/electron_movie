@@ -37,7 +37,7 @@ const SidebarNavbar = () => {
         <ul className="menu flex flex-col gap-2">
           <li>
             <Link to="/" className={pathName === "/" ? "active font-bold" : ""}>
-              <Home className="w-5 h-5" />
+              <Home className="w-5 h-5 text-primarys" />
               Trang chủ
             </Link>
           </li>
@@ -83,12 +83,10 @@ const SidebarNavbar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/category/7/Amateur/null"
-                    className={
-                      isActive("/category/7/") ? "active font-bold" : ""
-                    }
+                    to="/viet69"
+                    className={isActive("/viet69") ? "active font-bold" : ""}
                   >
-                    Amateur
+                    VIET69
                   </Link>
                 </li>
               </ul>

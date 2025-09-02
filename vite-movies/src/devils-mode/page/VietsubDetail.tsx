@@ -72,7 +72,11 @@ const VietSubDetails = () => {
   }, []);
 
   if (loading) {
-    return <Loading />;
+    return (
+      <div className="flex justify-center items-center w-full">
+        <Loading />
+      </div>
+    );
   }
 
   return (

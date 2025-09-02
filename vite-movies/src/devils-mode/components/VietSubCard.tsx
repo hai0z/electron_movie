@@ -2,8 +2,22 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { VietSubResult } from "../types/vietsub";
 import { decode } from "html-entities";
+import { useAppStore } from "../../zustand/appState";
+import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
 
 function VietSubCard({ m }: { m: VietSubResult["movies"][0] }) {
+  const likeVietSubs = useAppStore((state) => state.likeVietSubs);
+  const isLike = likeVietSubs.findIndex((i) => i.id === m.id) !== -1;
+
+  const setLikeVietSubs = useAppStore((state) => state.setLikeVietSubs);
+
+  const toggleLike = () => {
+    if (isLike) {
+      setLikeVietSubs(likeVietSubs.filter((i) => i.id !== m.id));
+    } else {
+      setLikeVietSubs([m, ...likeVietSubs]);
+    }
+  };
   return (
     <motion.div
       initial={{
@@ -29,12 +43,20 @@ function VietSubCard({ m }: { m: VietSubResult["movies"][0] }) {
         </Link>
         <div className="absolute top-1 left-1 badge badge-secondary bg-opacity-90 px-1 rounded-md text-xs">
           {m.quality}
+
+          {m.lang && " | " + m.lang}
         </div>
-        {m.lang && (
-          <div className="absolute top-1 right-1 px-1 rounded-md text-xs badge badge-accent">
-            {m.lang}
-          </div>
-        )}
+
+        <button
+          onClick={toggleLike}
+          className="absolute top-2 right-2 p-2 rounded-full bg-base-100 shadow-md hover:bg-primary/20 transition"
+        >
+          {isLike ? (
+            <IoHeartSharp size={20} color="red" />
+          ) : (
+            <IoHeartOutline size={20} />
+          )}
+        </button>
       </figure>
       <Link to={"/vietsub-detail/" + m.slug} className="card-body">
         <div>

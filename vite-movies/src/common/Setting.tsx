@@ -63,7 +63,10 @@ const Setting = () => {
         }
 
         // Nếu ok thì setState
-        useAppStore.setState(importedState, true);
+        useAppStore.setState((state) => ({
+          ...state,
+          ...importedState,
+        }));
         alert("Import thành công!");
       } catch (error) {
         alert("❌ File không hợp lệ hoặc bị lỗi!");
@@ -73,7 +76,11 @@ const Setting = () => {
   };
 
   return (
-    <div className={`px-6 ${appMode === "angle" ? "pt-20" : "pt-8"}`}>
+    <div
+      className={`px-6 ${
+        appMode === "angle" ? "pt-20" : "pt-8"
+      } bg-base-100 min-h-screen`}
+    >
       <div>
         <span className="text-3xl font-bold" onDoubleClick={changeMode}>
           Cài đặt

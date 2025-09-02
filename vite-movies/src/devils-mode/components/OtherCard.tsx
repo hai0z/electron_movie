@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Post } from "../types/other";
 import { useAppStore } from "../../zustand/appState";
-import { BiHeart } from "react-icons/bi";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
 
 interface IProps {

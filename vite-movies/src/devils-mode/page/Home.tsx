@@ -78,7 +78,6 @@ const HomePage = () => {
             ).values()
           ).slice(0, 8),
         });
-        setLoading(false);
       }
     );
   };
@@ -97,13 +96,13 @@ const HomePage = () => {
 
   return (
     <motion.div
-      className="flex w-full flex-col min-h-screen pb-10 pr-4 mt-4"
+      className="flex w-full flex-col min-h-screen pb-10 pr-4 mt-4 "
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       {/* Banner */}
-      <div className="relative w-full rounded-box h-64 bg-gradient-to-r from-primary via-accent to-secondary flex items-center justify-center">
+      <div className="relative w-full rounded-box h-64 bg-gradient-to-r from-primarys via-accent to-secondary flex items-center justify-center">
         <h1 className="text-white text-5xl font-bold drop-shadow-lg">
           🎬 Movie Hub
         </h1>
