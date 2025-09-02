@@ -1,21 +1,34 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoCloseOutline } from "react-icons/io5";
 import { useDebounce } from "../../hooks/useDebounce";
+
 const SearchInput = () => {
-  const navigation = useNavigate();
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = React.useState("");
 
-  const debounce = useDebounce(searchValue, 300);
+  const debouncedSearch = useDebounce(searchValue, 300);
 
-  const handleSearch = () => {
-    navigation(`/search/${debounce}?page=1`, {
-      replace: true,
-    });
-  };
+  const handleSearch = useCallback(() => {
+    if (debouncedSearch.length > 0) {
+      navigate(`/search/${debouncedSearch}?page=1`, { replace: true });
+    } else {
+      // Optionally navigate to a default route when search is cleared
+      navigate("/search", { replace: true });
+    }
+  }, [debouncedSearch, navigate]);
+
   useEffect(() => {
-    if (searchValue.length > 0) handleSearch();
-  }, [debounce]);
+    if (searchValue.length > 0 || debouncedSearch.length > 0) {
+      handleSearch();
+    }
+  }, [debouncedSearch, handleSearch]);
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter" && searchValue.length > 0) {
+      navigate(`/search/${searchValue}?page=1`, { replace: true });
+    }
+  };
 
   return (
     <label className="input input-bordered flex items-center gap-2 input-sm">
@@ -24,9 +37,8 @@ const SearchInput = () => {
         className="grow"
         placeholder="Tìm kiếm phim..."
         value={searchValue}
-        onChange={(event) => {
-          setSearchValue(event.target.value);
-        }}
+        onChange={(event) => setSearchValue(event.target.value)}
+        onKeyDown={handleKeyDown}
       />
       {!searchValue.length ? (
         <svg

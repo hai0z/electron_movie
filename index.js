@@ -23,8 +23,8 @@ function createMainWindow() {
     icon: path.join(__dirname, "assets", "fire.ico"),
   });
 
-  // win.loadFile(path.join(__dirname, "./vite-movies/dist/index.html"));
-  win.loadURL("http://localhost:5173");
+  win.loadFile(path.join(__dirname, "./vite-movies/dist/index.html"));
+  // win.loadURL("http://localhost:5173");
 
   ipcMain.on("minimize", (_) => {
     win.minimize();

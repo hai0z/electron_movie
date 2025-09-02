@@ -52,7 +52,7 @@ const Search = () => {
           </div>
         ) : (
           <div className="flex flex-row flex-wrap gap-4 mt-4 px-6">
-            {Array.from({ length: 10 }).map((_, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
               <SkeletonMovieCard key={i} />
             ))}
           </div>

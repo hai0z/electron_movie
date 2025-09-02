@@ -4,6 +4,7 @@ import OtherCard from "../components/OtherCard";
 import { Other, Post } from "../types/other";
 import Pagination from "../components/Pagination";
 import { useSearchParams } from "react-router-dom";
+import OtherSourcemodal from "../components/OtherSourceModal";
 
 const theLoaiArr = [
   {
@@ -213,36 +214,7 @@ const Viet69 = () => {
         </div>
       )}
 
-      <dialog id="video_modal" className="modal">
-        <div className="modal-box max-w-5xl w-full p-0 overflow-hidden">
-          {/* Header */}
-          <div className="flex justify-between items-center px-4 py-3 border-b">
-            <h3 className="font-bold text-lg line-clamp-1">
-              {post?.post_title}
-            </h3>
-          </div>
-
-          {/* Iframe player */}
-          <div className="w-full aspect-video bg-black">
-            <iframe
-              src={post?.post_stream}
-              title={post?.post_title}
-              className="w-full h-full"
-              allowFullScreen
-            />
-          </div>
-
-          {/* Footer */}
-          <div className="px-4 py-3 border-t flex justify-between items-center">
-            <span className="text-sm opacity-70">{post?.post_actor}</span>
-            <form method="dialog">
-              <button className="btn btn-sm" onClick={() => setPost(undefined)}>
-                Close
-              </button>
-            </form>
-          </div>
-        </div>
-      </dialog>
+      <OtherSourcemodal post={post} onClose={() => setPost(undefined)} />
     </div>
   );
 };

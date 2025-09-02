@@ -13,11 +13,11 @@ import {
   FaGlobe,
   FaFilm,
 } from "react-icons/fa";
+import { useHistoryStore } from "../../zustand/useHistoryStore";
 
 const VietSubDetails = () => {
   const params = useParams();
 
-  const ipcRenderer = (window as any).electron.ipcRenderer;
   const [movie, setMovie] = useState({} as Movie);
 
   const [relatedMovies, setRelatedMovies] = useState(
@@ -37,6 +37,9 @@ const VietSubDetails = () => {
       behavior: "smooth",
     });
   };
+
+  const { addToHistory } = useHistoryStore();
+
   const getMovieDetail = async () => {
     setLoading(true);
     const [res, res1] = await Promise.all([
@@ -52,6 +55,13 @@ const VietSubDetails = () => {
     setMovie(data.movie as any);
     setEp(data.movie.episodes[0].server_data[0]);
     setRelatedMovies(data1.movies.slice(0, 10));
+
+    addToHistory({
+      id: String(data.movie.slug),
+      thumbnail: data.movie.thumb_url,
+      type: "xxvn",
+      title: data.movie.name,
+    });
   };
 
   useEffect(() => {
@@ -64,12 +74,6 @@ const VietSubDetails = () => {
   useEffect(() => {
     getMovieDetail();
   }, [params.id]);
-
-  useEffect(() => {
-    ipcRenderer.on("find-m3u8-links", (data: any) => {
-      alert(data);
-    });
-  }, []);
 
   if (loading) {
     return (

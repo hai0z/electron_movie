@@ -6,16 +6,37 @@ import {
   Heart,
   Settings,
   Video,
-  Star,
   User,
+  Clock,
+  CameraOff,
+  Camera,
+  Dices,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
+import RandomModal from "./RandomModal";
+import { Movie } from "../types/vietsub";
+import { useState } from "react";
 
 const SidebarNavbar = () => {
   const pathName = useLocation().pathname;
 
   const isActive = (path: string) =>
     pathName === path || pathName.includes(path);
+
+  const [data, setData] = useState<Movie>();
+  const [loading, setLoading] = useState(true);
+
+  const getRandomVideo = async () => {
+    setLoading(true);
+    const res = await fetch(
+      `https://xxvnapi.com/api/chuyen-muc/jav-hd?page=${Math.floor(
+        Math.random() * 48 + 1
+      )}`
+    );
+    const data = await res.json();
+    setData(data.movies[Math.floor(Math.random() * 49)]);
+    setLoading(false);
+  };
 
   return (
     <div
@@ -25,7 +46,7 @@ const SidebarNavbar = () => {
       <div className="px-6 border-b border-base-200 py-10">
         <Link
           to="/"
-          className="flex items-center gap-2 text-2xl font-bold text-primary"
+          className="flex items-center gap-2 text-2xl font-bold text-primarys"
         >
           <Film className="w-6 h-6" />
           <span className="uppercase text-gradient">Movies Hub</span>
@@ -98,7 +119,7 @@ const SidebarNavbar = () => {
               to="/category/0/Censored/null"
               className={isActive("/category/0/") ? "active font-bold" : ""}
             >
-              <Star className="w-5 h-5 text-purple-500" />
+              <Camera className="w-5 h-5 text-purple-500" />
               Censored
             </Link>
           </li>
@@ -107,7 +128,7 @@ const SidebarNavbar = () => {
               to="/category/1/Uncencored/null"
               className={isActive("/category/1/") ? "active font-bold" : ""}
             >
-              <Video className="w-5 h-5 text-green-500" />
+              <CameraOff className="w-5 h-5 text-green-500" />
               Uncensored
             </Link>
           </li>
@@ -139,6 +160,17 @@ const SidebarNavbar = () => {
               Amateur
             </Link>
           </li>
+          <li
+            onClick={() => {
+              (document.getElementById("video_modal_2") as any)?.showModal();
+              getRandomVideo();
+            }}
+          >
+            <div>
+              <Dices className="w-5 h-5 text-pink-500" />
+              Random
+            </div>
+          </li>
         </ul>
       </nav>
 
@@ -156,11 +188,20 @@ const SidebarNavbar = () => {
           />
           <span>Yêu thích</span>
         </Link>
+        <Link
+          to="/history"
+          className={`flex items-center gap-2 ${
+            isActive("/history") ? "text-green-500" : ""
+          }`}
+        >
+          <Clock className="w-6 h-6" />
+          <span>Lịch sử</span>
+        </Link>
 
         <Link
           to="/setting"
           className={`flex items-center gap-2 ${
-            isActive("/setting") ? "text-primary font-bold" : ""
+            isActive("/setting") ? "text-primary " : ""
           }`}
         >
           <Settings className="w-6 h-6" />
@@ -169,6 +210,12 @@ const SidebarNavbar = () => {
 
         <SearchInput />
       </div>
+
+      <RandomModal
+        data={data!}
+        onClose={() => setData(undefined)}
+        loading={loading}
+      />
     </div>
   );
 };

@@ -9,6 +9,7 @@ import { decode } from "html-entities";
 import Loading from "../../common/Loading";
 import { useAppStore } from "../../zustand/appState";
 import { FaLightbulb } from "react-icons/fa";
+import { useHistoryStore } from "../../zustand/useHistoryStore";
 
 const MovieDetail = () => {
   const params = useParams();
@@ -23,6 +24,8 @@ const MovieDetail = () => {
 
   const { lightOff, setLightOff } = useAppStore();
 
+  const { addToHistory } = useHistoryStore();
+
   const getMovieDetail = async () => {
     setLoading(true);
     electron.ipcRenderer.send("get-movie-detail", params.id);
@@ -32,6 +35,12 @@ const MovieDetail = () => {
         setMovie(data.details.list[0]);
         setRelatedMovies(data.related);
         setLoading(false);
+        addToHistory({
+          id: String(data.details.list[0].id),
+          thumbnail: data.details.list[0].thumb_url,
+          type: "avdb",
+          title: data.details.list[0].origin_name,
+        });
       }
     );
   };

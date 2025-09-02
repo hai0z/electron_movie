@@ -18,6 +18,7 @@ import Javhd from "../page/Javhd";
 import Sextop1 from "../page/Sextop1";
 import ScrollToTopButton from "../../common/FloatingButton";
 import Viet69 from "../page/Viet69";
+import History from "../page/History";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -131,6 +132,10 @@ const router = createHashRouter([
       {
         path: "/javhd",
         element: <Javhd />,
+      },
+      {
+        path: "/history",
+        element: <History />,
       },
       {
         path: "/viet69",
