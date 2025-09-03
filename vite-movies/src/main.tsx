@@ -1,4 +1,4 @@
-import { Fragment, StrictMode, useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "./index.css";
@@ -44,9 +44,7 @@ const AppRoot = () => {
 };
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <AppProvider>
-      <AppRoot />
-    </AppProvider>
-  </StrictMode>
+  <AppProvider>
+    <AppRoot />
+  </AppProvider>
 );

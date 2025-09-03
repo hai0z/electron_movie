@@ -19,6 +19,7 @@ import Sextop1 from "../page/Sextop1";
 import ScrollToTopButton from "../../common/FloatingButton";
 import Viet69 from "../page/Viet69";
 import History from "../page/History";
+import Rell from "../page/Rell";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -144,6 +145,10 @@ const router = createHashRouter([
       {
         path: "/sextop1",
         element: <Sextop1 />,
+      },
+      {
+        path: "/rell",
+        element: <Rell />,
       },
       {
         path: "/category/:category/:title/:keyword",

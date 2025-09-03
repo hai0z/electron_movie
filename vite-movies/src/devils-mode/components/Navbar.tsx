@@ -11,6 +11,7 @@ import {
   CameraOff,
   Camera,
   Dices,
+  Flame,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -158,6 +159,15 @@ const SidebarNavbar = () => {
             >
               <User className="w-5 h-5 text-orange-500" />
               Amateur
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="rell"
+              className={isActive("/rell") ? "active font-bold" : ""}
+            >
+              <Flame className="w-5 h-5 text-cyan-500" />
+              Short
             </Link>
           </li>
           <li

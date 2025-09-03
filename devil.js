@@ -7,6 +7,11 @@ var api = axios.create({
 var api2 = axios.create({
   baseURL: "https://api.crawl.team",
 });
+
+var api3 = axios.create({
+  baseURL: "https://www.avrebo.com",
+});
+
 var Category = {
   censored: 0,
   uncensored: 1,
@@ -29,6 +34,12 @@ function MovieService() {
       .get(
         `/xxx/api-posts?cate_ids=${data.cate_ids}&source=${data.source}&limit=99999`
       )
+      .then((res) => res.data);
+  };
+
+  this.getTikTok = function () {
+    return api3
+      .get(`/avrebo-api/v1/video/listRandom?limit=16`)
       .then((res) => res.data);
   };
 

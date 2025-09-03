@@ -23,8 +23,8 @@ function createMainWindow() {
     icon: path.join(__dirname, "assets", "fire.ico"),
   });
 
-  win.loadFile(path.join(__dirname, "./vite-movies/dist/index.html"));
-  // win.loadURL("http://localhost:5173");
+  // win.loadFile(path.join(__dirname, "./vite-movies/dist/index.html"));
+  win.loadURL("http://localhost:5173");
 
   ipcMain.on("minimize", (_) => {
     win.minimize();
@@ -45,6 +45,10 @@ function createMainWindow() {
   ipcMain.on("get-other-cate", async (_, inputData) => {
     const data = await movieService.getOtherCate(inputData);
     win.webContents.send("other-cate", data);
+  });
+  ipcMain.on("get-tiktok", async (_) => {
+    const data = await movieService.getTikTok();
+    win.webContents.send("tiktok", data);
   });
 
   ipcMain.on("get-devil-home", async () => {
