@@ -8,7 +8,7 @@ export interface HistoryItem {
   title: string;
   thumbnail: string;
   watchedAt: string;
-  type: "avdb" | "xxvn" | "other";
+  type: "avdb" | "xxvn" | "other" | "old";
   otherData?: Post;
   stayIn?: number;
 }
@@ -33,7 +33,7 @@ export const useHistoryStore = create<HistoryState>()(
         const updated = [newItem, ...get().history]
           // loại bỏ trùng id (chỉ giữ mới nhất)
           .filter((v, i, arr) => arr.findIndex((x) => x.id === v.id) === i)
-          .slice(0, 50); // giới hạn 50 video
+          .slice(0, 100); // giới hạn 100 video
         set({ history: updated });
       },
 

@@ -260,7 +260,7 @@ export default function AIButton() {
 
       {/* Floating Button */}
       <div
-        className="tooltip tooltip-top fixed z-[999] transition-all duration-150"
+        className="tooltip tooltip-top fixed z-[99] transition-all duration-150"
         data-tip="Gợi ý video"
         style={{
           bottom: visible ? 96 : 40,

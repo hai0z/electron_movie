@@ -51,7 +51,7 @@ function MovieCard2({ m }: { m: List }) {
   );
 }
 
-function MovieCard1({ m }: { m: List }) {
+function MovieCard1({ m, type }: { m: List; type?: string }) {
   const likeVideos = useAppStore((state) => state.likeVideos);
   const isLike = likeVideos.findIndex((i) => i.id === m.id) !== -1;
 
@@ -79,7 +79,13 @@ function MovieCard1({ m }: { m: List }) {
       className="transition-all duration-300 rounded-lg shadow-md cursor-pointer w-[23%] bg-base-200 hover:ring-1 hover:ring-primarys hover:scale-[1.01] hover:shadow-primarys group card my-1 hover:bg-accent/10 card-compact"
     >
       <figure className="overflow-hidden rounded-t-lg">
-        <Link to={"/movie/" + m.id + "#top"}>
+        <Link
+          to={
+            type !== "old"
+              ? "/movie/" + m.id + "#top"
+              : "/old-video/" + m.id + "#top"
+          }
+        >
           <img
             src={m.poster_url ? m.poster_url : m.thumb_url}
             alt="cast"
@@ -91,16 +97,18 @@ function MovieCard1({ m }: { m: List }) {
           {m.quality} {m.year && " | " + m.year}
         </div>
 
-        <button
-          onClick={toggleLike}
-          className="absolute top-2 right-2 p-2 rounded-full bg-base-100 shadow-md hover:bg-primary/20 transition"
-        >
-          {isLike ? (
-            <IoHeartSharp size={20} color="red" />
-          ) : (
-            <IoHeartOutline size={20} />
-          )}
-        </button>
+        {type !== "old" && (
+          <button
+            onClick={toggleLike}
+            className="absolute top-2 right-2 p-2 rounded-full bg-base-100 shadow-md hover:bg-primary/20 transition"
+          >
+            {isLike ? (
+              <IoHeartSharp size={20} color="red" />
+            ) : (
+              <IoHeartOutline size={20} />
+            )}
+          </button>
+        )}
       </figure>
       <Link to={"/movie/" + m.id} className="card-body">
         <div>

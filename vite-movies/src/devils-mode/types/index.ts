@@ -38,10 +38,6 @@ interface Episodes {
 
 interface Serverdata {
   Full?: Full;
-  "1"?: Full;
-  "2"?: Full;
-  "3"?: Full;
-  "4"?: Full;
 }
 
 interface Full {

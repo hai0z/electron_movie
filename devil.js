@@ -11,6 +11,9 @@ var api2 = axios.create({
 var api3 = axios.create({
   baseURL: "https://www.avrebo.com",
 });
+var api4 = axios.create({
+  baseURL: "https://xvidapi.com/api.php/",
+});
 
 var Category = {
   censored: 0,
@@ -53,9 +56,28 @@ function MovieService() {
         return response.data;
       });
   };
+  this.getAllOld = function (page) {
+    if (page === undefined) {
+      page = 1;
+    }
+    return api4
+      .get("provide/vod?ac=detail&pg=" + page + this.getRandomParam())
+      .then(function (response) {
+        return response.data;
+      });
+  };
 
   this.getMovieDetail = function (id) {
     return api
+      .get("provide/vod?ac=detail&ids=" + id + this.getRandomParam())
+      .then(
+        function (response) {
+          return response.data;
+        }.bind(this)
+      );
+  };
+  this.getOldMovieDetail = function (id) {
+    return api4
       .get("provide/vod?ac=detail&ids=" + id + this.getRandomParam())
       .then(
         function (response) {
@@ -197,6 +219,14 @@ const getMovieDetail = async (id) => {
     related: related.list.slice(0, 8),
   };
 };
+const getMovieDetailOld = async (id) => {
+  const [details] = await Promise.all([m.getOldMovieDetail(id)]);
+
+  return {
+    details,
+    related: [],
+  };
+};
 
 var m = new MovieService();
 
@@ -204,4 +234,5 @@ module.exports = {
   getHomeData,
   movieService: m,
   getMovieDetail,
+  getMovieDetailOld,
 };

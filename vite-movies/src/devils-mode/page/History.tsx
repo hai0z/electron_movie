@@ -1,26 +1,29 @@
 import { Link } from "react-router-dom";
-import { Clock, Play, Trash2, Database, Globe } from "lucide-react";
+import { Clock, Play, Trash2 } from "lucide-react";
 import { useHistoryStore } from "../../zustand/useHistoryStore";
 import { useState } from "react";
 import { Post } from "../types/other";
 import OtherSourcemodal from "../components/OtherSourceModal";
+
+function formatTime(seconds: number) {
+  if (seconds < 60) {
+    return `${seconds}s`;
+  } else if (seconds < 3600) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+  } else {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
+  }
+}
 
 const HistoryPage = () => {
   const { history, clearHistory, removeFromHistory } = useHistoryStore();
 
   const [post, setPost] = useState<Post>();
   const [confirmId, setConfirmId] = useState<string | null>(null); // id để xác nhận xoá
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "avdb":
-        return <Database className="w-5 h-5 text-purple-500" />;
-      case "xxvn":
-        return <Globe className="w-5 h-5 text-green-500" />;
-      default:
-        return <Clock className="w-5 h-5 text-gray-500" />;
-    }
-  };
 
   return (
     <div className="p-6  h-full my-4">
@@ -64,14 +67,13 @@ const HistoryPage = () => {
             </figure>
             <div className="card-body p-4 flex flex-row justify-between items-center w-full">
               <div className="flex items-center gap-3 flex-1">
-                {getTypeIcon(item.type)}
                 <div>
                   <p className="font-semibold hover:underline ">{item.title}</p>
                   <p className="text-sm text-gray-500">
                     {new Date(item.watchedAt).toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Đã xem trong {item.stayIn}s
+                    Đã xem trong {formatTime(item.stayIn!)}
                   </p>
                 </div>
               </div>

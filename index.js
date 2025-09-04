@@ -1,6 +1,11 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const { getHomeData, movieService, getMovieDetail } = require("./devil.js");
+const {
+  getHomeData,
+  movieService,
+  getMovieDetail,
+  getMovieDetailOld,
+} = require("./devil.js");
 
 function createMainWindow() {
   const win = new BrowserWindow({
@@ -56,9 +61,18 @@ function createMainWindow() {
     win.webContents.send("home-data", data);
   });
 
+  ipcMain.on("get-old", async (_, page = 1) => {
+    const data = await movieService.getAllOld(page);
+    win.webContents.send("old-data", data);
+  });
+
   ipcMain.on("get-movie-detail", async (_, id) => {
     const data = await getMovieDetail(id);
     win.webContents.send("movie-detail", data);
+  });
+  ipcMain.on("get-movie-detail-old", async (_, id) => {
+    const data = await getMovieDetailOld(id);
+    win.webContents.send("movie-detail-old", data);
   });
 
   ipcMain.on("get-by-category", async (_, data) => {

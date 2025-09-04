@@ -25,6 +25,8 @@ import AllHistory from "../page/AllHistory";
 import Comic from "../page/Comic";
 import ComicDetailPage from "../page/ComicDetail";
 import AIButton from "../../common/AIButton";
+import OldScreen from "../page/Old";
+import OldMovieDetail from "../page/OldMovieDetail";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -163,6 +165,14 @@ const router = createHashRouter([
       {
         path: "/stories",
         element: <Stories />,
+      },
+      {
+        path: "/old",
+        element: <OldScreen />,
+      },
+      {
+        path: "/old-video/:id",
+        element: <OldMovieDetail />,
       },
       {
         path: "/stories-detail/:remote",

@@ -73,7 +73,7 @@ const RandomModal = ({
             </span>
             <form method="dialog">
               <button className="btn btn-sm" onClick={onClose}>
-                Close
+                Đóng
               </button>
             </form>
           </div>
