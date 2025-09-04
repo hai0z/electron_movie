@@ -10,7 +10,7 @@ const AllHistory = () => {
   return (
     <div className="w-full flex flex-col">
       {/* Header Tabs */}
-      <div className="flex border-b border-base-content sticky top-10">
+      <div className="flex border-b border-base-content sticky top-10 z-50 bg-base-100">
         <button
           onClick={() =>
             setSearchParams({

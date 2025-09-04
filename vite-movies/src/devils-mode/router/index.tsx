@@ -18,11 +18,12 @@ import Javhd from "../page/Javhd";
 import Sextop1 from "../page/Sextop1";
 import ScrollToTopButton from "../../common/FloatingButton";
 import Viet69 from "../page/Viet69";
-import History from "../page/History";
 import Rell from "../page/Rell";
 import Stories from "../page/Stories";
 import StoriesDetail from "../page/StoriesDetail";
 import AllHistory from "../page/AllHistory";
+import Comic from "../page/Comic";
+import ComicDetailPage from "../page/ComicDetail";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -142,6 +143,10 @@ const router = createHashRouter([
         element: <AllHistory />,
       },
       {
+        path: "/comic",
+        element: <Comic />,
+      },
+      {
         path: "/viet69",
         element: <Viet69 />,
       },
@@ -160,6 +165,10 @@ const router = createHashRouter([
       {
         path: "/stories-detail/:remote",
         element: <StoriesDetail />,
+      },
+      {
+        path: "/comic-detail/:remote",
+        element: <ComicDetailPage />,
       },
       {
         path: "/category/:category/:title/:keyword",

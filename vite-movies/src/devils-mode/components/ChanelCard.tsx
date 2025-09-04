@@ -49,7 +49,7 @@ export default function ChannelItem({
           )}
           {position! >= 0 ? (
             <p className="badge badge-secondary my-2 ml-2">
-              postion: {position}
+              Vị trí: {position}
             </p>
           ) : (
             ""

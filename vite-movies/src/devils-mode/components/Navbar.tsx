@@ -13,6 +13,7 @@ import {
   Dices,
   Flame,
   Notebook,
+  BookOpenText,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -56,8 +57,8 @@ const SidebarNavbar = () => {
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 overflow-y-auto px-4 py-6">
-        <ul className="menu flex flex-col gap-2 ">
+      <nav className="flex-1 overflow-y-auto px-4 py-3">
+        <ul className="menu flex flex-col gap-2">
           <li>
             <Link to="/" className={pathName === "/" ? "active font-bold" : ""}>
               <Home className="w-5 h-5 text-primarys" />
@@ -122,7 +123,7 @@ const SidebarNavbar = () => {
               className={isActive("/category/0/") ? "active font-bold" : ""}
             >
               <Camera className="w-5 h-5 text-purple-500" />
-              Censored
+              Có che
             </Link>
           </li>
           <li>
@@ -131,7 +132,7 @@ const SidebarNavbar = () => {
               className={isActive("/category/1/") ? "active font-bold" : ""}
             >
               <CameraOff className="w-5 h-5 text-green-500" />
-              Uncensored
+              Không che
             </Link>
           </li>
           <li>
@@ -139,8 +140,8 @@ const SidebarNavbar = () => {
               to="/category/2/Uncensored Leaked/null"
               className={isActive("/category/2/") ? "active font-bold" : ""}
             >
-              <Video className="w-5 h-5 text-red-500" />
-              Leaked
+              <Video className="w-5 h-5 text-cyan-500" />
+              Bị rò rỉ
             </Link>
           </li>
           <li>
@@ -149,7 +150,7 @@ const SidebarNavbar = () => {
               className={isActive("/category/3/") ? "active font-bold" : ""}
             >
               <Film className="w-5 h-5 text-blue-500" />
-              Chinese AV
+              Trung Quốc
             </Link>
           </li>
 
@@ -159,7 +160,7 @@ const SidebarNavbar = () => {
               className={isActive("/category/7/") ? "active font-bold" : ""}
             >
               <User className="w-5 h-5 text-orange-500" />
-              Amateur
+              Nghiệp dư
             </Link>
           </li>
           <li>
@@ -167,8 +168,8 @@ const SidebarNavbar = () => {
               to="rell"
               className={isActive("/rell") ? "active font-bold" : ""}
             >
-              <Flame className="w-5 h-5 text-cyan-500" />
-              Short
+              <Flame className="w-5 h-5 text-red-500" />
+              Video Ngắn
             </Link>
           </li>
           <li>
@@ -177,9 +178,19 @@ const SidebarNavbar = () => {
               className={isActive("/stories") ? "active font-bold" : ""}
             >
               <Notebook className="w-5 h-5 text-teal-500" />
-              Stories
+              Truyện
             </Link>
           </li>
+          <li>
+            <Link
+              to="comic"
+              className={isActive("/comic") ? "active font-bold" : ""}
+            >
+              <BookOpenText className="w-5 h-5 text-indigo-500" />
+              Truyện tranh
+            </Link>
+          </li>
+
           <li
             onClick={() => {
               (document.getElementById("video_modal_2") as any)?.showModal();
@@ -188,18 +199,18 @@ const SidebarNavbar = () => {
           >
             <div>
               <Dices className="w-5 h-5 text-pink-500" />
-              Random
+              Ngẫu nhiên
             </div>
           </li>
         </ul>
       </nav>
 
       {/* Bottom actions */}
-      <div className="px-6 py-4 border-t border-base-200 flex flex-col gap-4">
+      <div className="px-6 py-2 border-t border-base-200 flex flex-col gap-4">
         <Link
           to="/favourite"
           className={`flex items-center gap-2 ${
-            isActive("/favourite") ? "text-red-500" : ""
+            isActive("/favourite") ? "text-danger" : ""
           }`}
         >
           <Heart
@@ -211,7 +222,7 @@ const SidebarNavbar = () => {
         <Link
           to="/history"
           className={`flex items-center gap-2 ${
-            isActive("/history") ? "text-green-500" : ""
+            isActive("/history") ? "text-primarys" : ""
           }`}
         >
           <Clock className="w-6 h-6" />
@@ -221,7 +232,7 @@ const SidebarNavbar = () => {
         <Link
           to="/setting"
           className={`flex items-center gap-2 ${
-            isActive("/setting") ? "text-primary " : ""
+            isActive("/setting") ? "text-accent " : ""
           }`}
         >
           <Settings className="w-6 h-6" />

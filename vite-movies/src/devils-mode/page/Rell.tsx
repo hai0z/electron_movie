@@ -1,14 +1,13 @@
-import { Play } from "lucide-react";
+import { Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { List, RootTiktok } from "../types/TikTok";
 import Loading from "../../common/Loading";
 
 export default function Rell() {
   const [items, setItems] = useState<List[]>([]);
-  const [isAtBottom, setIsAtBottom] = useState(false); // 👈 thêm state
-
+  const [isAtBottom, setIsAtBottom] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<List>();
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const electron = (window as any).electron;
 
@@ -24,9 +23,10 @@ export default function Rell() {
   const handleLoadMore = async () => {
     electron.ipcRenderer.send("get-tiktok");
     electron.ipcRenderer.on("tiktok", (data: RootTiktok) => {
-      setItems([...items, ...data.data.list]);
+      setItems((prev) => [...prev, ...data.data.list]);
     });
   };
+
   useEffect(() => {
     getData();
   }, []);
@@ -58,23 +58,67 @@ export default function Rell() {
       </div>
     );
   }
+
+  const selectedItem =
+    selectedIndex !== null ? items[selectedIndex] : undefined;
+
+  const handlePrev = () => {
+    if (selectedIndex !== null && selectedIndex > 0) {
+      setSelectedIndex(selectedIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (selectedIndex !== null && selectedIndex < items.length - 1) {
+      setSelectedIndex(selectedIndex + 1);
+    }
+  };
+
   return (
     <div className="w-full h-full bg-base-100 p-2">
       <dialog id="my_modal_2" className="modal">
-        <div className="modal-box aspect-[9/16] p-0">
-          <iframe className="w-full h-full" src={selectedItem?.video_url} />
+        <div className="modal-box relative aspect-[9/16] p-0 flex flex-col">
+          {/* iframe */}
+          <iframe
+            className="w-full flex-1"
+            src={selectedItem?.video_url}
+            allowFullScreen
+          />
+
+          {/* Controls */}
+          <div className="absolute top-1/2 left-2 -translate-y-1/2">
+            <button
+              onClick={handlePrev}
+              disabled={selectedIndex === 0}
+              className="btn btn-circle btn-sm"
+            >
+              <ChevronLeft />
+            </button>
+          </div>
+          <div className="absolute top-1/2 right-2 -translate-y-1/2">
+            <button
+              onClick={handleNext}
+              disabled={selectedIndex === items.length - 1}
+              className="btn btn-circle btn-sm"
+            >
+              <ChevronRight />
+            </button>
+          </div>
         </div>
+
         <form method="dialog" className="modal-backdrop">
-          <button onClick={() => setSelectedItem(undefined)}>close</button>
+          <button onClick={() => setSelectedIndex(null)}>close</button>
         </form>
       </dialog>
+
+      {/* Grid list */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-        {items.map((item: List) => (
+        {items.map((item: List, idx) => (
           <PostCard
             key={item.id}
             item={item}
             onClick={() => {
-              setSelectedItem(item);
+              setSelectedIndex(idx);
               (document.getElementById("my_modal_2") as any)?.showModal();
             }}
           />
@@ -92,8 +136,6 @@ function PostCard({ item, onClick }: { item: List; onClick: () => void }) {
         src={item.thumb}
         alt={item.title}
       />
-
-      {/* overlay hover */}
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-2 text-white text-sm">
         <div>
           <p className="font-semibold truncate">{item.nickname}</p>

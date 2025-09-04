@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useStoriesHistory } from "../../zustand/useStoriesHistory";
+import { ZoomIn, ZoomOut } from "lucide-react";
 
 export interface Root {
   description: string;
@@ -31,23 +32,39 @@ export interface RemoteData {
   url: string;
 }
 
-const StoriesDetail = () => {
+export interface Contents {
+  files: File[];
+  text: any;
+}
+
+export interface File {
+  id: string;
+  url: string;
+  request_headers: RequestHeader[];
+}
+
+export interface RequestHeader {
+  key: string;
+  value: string;
+}
+
+const ComicDetailPage = () => {
   const params = useParams();
   const [data, setData] = useState<Root>();
-
-  const [contents, setContents] = useState("");
-
+  const [contents, setContents] = useState<Contents>();
   const [progress, setProgress] = useState(0);
+  const [contentWidth, setContentWidth] = useState<number>(() => {
+    // lấy từ localStorage hoặc mặc định 80
+    const saved = localStorage.getItem("contentWidth");
+    return saved ? parseInt(saved, 10) : 80;
+  });
 
   const location = useLocation();
-
   const navigation = useNavigate();
-
   const { addHistory, updateChap } = useStoriesHistory();
 
   // Xác định stream hiện tại
   const streams = data?.sources[0].contents[0].streams.slice().reverse() || [];
-
   const [currentIndex, setCurrentIndex] = useState(
     location?.state?.lastChap ? location.state.lastChap : 0
   );
@@ -56,7 +73,7 @@ const StoriesDetail = () => {
 
   const getData = async () => {
     const res = await fetch(
-      `https://truyenx.link/truyensextv/channels/${params.remote}`
+      `https://truyenx.link/sayhentai/channels/${params.remote}`
     );
     const dt: Root = await res.json();
     setData(dt);
@@ -66,7 +83,7 @@ const StoriesDetail = () => {
   const getContents = async () => {
     const res = await fetch(streams[currentIndex].remote_data.url);
     const dt = await res.json();
-    setContents(dt.text);
+    setContents(dt);
   };
 
   // Scroll progress
@@ -99,13 +116,37 @@ const StoriesDetail = () => {
       updateChap(location?.state?.channel.id, currentIndex, 0);
     }
   }, [currentIndex, data]);
+
+  // Lưu contentWidth vào localStorage khi thay đổi
+  useEffect(() => {
+    localStorage.setItem("contentWidth", String(contentWidth));
+  }, [contentWidth]);
+
   return (
     <div className="w-full h-full">
       {/* Thanh progress */}
-      <div className="bg-base-100 sticky top-10 py-4">
-        <p className="text-center text-lg font-bold">
-          {location?.state?.channel.name}
-        </p>
+      <div className="bg-base-100 sticky top-10 ">
+        <div className="flex justify-between">
+          <div></div>
+          <p className="text-center text-lg font-bold">
+            {location?.state?.channel.name}
+          </p>
+          {/* Nút tăng giảm chiều rộng */}
+          <div className="flex gap-2">
+            <button
+              className="btn btn-sm btn-outline"
+              onClick={() => setContentWidth((w) => Math.max(40, w - 10))}
+            >
+              <ZoomOut />
+            </button>
+            <button
+              className="btn btn-sm btn-outline"
+              onClick={() => setContentWidth((w) => Math.min(100, w + 10))}
+            >
+              <ZoomIn />
+            </button>
+          </div>
+        </div>
         <div className=" flex flex-row items-center gap-4">
           <button
             onClick={() => {
@@ -124,26 +165,29 @@ const StoriesDetail = () => {
       </div>
 
       {/* Chọn chapter */}
-      <select
-        onChange={(e) => {
-          setCurrentIndex(+e.target.value);
-        }}
-        value={currentIndex}
-        className="select select-bordered select-sm w-full max-w-40 my-3"
-      >
-        {streams.map((item) => (
-          <option key={item.id} value={item.index - 1}>
-            {item.name}
-          </option>
-        ))}
-      </select>
+      <div className="flex items-center gap-2">
+        <select
+          onChange={(e) => {
+            setCurrentIndex(+e.target.value);
+          }}
+          value={currentIndex}
+          className="select select-bordered select-sm w-full max-w-40 my-3"
+        >
+          {streams.map((item) => (
+            <option key={item.id} value={item.index - 1}>
+              {item.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Nội dung */}
-      <div className="mt-16">
-        <p
-          dangerouslySetInnerHTML={{ __html: contents }}
-          className="text-2xl leading-relaxed"
-        ></p>
+      <div className="container mx-auto flex justify-center">
+        <div className="mt-16" style={{ width: `${contentWidth}%` }}>
+          {contents?.files.map((img) => {
+            return <img key={img.id} src={img.url} className="w-full" />;
+          })}
+        </div>
       </div>
 
       {/* Nút điều hướng */}
@@ -171,4 +215,4 @@ const StoriesDetail = () => {
   );
 };
 
-export default StoriesDetail;
+export default ComicDetailPage;

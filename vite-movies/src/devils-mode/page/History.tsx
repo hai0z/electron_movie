@@ -27,7 +27,7 @@ const HistoryPage = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Clock className="w-6 h-6 text-primary" />
+          <Clock className="w-6 h-6 text-primarys" />
           Lịch sử đã xem
         </h1>
         {history.length > 0 && (

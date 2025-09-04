@@ -4,8 +4,9 @@ import Pagination from "../components/Pagination";
 import { Stories } from "../types/Story";
 import ChannelCard from "../components/ChanelCard";
 import Loading from "../../common/Loading";
+import HentaiCard from "../components/HentaiCard";
 
-const StoriesPage = () => {
+const ComicPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const query = searchParams.get("q") || "";
@@ -18,10 +19,10 @@ const StoriesPage = () => {
     setLoading(true);
 
     const url = query
-      ? `https://truyenx.link/truyensextv/channels/search?q=${encodeURIComponent(
+      ? `https://truyenx.link/sayhentai/channels/search?q=${encodeURIComponent(
           query
         )}&page=${page}&t=${Date.now()}`
-      : `https://truyenx.link/truyensextv/channels?page=${page}&t=${Date.now()}`;
+      : `https://truyenx.link/sayhentai/channels?page=${page}&t=${Date.now()}`;
 
     const res = await fetch(url);
     const dt = await res.json();
@@ -92,13 +93,13 @@ const StoriesPage = () => {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col px-4 gap-4 pt-4">
+      <div className="flex flex-row flex-wrap px-4 gap-4 pt-4">
         {data?.channels.map((stories) => (
-          <ChannelCard key={stories.id} channel={stories} />
+          <HentaiCard key={stories.id} channel={stories} />
         ))}
       </div>
     </div>
   );
 };
 
-export default StoriesPage;
+export default ComicPage;

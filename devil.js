@@ -39,7 +39,7 @@ function MovieService() {
 
   this.getTikTok = function () {
     return api3
-      .get(`/avrebo-api/v1/video/listRandom?limit=16`)
+      .get(`/avrebo-api/v1/video/listRandom?limit=50`)
       .then((res) => res.data);
   };
 
