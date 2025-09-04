@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useHistoryStore } from "../../zustand/useHistoryStore";
 import { Movie } from "../types/vietsub";
 import Loading from "../../common/Loading";
@@ -13,7 +13,7 @@ const RandomModal = ({
   loading: boolean;
 }) => {
   const { addToHistory } = useHistoryStore();
-
+  let timerRef = useRef(0);
   useEffect(() => {
     if (data) {
       addToHistory({
@@ -23,6 +23,26 @@ const RandomModal = ({
         title: data.name,
       });
     }
+  }, [data, addToHistory]);
+
+  useEffect(() => {
+    if (!data) return;
+
+    timerRef.current = 0;
+
+    const timer = setInterval(() => {
+      timerRef.current = timerRef.current + 1;
+
+      addToHistory({
+        id: String(data.slug),
+        thumbnail: data.thumb_url,
+        type: "xxvn",
+        title: data.name,
+        stayIn: timerRef.current,
+      });
+    }, 1000);
+
+    return () => clearInterval(timer); // cleanup đúng
   }, [data, addToHistory]);
 
   return (

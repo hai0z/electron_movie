@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LikeButton from "../components/LikeButton";
 import { Movie, VietSubResult } from "../types/vietsub";
 import Loading from "../../common/Loading";
@@ -40,6 +40,9 @@ const VietSubDetails = () => {
 
   const { addToHistory } = useHistoryStore();
 
+  let movieDataRef = useRef({});
+  let timerRef = useRef(0);
+
   const getMovieDetail = async () => {
     setLoading(true);
     const [res, res1] = await Promise.all([
@@ -55,14 +58,26 @@ const VietSubDetails = () => {
     setMovie(data.movie as any);
     setEp(data.movie.episodes[0].server_data[0]);
     setRelatedMovies(data1.movies.slice(0, 10));
-
-    addToHistory({
+    movieDataRef.current = {
       id: String(data.movie.slug),
       thumbnail: data.movie.thumb_url,
       type: "xxvn",
       title: data.movie.name,
-    });
+    };
+    addToHistory(movieDataRef.current as any);
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      timerRef.current = timerRef.current + 1;
+      addToHistory({
+        ...movieDataRef.current,
+        stayIn: timerRef.current,
+      } as any);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     window.scrollTo({

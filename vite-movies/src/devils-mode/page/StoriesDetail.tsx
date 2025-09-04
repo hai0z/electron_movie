@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useStoriesHistory } from "../../zustand/useStoriesHistory";
+import Loading from "../../common/Loading";
 
 export interface Root {
   description: string;
@@ -99,7 +100,9 @@ const StoriesDetail = () => {
     // lần đầu thì scroll đến vị trí cũ
     if (!isFirstRender.current && !loading) {
       if (location?.state?.position) {
-        window.scrollTo({ top: location.state.position, behavior: "smooth" });
+        setTimeout(() => {
+          window.scrollTo({ top: location.state.position, behavior: "smooth" });
+        }, 500);
       }
       isFirstRender.current = true;
     }
@@ -112,6 +115,7 @@ const StoriesDetail = () => {
       updateChap(location?.state?.channel.id, currentIndex, 0);
     }
   }, [currentIndex, data]);
+
   return (
     <div className="w-full h-full">
       {/* Thanh progress */}
@@ -152,13 +156,15 @@ const StoriesDetail = () => {
       </select>
 
       {/* Nội dung */}
-      {!loading && (
+      {!loading ? (
         <div className="mt-16">
           <p
             dangerouslySetInnerHTML={{ __html: contents }}
             className="text-2xl leading-relaxed"
           ></p>
         </div>
+      ) : (
+        <Loading />
       )}
 
       {/* Nút điều hướng */}

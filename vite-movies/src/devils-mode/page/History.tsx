@@ -70,6 +70,9 @@ const HistoryPage = () => {
                   <p className="text-sm text-gray-500">
                     {new Date(item.watchedAt).toLocaleString()}
                   </p>
+                  <p className="text-sm text-gray-500">
+                    Đã xem trong {item.stayIn}s
+                  </p>
                 </div>
               </div>
               <div className="flex gap-2">

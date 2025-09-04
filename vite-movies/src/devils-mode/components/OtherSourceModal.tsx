@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useHistoryStore } from "../../zustand/useHistoryStore";
 import { Post } from "../types/other";
 import { useAppStore } from "../../zustand/appState";
@@ -17,6 +17,8 @@ const OtherSourceModal = ({
 
   const setOtherLike = useAppStore((state) => state.setOtherLike);
 
+  let timerRef = useRef(0);
+
   const toggleLike = () => {
     if (isLike) {
       setOtherLike(otherLike.filter((i) => i.post_id !== post?.post_id));
@@ -24,6 +26,7 @@ const OtherSourceModal = ({
       setOtherLike([post!, ...otherLike]);
     }
   };
+
   useEffect(() => {
     if (post) {
       addToHistory({
@@ -35,6 +38,28 @@ const OtherSourceModal = ({
       });
     }
   }, [post, addToHistory]);
+
+  useEffect(() => {
+    if (!post) return;
+
+    timerRef.current = 0; // reset khi đổi post
+
+    const timer = setInterval(() => {
+      timerRef.current = timerRef.current + 1;
+
+      addToHistory({
+        id: String(post.post_id),
+        thumbnail: post.post_thumbnail,
+        type: "other",
+        title: post.post_title,
+        otherData: post,
+        stayIn: timerRef.current,
+      });
+    }, 1000);
+
+    return () => clearInterval(timer); // cleanup đúng
+  }, [post, addToHistory]); // chạy lại khi đổi post
+
   return (
     <dialog id="video_modal" className="modal">
       <div className="modal-box max-w-5xl w-full p-0 overflow-hidden">

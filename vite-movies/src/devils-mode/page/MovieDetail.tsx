@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { List, MovieDetailResult } from "../types/movieDetail";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { HomeResult } from "../types";
 import LikeButton from "../components/LikeButton";
@@ -26,6 +26,8 @@ const MovieDetail = () => {
 
   const { addToHistory } = useHistoryStore();
 
+  let movieDataRef = useRef({});
+  let timerRef = useRef(0);
   const getMovieDetail = async () => {
     setLoading(true);
     electron.ipcRenderer.send("get-movie-detail", params.id);
@@ -35,15 +37,28 @@ const MovieDetail = () => {
         setMovie(data.details.list[0]);
         setRelatedMovies(data.related);
         setLoading(false);
-        addToHistory({
+        movieDataRef.current = {
           id: String(data.details.list[0].id),
           thumbnail: data.details.list[0].thumb_url,
           type: "avdb",
           title: data.details.list[0].origin_name,
-        });
+        };
+        addToHistory(movieDataRef.current as any);
       }
     );
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      timerRef.current = timerRef.current + 1;
+      addToHistory({
+        ...movieDataRef.current,
+        stayIn: timerRef.current,
+      } as any);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     window.scrollTo({

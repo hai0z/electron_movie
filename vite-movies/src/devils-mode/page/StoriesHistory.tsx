@@ -83,7 +83,7 @@ const StoriesHistory = () => {
             {otherHistory.map((item) => (
               <div
                 key={item.channel.id}
-                className="flex items-center justify-between gap-3"
+                className="flex items-center justify-between gap-3 relative"
               >
                 <ChannelItem
                   channel={item.channel}
@@ -97,7 +97,7 @@ const StoriesHistory = () => {
                       document.getElementById("delete_modal") as any
                     )?.showModal();
                   }}
-                  className="btn btn-sm btn-outline btn-error flex items-center gap-1"
+                  className="btn btn-sm btn-outline btn-error flex items-center gap-1 absolute right-4 top-4"
                 >
                   <Trash2 className="w-4 h-4" />
                   Xoá

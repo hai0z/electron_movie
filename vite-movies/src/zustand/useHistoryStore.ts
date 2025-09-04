@@ -10,7 +10,7 @@ export interface HistoryItem {
   watchedAt: string;
   type: "avdb" | "xxvn" | "other";
   otherData?: Post;
-  content?: string;
+  stayIn?: number;
 }
 
 interface HistoryState {

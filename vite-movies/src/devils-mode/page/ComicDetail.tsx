@@ -111,7 +111,9 @@ const ComicDetailPage = () => {
     // lần đầu thì scroll đến vị trí cũ
     if (!isFirstRender.current && !loading) {
       if (location?.state?.position) {
-        window.scrollTo({ top: location.state.position, behavior: "smooth" });
+        setTimeout(() => {
+          window.scrollTo({ top: location.state.position, behavior: "smooth" });
+        }, 500);
       }
       isFirstRender.current = true;
     }
@@ -123,7 +125,6 @@ const ComicDetailPage = () => {
 
   useEffect(() => {
     getContents();
-    window.scrollTo({ top: 0, behavior: "smooth" });
     if (location?.state?.channel) {
       updateChap(location?.state?.channel.id, currentIndex, 0);
     }
