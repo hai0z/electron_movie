@@ -34,13 +34,8 @@ export default function HentaiCard({ channel, chap, position }: Props) {
           </div>
         )}
         {chap! >= 0 && (
-          <div className="absolute bottom-2 left-2 badge badge-primary">
+          <div className="absolute bottom-2 left-2 badge badge-secondary">
             Chap {chap! + 1} | vị trí: {position}
-          </div>
-        )}
-        {channel.label?.text && (
-          <div className="absolute top-2 left-2 badge badge-primary">
-            {channel.label.text}
           </div>
         )}
       </div>

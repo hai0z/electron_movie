@@ -4,6 +4,7 @@ import Pagination from "../components/Pagination";
 import { Stories } from "../types/Story";
 import Loading from "../../common/Loading";
 import HentaiCard from "../components/HentaiCard";
+import { useStoriesHistory } from "../../zustand/useStoriesHistory";
 
 const ComicPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,6 +15,7 @@ const ComicPage = () => {
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState(query);
 
+  const { history } = useStoriesHistory();
   const getData = async () => {
     setLoading(true);
 
@@ -93,9 +95,19 @@ const ComicPage = () => {
 
       {/* Content */}
       <div className="flex flex-row flex-wrap px-4 gap-4 pt-4">
-        {data?.channels.map((stories) => (
-          <HentaiCard key={stories.id} channel={stories} />
-        ))}
+        {data?.channels.map((stories) => {
+          const inHistory = history.find(
+            (i) => i.channel.id === stories.id && i.channel.type !== "text"
+          );
+          return (
+            <HentaiCard
+              key={stories.id}
+              channel={stories}
+              chap={inHistory?.lastChap}
+              position={inHistory?.position}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -201,7 +201,14 @@ const ComicDetailPage = () => {
         <div className="container mx-auto flex justify-center">
           <div className="mt-16" style={{ width: `${contentWidth}%` }}>
             {contents?.files.map((img) => {
-              return <img key={img.id} src={img.url} className="w-full" />;
+              return (
+                <img
+                  key={img.id}
+                  src={img.url}
+                  loading="lazy"
+                  className="w-full"
+                />
+              );
             })}
           </div>
         </div>

@@ -4,6 +4,7 @@ import Pagination from "../components/Pagination";
 import { Stories } from "../types/Story";
 import ChannelCard from "../components/ChanelCard";
 import Loading from "../../common/Loading";
+import { useStoriesHistory } from "../../zustand/useStoriesHistory";
 
 const StoriesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,6 +14,8 @@ const StoriesPage = () => {
   const [data, setData] = useState<Stories>();
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState(query);
+
+  const { history } = useStoriesHistory();
 
   const getData = async () => {
     setLoading(true);
@@ -93,9 +96,18 @@ const StoriesPage = () => {
 
       {/* Content */}
       <div className="flex flex-col px-4 gap-4 pt-4">
-        {data?.channels.map((stories) => (
-          <ChannelCard key={stories.id} channel={stories} />
-        ))}
+        {data?.channels.map((stories) => {
+          const inHistory = history.find((i) => i.channel.id === stories.id);
+
+          return (
+            <ChannelCard
+              key={stories.id}
+              channel={stories}
+              chap={inHistory?.lastChap}
+              position={inHistory?.position}
+            />
+          );
+        })}
       </div>
     </div>
   );

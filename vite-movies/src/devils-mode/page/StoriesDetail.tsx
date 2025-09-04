@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useStoriesHistory } from "../../zustand/useStoriesHistory";
 import Loading from "../../common/Loading";
+import { ZoomIn, ZoomOut } from "lucide-react";
 
 export interface Root {
   description: string;
@@ -43,6 +44,12 @@ const StoriesDetail = () => {
   const location = useLocation();
 
   const navigation = useNavigate();
+
+  const [textSize, setTextSize] = useState<number>(() => {
+    // lấy từ localStorage hoặc mặc định 80
+    const saved = localStorage.getItem("textSize");
+    return saved ? parseInt(saved, 10) : 24;
+  });
 
   const { addHistory, updateChap } = useStoriesHistory();
 
@@ -116,13 +123,35 @@ const StoriesDetail = () => {
     }
   }, [currentIndex, data]);
 
+  useEffect(() => {
+    localStorage.setItem("textSize", String(textSize));
+  }, [textSize]);
+
   return (
     <div className="w-full h-full">
       {/* Thanh progress */}
       <div className="bg-base-100 sticky top-10 py-4">
-        <p className="text-center text-lg font-bold">
-          {location?.state?.channel.name}
-        </p>
+        <div className="flex justify-between">
+          <div></div>
+          <p className="text-center text-lg font-bold">
+            {location?.state?.channel.name}
+          </p>
+          <div className="flex gap-2">
+            <button
+              className="btn btn-sm btn-outline"
+              onClick={() => setTextSize((w) => Math.max(24, w - 5))}
+            >
+              <ZoomOut size={16} />
+            </button>
+            <button
+              className="btn btn-sm btn-outline"
+              onClick={() => setTextSize((w) => Math.min(60, w + 5))}
+            >
+              <ZoomIn size={16} />
+            </button>
+          </div>
+        </div>
+
         <div className=" flex flex-row items-center gap-4">
           <button
             onClick={() => {
@@ -160,7 +189,10 @@ const StoriesDetail = () => {
         <div className="mt-16">
           <p
             dangerouslySetInnerHTML={{ __html: contents }}
-            className="text-2xl leading-relaxed"
+            className=" leading-relaxed"
+            style={{
+              fontSize: textSize,
+            }}
           ></p>
         </div>
       ) : (

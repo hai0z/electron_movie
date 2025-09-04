@@ -59,7 +59,7 @@ const SidebarNavbar = () => {
 
       {/* Menu */}
       <nav className="flex-1 overflow-y-auto px-4 py-3">
-        <ul className="menu flex flex-col gap-2 menu-sm">
+        <ul className="menu flex flex-col gap-[10px] menu-sm">
           <li>
             <Link to="/" className={pathName === "/" ? "active font-bold" : ""}>
               <Home className="w-5 h-5 text-primarys" />
@@ -173,6 +173,15 @@ const SidebarNavbar = () => {
               Video Ngắn
             </Link>
           </li>
+          <li>
+            <Link
+              to="/old"
+              className={isActive("/old") ? "active font-bold" : ""}
+            >
+              <FileVideoCamera className="w-5 h-5 text-amber-500" />
+              Video cổ
+            </Link>
+          </li>
           <li
             onClick={() => {
               (document.getElementById("video_modal_2") as any)?.showModal();
@@ -184,15 +193,7 @@ const SidebarNavbar = () => {
               Video ngẫu nhiên
             </div>
           </li>
-          <li>
-            <Link
-              to="/old"
-              className={isActive("/old") ? "active font-bold" : ""}
-            >
-              <FileVideoCamera className="w-5 h-5 text-amber-500" />
-              Video cổ
-            </Link>
-          </li>
+
           <li>
             <Link
               to="stories"
