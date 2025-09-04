@@ -184,7 +184,7 @@ export default function AIButton() {
             exit={{ opacity: 0, scale: 0 }}
           >
             <motion.div
-              className="absolute inset-0 rounded-2xl"
+              className="absolute inset-0 "
               style={{
                 background:
                   "linear-gradient(270deg, #a78bfa, #60a5fa, #34d399, #f472b6, #a78bfa)",
@@ -203,7 +203,7 @@ export default function AIButton() {
             {/* Background hiệu ứng */}
 
             {/* Content */}
-            <div className="relative z-10 max-w-3xl text-center p-6">
+            <div className="relative z-10 max-w-5xl text-center p-6">
               {loading && (
                 <motion.h1
                   className="text-3xl font-bold text-white drop-shadow-xl animate-pulse"

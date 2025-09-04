@@ -100,7 +100,7 @@ const ComicDetailPage = () => {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [currentIndex]);
 
   useEffect(() => {
     getData();
