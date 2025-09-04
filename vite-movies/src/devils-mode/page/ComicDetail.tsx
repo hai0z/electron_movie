@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useStoriesHistory } from "../../zustand/useStoriesHistory";
 import { ZoomIn, ZoomOut } from "lucide-react";
+import Loading from "../../common/Loading";
 
 export interface Root {
   description: string;
@@ -62,7 +63,9 @@ const ComicDetailPage = () => {
   const location = useLocation();
   const navigation = useNavigate();
   const { addHistory, updateChap } = useStoriesHistory();
+  const [loading, setLoading] = useState(true);
 
+  let isFirstRender = useRef(false);
   // Xác định stream hiện tại
   const streams = data?.sources[0].contents[0].streams.slice().reverse() || [];
   const [currentIndex, setCurrentIndex] = useState(
@@ -81,9 +84,11 @@ const ComicDetailPage = () => {
   };
 
   const getContents = async () => {
+    setLoading(true);
     const res = await fetch(streams[currentIndex].remote_data.url);
     const dt = await res.json();
     setContents(dt);
+    setLoading(false);
   };
 
   // Scroll progress
@@ -103,10 +108,17 @@ const ComicDetailPage = () => {
   }, [currentIndex]);
 
   useEffect(() => {
+    // lần đầu thì scroll đến vị trí cũ
+    if (!isFirstRender.current && !loading) {
+      if (location?.state?.position) {
+        window.scrollTo({ top: location.state.position, behavior: "smooth" });
+      }
+      isFirstRender.current = true;
+    }
+  }, [loading]);
+
+  useEffect(() => {
     getData();
-    setTimeout(() => {
-      window.scrollTo({ top: location?.state?.position, behavior: "smooth" });
-    }, 100);
   }, []);
 
   useEffect(() => {
@@ -182,13 +194,17 @@ const ComicDetailPage = () => {
       </div>
 
       {/* Nội dung */}
-      <div className="container mx-auto flex justify-center">
-        <div className="mt-16" style={{ width: `${contentWidth}%` }}>
-          {contents?.files.map((img) => {
-            return <img key={img.id} src={img.url} className="w-full" />;
-          })}
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="container mx-auto flex justify-center">
+          <div className="mt-16" style={{ width: `${contentWidth}%` }}>
+            {contents?.files.map((img) => {
+              return <img key={img.id} src={img.url} className="w-full" />;
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Nút điều hướng */}
       <div className="flex justify-center items-center mt-8 mb-16 gap-4 w-full">

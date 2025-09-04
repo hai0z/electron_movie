@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../components/Pagination";
 import { Stories } from "../types/Story";
-import ChannelCard from "../components/ChanelCard";
 import Loading from "../../common/Loading";
 import HentaiCard from "../components/HentaiCard";
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useStoriesHistory } from "../../zustand/useStoriesHistory";
 
@@ -45,7 +45,6 @@ const StoriesDetail = () => {
 
   const { addHistory, updateChap } = useStoriesHistory();
 
-  // Xác định stream hiện tại
   const streams = data?.sources[0].contents[0].streams.slice().reverse() || [];
 
   const [currentIndex, setCurrentIndex] = useState(
@@ -53,6 +52,10 @@ const StoriesDetail = () => {
   );
   const prevStream = streams[currentIndex - 1];
   const nextStream = streams[currentIndex + 1];
+
+  const [loading, setLoading] = useState(true);
+
+  let isFirstRender = useRef(false);
 
   const getData = async () => {
     const res = await fetch(
@@ -64,11 +67,14 @@ const StoriesDetail = () => {
   };
 
   const getContents = async () => {
+    setLoading(true);
     const res = await fetch(streams[currentIndex].remote_data.url);
     const dt = await res.json();
     setContents(dt.text);
+    setLoading(false);
   };
 
+  console.log(isFirstRender.current);
   // Scroll progress
   useEffect(() => {
     const handleScroll = () => {
@@ -87,10 +93,17 @@ const StoriesDetail = () => {
 
   useEffect(() => {
     getData();
-    setTimeout(() => {
-      window.scrollTo({ top: location?.state?.position, behavior: "smooth" });
-    }, 100);
   }, []);
+
+  useEffect(() => {
+    // lần đầu thì scroll đến vị trí cũ
+    if (!isFirstRender.current && !loading) {
+      if (location?.state?.position) {
+        window.scrollTo({ top: location.state.position, behavior: "smooth" });
+      }
+      isFirstRender.current = true;
+    }
+  }, [loading]);
 
   useEffect(() => {
     getContents();
@@ -139,12 +152,14 @@ const StoriesDetail = () => {
       </select>
 
       {/* Nội dung */}
-      <div className="mt-16">
-        <p
-          dangerouslySetInnerHTML={{ __html: contents }}
-          className="text-2xl leading-relaxed"
-        ></p>
-      </div>
+      {!loading && (
+        <div className="mt-16">
+          <p
+            dangerouslySetInnerHTML={{ __html: contents }}
+            className="text-2xl leading-relaxed"
+          ></p>
+        </div>
+      )}
 
       {/* Nút điều hướng */}
       <div className="flex justify-center items-center mt-8 mb-16 gap-4 w-full">
