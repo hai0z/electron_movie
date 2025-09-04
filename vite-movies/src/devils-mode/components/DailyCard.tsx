@@ -18,7 +18,7 @@ const DailyCard = () => {
               <img src={video.thumbnail} alt="thumb" />
             </figure>
             <div className="card-body">
-              <h2 className="card-title">{video.title}</h2>
+              <h2 className="card-title line-clamp-1">{video.title}</h2>
               <div>
                 <p
                   className="line-clamp-2 font-semibold"

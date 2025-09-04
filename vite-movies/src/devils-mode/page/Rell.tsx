@@ -1,21 +1,23 @@
 import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { List, RootTiktok } from "../types/TikTok";
+import Loading from "../../common/Loading";
 
 export default function Rell() {
   const [items, setItems] = useState<List[]>([]);
   const [isAtBottom, setIsAtBottom] = useState(false); // 👈 thêm state
 
+  const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<List>();
 
   const electron = (window as any).electron;
 
   const getData = async () => {
     electron.ipcRenderer.send("get-tiktok");
-
+    setLoading(true);
     electron.ipcRenderer.on("tiktok", (data: RootTiktok) => {
-      console.log(data);
       setItems(data.data.list);
+      setLoading(false);
     });
   };
 
@@ -49,6 +51,13 @@ export default function Rell() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isAtBottom]);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <Loading />
+      </div>
+    );
+  }
   return (
     <div className="w-full h-full bg-base-100 p-2">
       <dialog id="my_modal_2" className="modal">

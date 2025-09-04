@@ -101,6 +101,11 @@ const HomePage = () => {
     getMovies();
     getAll();
     generateDaily();
+    window.scrollTo({
+      left: 0,
+      top: 0,
+      behavior: "smooth",
+    });
   }, []);
 
   const containerVariants = {

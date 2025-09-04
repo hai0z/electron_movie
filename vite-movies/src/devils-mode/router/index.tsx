@@ -20,6 +20,9 @@ import ScrollToTopButton from "../../common/FloatingButton";
 import Viet69 from "../page/Viet69";
 import History from "../page/History";
 import Rell from "../page/Rell";
+import Stories from "../page/Stories";
+import StoriesDetail from "../page/StoriesDetail";
+import AllHistory from "../page/AllHistory";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -136,7 +139,7 @@ const router = createHashRouter([
       },
       {
         path: "/history",
-        element: <History />,
+        element: <AllHistory />,
       },
       {
         path: "/viet69",
@@ -149,6 +152,14 @@ const router = createHashRouter([
       {
         path: "/rell",
         element: <Rell />,
+      },
+      {
+        path: "/stories",
+        element: <Stories />,
+      },
+      {
+        path: "/stories-detail/:remote",
+        element: <StoriesDetail />,
       },
       {
         path: "/category/:category/:title/:keyword",

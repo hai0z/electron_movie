@@ -37,7 +37,7 @@ const OtherSourceModal = ({
   }, [post, addToHistory]);
   return (
     <dialog id="video_modal" className="modal">
-      <div className="modal-box max-w-3xl w-full p-0 overflow-hidden">
+      <div className="modal-box max-w-5xl w-full p-0 overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center px-4 py-3 border-b">
           <h3 className="font-bold text-lg line-clamp-1">{post?.post_title}</h3>

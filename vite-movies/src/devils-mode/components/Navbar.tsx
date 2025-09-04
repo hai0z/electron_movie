@@ -12,6 +12,7 @@ import {
   Camera,
   Dices,
   Flame,
+  Notebook,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -44,7 +45,7 @@ const SidebarNavbar = () => {
       className={`fixed top-0 left-0 h-screen w-64  border-r border-base-200 z-50 flex flex-col`}
     >
       {/* Logo */}
-      <div className="px-6 border-b border-base-200 py-10">
+      <div className="px-6 border-b border-base-200 pt-10 pb-2">
         <Link
           to="/"
           className="flex items-center gap-2 text-2xl font-bold text-primarys"
@@ -56,7 +57,7 @@ const SidebarNavbar = () => {
 
       {/* Menu */}
       <nav className="flex-1 overflow-y-auto px-4 py-6">
-        <ul className="menu flex flex-col gap-2">
+        <ul className="menu flex flex-col gap-2 ">
           <li>
             <Link to="/" className={pathName === "/" ? "active font-bold" : ""}>
               <Home className="w-5 h-5 text-primarys" />
@@ -168,6 +169,15 @@ const SidebarNavbar = () => {
             >
               <Flame className="w-5 h-5 text-cyan-500" />
               Short
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="stories"
+              className={isActive("/stories") ? "active font-bold" : ""}
+            >
+              <Notebook className="w-5 h-5 text-teal-500" />
+              Stories
             </Link>
           </li>
           <li

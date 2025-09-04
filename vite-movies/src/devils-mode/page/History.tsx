@@ -23,7 +23,7 @@ const HistoryPage = () => {
   };
 
   return (
-    <div className="p-6 w-full">
+    <div className="p-6  h-full my-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -41,7 +41,6 @@ const HistoryPage = () => {
           </button>
         )}
       </div>
-
       {/* Content */}
       {history.length === 0 ? (
         <div className="alert alert-info shadow-lg w-full">

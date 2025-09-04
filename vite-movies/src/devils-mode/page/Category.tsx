@@ -15,8 +15,6 @@ const CategoryScreens = () => {
 
   const [data, setData] = React.useState({} as HomeResult);
 
-  console.log(page);
-
   const getMovies = async () => {
     setLoading(true);
     electron.ipcRenderer.send("get-by-category", {
