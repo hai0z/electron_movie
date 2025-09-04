@@ -172,13 +172,24 @@ const SidebarNavbar = () => {
               Video Ngắn
             </Link>
           </li>
+          <li
+            onClick={() => {
+              (document.getElementById("video_modal_2") as any)?.showModal();
+              getRandomVideo();
+            }}
+          >
+            <div>
+              <Dices className="w-5 h-5 text-pink-500" />
+              Video ngẫu nhiên
+            </div>
+          </li>
           <li>
             <Link
               to="stories"
               className={isActive("/stories") ? "active font-bold" : ""}
             >
               <Notebook className="w-5 h-5 text-teal-500" />
-              Truyện
+              Truyện chữ
             </Link>
           </li>
           <li>
@@ -189,18 +200,6 @@ const SidebarNavbar = () => {
               <BookOpenText className="w-5 h-5 text-indigo-500" />
               Truyện tranh
             </Link>
-          </li>
-
-          <li
-            onClick={() => {
-              (document.getElementById("video_modal_2") as any)?.showModal();
-              getRandomVideo();
-            }}
-          >
-            <div>
-              <Dices className="w-5 h-5 text-pink-500" />
-              Ngẫu nhiên
-            </div>
           </li>
         </ul>
       </nav>
@@ -214,10 +213,10 @@ const SidebarNavbar = () => {
           }`}
         >
           <Heart
-            className="w-6 h-6"
+            className="w-5 h-5"
             fill={isActive("/favourite") ? "red" : "none"}
           />
-          <span>Yêu thích</span>
+          <span className="text-sm">Yêu thích</span>
         </Link>
         <Link
           to="/history"
@@ -225,8 +224,8 @@ const SidebarNavbar = () => {
             isActive("/history") ? "text-primarys" : ""
           }`}
         >
-          <Clock className="w-6 h-6" />
-          <span>Lịch sử</span>
+          <Clock className="w-5 h-5" />
+          <span className="text-sm">Lịch sử</span>
         </Link>
 
         <Link
@@ -235,8 +234,8 @@ const SidebarNavbar = () => {
             isActive("/setting") ? "text-accent " : ""
           }`}
         >
-          <Settings className="w-6 h-6" />
-          <span>Cài đặt</span>
+          <Settings className="w-5 h-5" />
+          <span className="text-sm">Cài đặt</span>
         </Link>
 
         <SearchInput />

@@ -24,6 +24,7 @@ import StoriesDetail from "../page/StoriesDetail";
 import AllHistory from "../page/AllHistory";
 import Comic from "../page/Comic";
 import ComicDetailPage from "../page/ComicDetail";
+import AIButton from "../../common/AIButton";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -89,6 +90,7 @@ const MainLayout = () => {
         } `}
       >
         <ScrollToTopButton />
+        <AIButton />
         <div className={`${lightOff && "invisible"}`}>
           <Navbar />
         </div>

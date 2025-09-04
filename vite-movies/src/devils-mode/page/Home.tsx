@@ -160,7 +160,7 @@ const HomePage = () => {
             </p>
           </div>
           <div className="hidden md:block">
-            <Sparkles className="w-16 h-16 text-primary animate-pulse" />
+            <Sparkles className="w-16 h-16 text-primarys animate-pulse" />
           </div>
         </div>
       </motion.div>

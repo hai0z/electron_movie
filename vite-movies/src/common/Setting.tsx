@@ -35,7 +35,7 @@ const Setting = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "appState.json";
+    a.download = "app_data.json";
     a.click();
     URL.revokeObjectURL(url);
   };

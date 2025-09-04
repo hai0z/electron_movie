@@ -82,7 +82,7 @@ const Javhd = () => {
   }, [currentPage]);
   return (
     <div>
-      <div className="mt-4 justify-center flex items-center sticky top-[40px] z-10 w-full py-2">
+      <div className="mt-4 justify-center flex items-center bg-base-100 sticky top-[40px] z-10 w-full py-2">
         <Pagination
           page={+currentPage}
           total={Math.ceil(all?.posts?.length / pageSize) || 10}

@@ -21,12 +21,17 @@ export default function ScrollToTopButton() {
 
   return (
     visible && (
-      <button
-        onClick={scrollToTop}
-        className="btn btn-primary btn-circle fixed bottom-6 right-6 shadow-lg z-50"
+      <div
+        className="tooltip tooltip-top  fixed bottom-10 right-6 z-[999] transition-all duration-150"
+        data-tip="Lên đầu trang"
       >
-        <ArrowUp className="w-5 h-5" />
-      </button>
+        <button
+          onClick={scrollToTop}
+          className="btn btn-primary btn-circle   shadow-lg"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      </div>
     )
   );
 }

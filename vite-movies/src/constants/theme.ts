@@ -34,9 +34,6 @@ const darkThemes = [
   { name: "night" },
   { name: "coffee" },
   { name: "dim" },
-  { name: "purple" },
-  { name: "orange" },
-  { name: "pink" },
 ];
 
 export { lightThemes, darkThemes };

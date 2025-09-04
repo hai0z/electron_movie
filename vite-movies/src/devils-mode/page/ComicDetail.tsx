@@ -135,15 +135,15 @@ const ComicDetailPage = () => {
           <div className="flex gap-2">
             <button
               className="btn btn-sm btn-outline"
-              onClick={() => setContentWidth((w) => Math.max(40, w - 10))}
+              onClick={() => setContentWidth((w) => Math.max(40, w - 5))}
             >
-              <ZoomOut />
+              <ZoomOut size={16} />
             </button>
             <button
               className="btn btn-sm btn-outline"
-              onClick={() => setContentWidth((w) => Math.min(100, w + 10))}
+              onClick={() => setContentWidth((w) => Math.min(100, w + 5))}
             >
-              <ZoomIn />
+              <ZoomIn size={16} />
             </button>
           </div>
         </div>
