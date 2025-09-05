@@ -7,6 +7,8 @@ const {
   getMovieDetailOld,
 } = require("./devil.js");
 
+const fs = require("fs");
+
 function createMainWindow() {
   const win = new BrowserWindow({
     minWidth: 1366,
@@ -47,10 +49,24 @@ function createMainWindow() {
     win.close();
   });
 
+  ipcMain.on("offline-search", async (_, keyword) => {
+    const data = JSON.parse(fs.readFileSync("movies.json", "utf-8"));
+    const query = keyword.toLowerCase();
+
+    const results = data.filter(
+      (item) =>
+        item.actors.join(",").toLowerCase().includes(query) ||
+        item.name.toLowerCase().includes(query)
+    );
+
+    win.webContents.send("offline-search-result", results);
+  });
+
   ipcMain.on("get-other-cate", async (_, inputData) => {
     const data = await movieService.getOtherCate(inputData);
     win.webContents.send("other-cate", data);
   });
+
   ipcMain.on("get-tiktok", async (_) => {
     const data = await movieService.getTikTok();
     win.webContents.send("tiktok", data);

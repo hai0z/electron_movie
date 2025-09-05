@@ -42,7 +42,7 @@ const OldScreen = () => {
         <Pagination page={+page} total={data?.pagecount} initialPage={+page} />
       </div>
       <div className="px-6">
-        <span className="text-3xl font-bold">Old Video (6tr video)</span>
+        <span className="text-3xl font-bold">Old Video</span>
       </div>
       {!loading ? (
         <div className="flex flex-row flex-wrap gap-4 mt-4 px-6">

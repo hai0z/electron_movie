@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { List, MovieDetailResult } from "../types/movieDetail";
 import { useEffect, useRef, useState } from "react";
 
@@ -8,9 +8,11 @@ import Loading from "../../common/Loading";
 import { useAppStore } from "../../zustand/appState";
 import { FaLightbulb } from "react-icons/fa";
 import { useHistoryStore } from "../../zustand/useHistoryStore";
+import { ChevronLeft } from "lucide-react";
 
 const OldMovieDetail = () => {
   const params = useParams();
+  const navigation = useNavigate();
 
   const electron = (window as any).electron;
 
@@ -82,6 +84,16 @@ const OldMovieDetail = () => {
         backgroundColor: lightOff ? "#000000" : "oklch(var(--b1))",
       }}
     >
+      <button
+        onClick={() => navigation(-1)}
+        className="btn btn-ghost btn-circle mb-2 btn-sm"
+        title="Quay lại"
+        style={{
+          visibility: lightOff ? "hidden" : "visible",
+        }}
+      >
+        <ChevronLeft />
+      </button>
       <div className={`breadcrumbs text-sm ${lightOff && "hidden"}`}>
         <ul>
           <li>

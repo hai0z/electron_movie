@@ -16,6 +16,7 @@ import {
   BookOpenText,
   FileVideoCamera,
   TvMinimalPlay,
+  Search,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -60,7 +61,7 @@ const SidebarNavbar = () => {
 
       {/* Menu */}
       <nav className="flex-1 overflow-y-auto px-4 py-3">
-        <ul className="menu flex flex-col gap-[10px] menu-sm 2xl:menu-md">
+        <ul className="menu flex flex-col gap-2 menu-sm 2xl:menu-md">
           <li>
             <Link to="/" className={pathName === "/" ? "active font-bold" : ""}>
               <Home className="w-5 h-5 text-primarys" />
@@ -165,15 +166,7 @@ const SidebarNavbar = () => {
               Nghiệp dư
             </Link>
           </li>
-          {/* <li>
-            <Link
-              to="/eporn"
-              className={isActive("/eporn") ? "active font-bold" : ""}
-            >
-              <TvMinimalPlay className="w-5 h-5 text-emerald-600" />
-              Eporn
-            </Link>
-          </li> */}
+
           <li>
             <Link
               to="rell"
@@ -220,6 +213,16 @@ const SidebarNavbar = () => {
             >
               <BookOpenText className="w-5 h-5 text-indigo-500" />
               Truyện tranh
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              to="/search-offline"
+              className={isActive("/search-offline") ? "active font-bold" : ""}
+            >
+              <Search className="w-5 h-5 text-emerald-600" />
+              Tìm kiếm vip
             </Link>
           </li>
         </ul>

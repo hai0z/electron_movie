@@ -65,6 +65,12 @@ export default function Rell() {
   const handlePrev = () => {
     if (selectedIndex !== null && selectedIndex > 0) {
       setSelectedIndex(selectedIndex - 1);
+      document
+        .getElementById(`short-${items[selectedIndex - 1].id}`)
+        ?.scrollIntoView({
+          behavior: "smooth", // cuộn mượt
+          block: "start", // vị trí top
+        });
     }
   };
 
@@ -164,14 +170,15 @@ export default function Rell() {
       {/* Grid list */}
       <div className="grid grid-cols-2 xl:grid-cols-6 2xl:grid-cols-8 gap-2">
         {items.map((item: List, idx) => (
-          <PostCard
-            key={idx}
-            item={item}
-            onClick={() => {
-              setSelectedIndex(idx);
-              (document.getElementById("my_modal_2") as any)?.showModal();
-            }}
-          />
+          <div key={idx}>
+            <PostCard
+              item={item}
+              onClick={() => {
+                setSelectedIndex(idx);
+                (document.getElementById("my_modal_2") as any)?.showModal();
+              }}
+            />
+          </div>
         ))}
       </div>
     </div>
@@ -219,7 +226,7 @@ const UserVideo = ({ id }: { id: number }) => {
   const [userVideo, setUserVideo] = useState<List[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
+  const [loading, setLoading] = useState(true);
   const selectedItem =
     selectedIndex !== null ? userVideo[selectedIndex] : undefined;
 
@@ -235,17 +242,25 @@ const UserVideo = ({ id }: { id: number }) => {
     }
   };
   const getUserVideo = async () => {
+    setLoading(true);
     const res = await fetch(
       `https://www.avrebo.com/avrebo-api/v1/video/list?type=1&limit=500&url=video/list&page=1&user_id=${id}`
     );
     const data = await res.json();
     setUserVideo(data.data.list);
-    console.log(data);
+    setLoading(false);
   };
   useEffect(() => {
     getUserVideo();
   }, [id]);
 
+  if (loading) {
+    return (
+      <div className="-mt-40">
+        <Loading />
+      </div>
+    );
+  }
   return (
     <div className="grid grid-cols-3 gap-2">
       <dialog id="my_modal_3" className="modal">
@@ -315,7 +330,14 @@ const UserVideo = ({ id }: { id: number }) => {
             </div>
             <div className="grid grid-cols-3 gap-2">
               {userVideo.map((item: List, idx) => (
-                <div key={idx}>
+                <div
+                  className="rounded-xl"
+                  key={idx}
+                  style={{
+                    borderWidth: selectedIndex === idx ? 2 : 0,
+                    borderColor: selectedIndex === idx ? "oklch(var(--p))" : "",
+                  }}
+                >
                   <PostCard
                     showInfo={false}
                     item={item}

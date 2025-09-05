@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import LikeButton from "../components/LikeButton";
 import { Movie, VietSubResult } from "../types/vietsub";
@@ -14,10 +14,12 @@ import {
   FaFilm,
 } from "react-icons/fa";
 import { useHistoryStore } from "../../zustand/useHistoryStore";
+import { ChevronLeft } from "lucide-react";
 
 const VietSubDetails = () => {
   const params = useParams();
 
+  const navigation = useNavigate();
   const [movie, setMovie] = useState({} as Movie);
 
   const [relatedMovies, setRelatedMovies] = useState(
@@ -105,6 +107,16 @@ const VietSubDetails = () => {
         backgroundColor: lightOff ? "#000000" : "oklch(var(--b1))",
       }}
     >
+      <button
+        onClick={() => navigation(-1)}
+        className="btn btn-ghost btn-circle mb-2 btn-sm"
+        title="Quay lại"
+        style={{
+          visibility: lightOff ? "hidden" : "visible",
+        }}
+      >
+        <ChevronLeft />
+      </button>
       {/* Light Toggle Button */}
       <div className="fixed top-20 right-10 z-50">
         <button
@@ -216,7 +228,17 @@ const VietSubDetails = () => {
                     </p>
                     <p>
                       <span className="font-semibold">Diễn viên:</span>{" "}
-                      {movie?.actors}
+                      {movie?.actors?.map((name, idx) => (
+                        <Link
+                          key={idx}
+                          to={`/search-offline?q=${encodeURIComponent(
+                            name
+                          )}&action=1`}
+                          className="text-blue-500 hover:underline"
+                        >
+                          {name},
+                        </Link>
+                      ))}
                     </p>
                   </div>
                 </div>
