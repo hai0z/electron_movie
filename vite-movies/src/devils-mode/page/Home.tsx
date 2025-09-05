@@ -21,7 +21,7 @@ import DailyCard from "../components/DailyCard";
 
 const CACHE_KEY_HOME = "home_cache";
 const CACHE_KEY_VIETSUB = "vietsub_cache";
-const CACHE_TTL = 1000 * 60 * 10; // cache 10 phút
+const CACHE_TTL = 1000 * 60 * 30; // cache 30 phút
 
 const HomePage = () => {
   const [_, setHome] = useState({} as HomeResult);

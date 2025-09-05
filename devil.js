@@ -15,8 +15,9 @@ var api4 = axios.create({
   baseURL: "https://xvidapi.com/api.php/",
 });
 
-var api5 = axios.create({
-  baseURL: "https://www.eporner.com/api/v2/video/",
+var api6 = axios.create({
+  baseURL:
+    "https://live.avrebo.net/api/live/v1/web/live-channels?sort_by=STREAM_START_TIME_DESC&size=100",
 });
 
 var Category = {
@@ -72,14 +73,9 @@ function MovieService() {
       });
   };
 
-  this.getEporn = function (params) {
-    if (params.page === undefined) {
-      params.page = 1;
-    }
-    return api5
-      .get(
-        `search/?query=${params.query}&per_page=1000&page=${params.page}&thumbsize=big&order=top-weekly&gay=0&lq=0&format=json`
-      )
+  this.getLive = function () {
+    return api6
+      .get()
       .then(function (response) {
         return response.data;
       })

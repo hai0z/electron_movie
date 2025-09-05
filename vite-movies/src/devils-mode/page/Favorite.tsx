@@ -5,10 +5,22 @@ import OtherCard from "../components/OtherCard";
 import { Post } from "../types/other";
 import { HeartOff } from "lucide-react";
 import OtherSourceModal from "../components/OtherSourceModal";
+import { useSearchParams } from "react-router-dom";
 
 const FavouriteScreen = () => {
   const { likeVideos, likeVietSubs, otherLike } = useAppStore();
   const [post, setPost] = useState<Post>();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // tab mặc định là VIP nếu không có trong URL
+  const activeTab = (searchParams.get("tab") || "VIP") as
+    | "VIP"
+    | "AVDB"
+    | "OTHER";
+
+  const handleTabChange = (tab: "VIP" | "AVDB" | "OTHER") => {
+    setSearchParams({ tab });
+  };
 
   if (!likeVideos?.length && !likeVietSubs?.length && !otherLike?.length) {
     return (
@@ -27,53 +39,71 @@ const FavouriteScreen = () => {
   }
 
   return (
-    <div className="px-6 pt-20 min-h-screen flex flex-col">
-      {likeVideos && likeVideos.length > 0 && (
-        <>
-          <div>
-            <span className="text-3xl font-bold">AVDB</span>
-          </div>
-          <div className="flex flex-row flex-wrap gap-4 mt-4">
-            {likeVideos.map((item) => (
-              <MediaList m={item} key={item.slug} />
-            ))}
-          </div>
-          <div className="divider"></div>
-        </>
+    <div className="min-h-screen flex flex-col w-full">
+      {/* Tabs header */}
+      <div className="flex gap-4 border-b pb-2 mb-4 sticky top-10 z-50 bg-base-100 w-full">
+        <button
+          onClick={() => handleTabChange("VIP")}
+          className={`px-4 py-2 font-semibold ${
+            activeTab === "VIP"
+              ? "border-b-2 border-primarys text-primarys"
+              : "text-gray-500"
+          }`}
+        >
+          XXVN
+        </button>
+        <button
+          onClick={() => handleTabChange("AVDB")}
+          className={`px-4 py-2 font-semibold ${
+            activeTab === "AVDB"
+              ? "border-b-2 border-primarys text-primarys"
+              : "text-gray-500"
+          }`}
+        >
+          AVDB
+        </button>
+        <button
+          onClick={() => handleTabChange("OTHER")}
+          className={`px-4 py-2 font-semibold ${
+            activeTab === "OTHER"
+              ? "border-b-2 border-primarys text-primarys"
+              : "text-gray-500"
+          }`}
+        >
+          OTHER SOURCE
+        </button>
+      </div>
+
+      {/* Tab content */}
+      {activeTab === "AVDB" && likeVideos && likeVideos.length > 0 && (
+        <div className="flex flex-row flex-wrap gap-4 px-6">
+          {likeVideos.map((item) => (
+            <MediaList m={item} key={item.slug} />
+          ))}
+        </div>
       )}
 
-      {likeVietSubs && likeVietSubs.length > 0 && (
-        <>
-          <div>
-            <span className="text-3xl font-bold">VIP</span>
-          </div>
-          <div className="flex flex-row flex-wrap gap-4 mt-4">
-            {likeVietSubs.map((item) => (
-              <MediaListVietSub m={item} key={item.slug} />
-            ))}
-          </div>
-          <div className="divider"></div>
-        </>
+      {activeTab === "VIP" && likeVietSubs && likeVietSubs.length > 0 && (
+        <div className="flex flex-row flex-wrap gap-4 px-6">
+          {likeVietSubs.map((item) => (
+            <MediaListVietSub m={item} key={item.slug} />
+          ))}
+        </div>
       )}
 
-      {otherLike && otherLike.length > 0 && (
-        <>
-          <div>
-            <span className="text-3xl font-bold">OTHER SOURCE</span>
-          </div>
-          <div className="flex flex-row flex-wrap gap-4 mt-4">
-            {otherLike.map((item) => (
-              <OtherCard
-                m={item}
-                key={item.post_id}
-                onClick={() => {
-                  setPost(item);
-                  (document.getElementById("video_modal") as any)?.showModal();
-                }}
-              />
-            ))}
-          </div>
-        </>
+      {activeTab === "OTHER" && otherLike && otherLike.length > 0 && (
+        <div className="flex flex-row flex-wrap gap-4 px-6">
+          {otherLike.map((item) => (
+            <OtherCard
+              m={item}
+              key={item.post_id}
+              onClick={() => {
+                setPost(item);
+                (document.getElementById("video_modal") as any)?.showModal();
+              }}
+            />
+          ))}
+        </div>
       )}
 
       <OtherSourceModal post={post} onClose={() => setPost(undefined)} />

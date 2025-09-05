@@ -53,74 +53,78 @@ const HistoryPage = () => {
           </div>
         </div>
       ) : (
-        history.map((item) => (
-          <div
-            key={item.id}
-            className="card card-side bg-base-200 shadow-sm hover:shadow-md transition hover:ring-1 ring-primary w-full my-4"
-          >
-            <figure>
-              <img
-                src={item.thumbnail}
-                alt={item.title}
-                className="w-32 h-20 object-cover rounded-box"
-              />
-            </figure>
-            <div className="card-body p-4 flex flex-row justify-between items-center w-full">
-              <div className="flex items-center gap-3 flex-1">
-                <div>
-                  <p className="font-semibold hover:underline ">{item.title}</p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(item.watchedAt).toLocaleString()}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Đã xem trong {formatTime(item.stayIn!)}
-                  </p>
+        history
+          .filter((item) => item.id !== undefined)
+          .map((item) => (
+            <div
+              key={item.id}
+              className="card card-side bg-base-200 shadow-sm hover:shadow-md transition hover:ring-1 ring-primary w-full my-4"
+            >
+              <figure>
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  className="w-32 h-20 object-cover rounded-box"
+                />
+              </figure>
+              <div className="card-body p-4 flex flex-row justify-between items-center w-full">
+                <div className="flex items-center gap-3 flex-1">
+                  <div>
+                    <p className="font-semibold hover:underline ">
+                      {item.title}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(item.watchedAt).toLocaleString()}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Đã xem trong {formatTime(item.stayIn!)}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-2">
-                {item.type !== "other" && (
-                  <Link
-                    to={`${
-                      item.type === "avdb"
-                        ? `/movie/${item.id}`
-                        : `/vietsub-detail/${item.id}`
-                    }`}
-                    className="btn btn-sm btn-primary flex items-center gap-1"
-                  >
-                    <Play className="w-4 h-4" />
-                    Xem lại
-                  </Link>
-                )}
-                {item.type === "other" && (
+                <div className="flex gap-2">
+                  {item.type !== "other" && (
+                    <Link
+                      to={`${
+                        item.type === "avdb"
+                          ? `/movie/${item.id}`
+                          : `/vietsub-detail/${item.id}`
+                      }`}
+                      className="btn btn-sm btn-primary flex items-center gap-1"
+                    >
+                      <Play className="w-4 h-4" />
+                      Xem lại
+                    </Link>
+                  )}
+                  {item.type === "other" && (
+                    <button
+                      onClick={() => {
+                        setPost(item.otherData);
+                        (
+                          document.getElementById("video_modal") as any
+                        )?.showModal();
+                      }}
+                      className="btn btn-sm btn-primary flex items-center gap-1"
+                    >
+                      <Play className="w-4 h-4" />
+                      Xem lại
+                    </button>
+                  )}
                   <button
                     onClick={() => {
-                      setPost(item.otherData);
+                      setConfirmId(item.id);
                       (
-                        document.getElementById("video_modal") as any
+                        document.getElementById("delete_modal") as any
                       )?.showModal();
                     }}
-                    className="btn btn-sm btn-primary flex items-center gap-1"
+                    className="btn btn-sm btn-outline btn-error flex items-center gap-1"
                   >
-                    <Play className="w-4 h-4" />
-                    Xem lại
+                    <Trash2 className="w-4 h-4" />
+                    Xoá
                   </button>
-                )}
-                <button
-                  onClick={() => {
-                    setConfirmId(item.id);
-                    (
-                      document.getElementById("delete_modal") as any
-                    )?.showModal();
-                  }}
-                  className="btn btn-sm btn-outline btn-error flex items-center gap-1"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Xoá
-                </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))
+          ))
       )}
 
       {/* Modal xoá từng mục */}

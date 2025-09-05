@@ -28,6 +28,7 @@ import AIButton from "../../common/AIButton";
 import OldScreen from "../page/Old";
 import OldMovieDetail from "../page/OldMovieDetail";
 import EpornScreen from "../page/OfflineSearch";
+import Live from "../page/Live";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -170,6 +171,10 @@ const router = createHashRouter([
       {
         path: "/old",
         element: <OldScreen />,
+      },
+      {
+        path: "/live",
+        element: <Live />,
       },
       {
         path: "/search-offline",

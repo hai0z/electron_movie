@@ -17,6 +17,7 @@ import {
   FileVideoCamera,
   TvMinimalPlay,
   Search,
+  Radio,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -68,6 +69,15 @@ const SidebarNavbar = () => {
               Trang chủ
             </Link>
           </li>
+          <li>
+            <Link
+              to="/live"
+              className={pathName === "/live" ? "active font-bold" : ""}
+            >
+              <Radio className="w-5 h-5 text-red-500" />
+              Live
+            </Link>
+          </li>
 
           <li>
             <details>
@@ -86,35 +96,60 @@ const SidebarNavbar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/vlxx"
-                    className={isActive("/vlxx") ? "active font-bold" : ""}
+                    to="/search-offline"
+                    className={
+                      isActive("/search-offline") ? "active font-bold" : ""
+                    }
                   >
-                    VLXX
+                    Tìm kiếm xxvn
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/javhd"
-                    className={isActive("/javhd") ? "active font-bold" : ""}
-                  >
-                    JAVHD
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/sextop1"
-                    className={isActive("/sextop1") ? "active font-bold" : ""}
-                  >
-                    SEXTOP1
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/viet69"
-                    className={isActive("/viet69") ? "active font-bold" : ""}
-                  >
-                    VIET69
-                  </Link>
+                  <details open>
+                    <summary>Other source</summary>
+                    <ul>
+                      <li>
+                        <Link
+                          to="/vlxx"
+                          className={
+                            isActive("/vlxx") ? "active font-bold" : ""
+                          }
+                        >
+                          VLXX
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/javhd"
+                          className={
+                            isActive("/javhd") ? "active font-bold" : ""
+                          }
+                        >
+                          JAVHD
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/sextop1"
+                          className={
+                            isActive("/sextop1") ? "active font-bold" : ""
+                          }
+                        >
+                          SEXTOP1
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/viet69"
+                          className={
+                            isActive("/viet69") ? "active font-bold" : ""
+                          }
+                        >
+                          VIET69
+                        </Link>
+                      </li>
+                    </ul>
+                  </details>
                 </li>
               </ul>
             </details>
@@ -213,16 +248,6 @@ const SidebarNavbar = () => {
             >
               <BookOpenText className="w-5 h-5 text-indigo-500" />
               Truyện tranh
-            </Link>
-          </li>
-
-          <li>
-            <Link
-              to="/search-offline"
-              className={isActive("/search-offline") ? "active font-bold" : ""}
-            >
-              <Search className="w-5 h-5 text-emerald-600" />
-              Tìm kiếm vip
             </Link>
           </li>
         </ul>

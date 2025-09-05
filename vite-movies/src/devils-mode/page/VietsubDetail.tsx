@@ -167,7 +167,6 @@ const VietSubDetails = () => {
                 className="w-full rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-105"
                 alt={movie?.name}
               />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-xl" />
             </div>
 
             <div className="mt-4 space-y-4">
