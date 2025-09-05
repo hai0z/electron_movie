@@ -90,7 +90,7 @@ function MovieCard1({ m, type }: { m: List; type?: string }) {
             src={m.poster_url ? m.poster_url : m.thumb_url}
             alt="cast"
             loading="lazy"
-            className="object-cover transition-all duration-300 md:w-56 group-hover:scale-150 lg:w-64 h-40 xl:w-72"
+            className="object-cover transition-all duration-300 md:w-56 group-hover:scale-150 lg:w-64 h-40 xl:w-96"
           />
         </Link>
         <div className="absolute top-1 left-1 badge badge-secondary bg-opacity-90 px-1 rounded-md text-xs">

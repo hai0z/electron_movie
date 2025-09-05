@@ -19,27 +19,62 @@ import {
 import { useDailyStore } from "../../zustand/dailyVideoStore";
 import DailyCard from "../components/DailyCard";
 
+const CACHE_KEY_HOME = "home_cache";
+const CACHE_KEY_VIETSUB = "vietsub_cache";
+const CACHE_TTL = 1000 * 60 * 10; // cache 10 phút
+
 const HomePage = () => {
   const [_, setHome] = useState({} as HomeResult);
   const [cencored, setCencored] = useState({} as HomeResult);
   const [uncencored, setUncencored] = useState({} as HomeResult);
   const [uncencoredLeaked, setUncencoredLeaked] = useState({} as HomeResult);
   const [chinese, setChinese] = useState({} as HomeResult);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [all, setAll] = React.useState({} as VietSubResult);
 
   const { generateDaily } = useDailyStore();
-
-  const getAll = async () => {
-    setLoading(true);
-    const res = await fetch("https://xxvnapi.com/api/phim-moi-cap-nhat?page=1");
-    const data = await res.json();
-    setAll(data);
-  };
-
   const electron = (window as any).electron;
 
+  const getAll = async () => {
+    try {
+      // check cache
+      const cache = localStorage.getItem(CACHE_KEY_VIETSUB);
+      if (cache) {
+        const parsed = JSON.parse(cache);
+        if (Date.now() - parsed.timestamp < CACHE_TTL) {
+          setAll(parsed.data);
+          setLoading(false);
+          return;
+        }
+      }
+      setLoading(true);
+
+      const res = await fetch(
+        "https://xxvnapi.com/api/phim-moi-cap-nhat?page=1"
+      );
+      const data = await res.json();
+      setAll(data);
+      localStorage.setItem(
+        CACHE_KEY_VIETSUB,
+        JSON.stringify({ data, timestamp: Date.now() })
+      );
+    } catch (err) {
+      console.error("Lỗi load vietsub:", err);
+    }
+  };
+
   const getMovies = async () => {
+    // check cache
+    const cache = localStorage.getItem(CACHE_KEY_HOME);
+    if (cache) {
+      const parsed = JSON.parse(cache);
+      if (Date.now() - parsed.timestamp < CACHE_TTL) {
+        setDataFromHome(parsed.data);
+        setLoading(false);
+        return;
+      }
+    }
+    setLoading(true);
     electron.ipcRenderer.send("get-devil-home");
     electron.ipcRenderer.on(
       "home-data",
@@ -50,62 +85,53 @@ const HomePage = () => {
         uncensoredLeaked: HomeResult;
         chinese: HomeResult;
       }) => {
-        setHome({
-          ...data.home,
-          list: Array.from(
-            new Map(
-              data.home.list.map((item) => [item.movie_code, item])
-            ).values()
-          ).slice(0, 8),
-        });
-        setCencored({
-          ...data.censored,
-          list: Array.from(
-            new Map(
-              data.censored.list.map((item) => [item.movie_code, item])
-            ).values()
-          ).slice(0, 8),
-        });
-        setUncencored({
-          ...data.uncensored,
-          list: Array.from(
-            new Map(
-              data.uncensored.list.map((item) => [item.movie_code, item])
-            ).values()
-          ).slice(0, 8),
-        });
-        setUncencoredLeaked({
-          ...data.uncensoredLeaked,
-          list: Array.from(
-            new Map(
-              data.uncensoredLeaked.list.map((item) => [item.movie_code, item])
-            ).values()
-          ).slice(0, 8),
-        });
-        setChinese({
-          ...data.chinese,
-          list: Array.from(
-            new Map(
-              data.chinese.list.map((item) => [item.movie_code, item])
-            ).values()
-          ).slice(0, 8),
-        });
-        setTimeout(() => {
-          setLoading(false);
-        }, 500);
+        setDataFromHome(data);
+        localStorage.setItem(
+          CACHE_KEY_HOME,
+          JSON.stringify({ data, timestamp: Date.now() })
+        );
+        setTimeout(() => setLoading(false), 500);
       }
     );
   };
+
+  const setDataFromHome = (data: {
+    home: HomeResult;
+    censored: HomeResult;
+    uncensored: HomeResult;
+    uncensoredLeaked: HomeResult;
+    chinese: HomeResult;
+  }) => {
+    setHome({
+      ...data.home,
+      list: uniqueByCode(data.home.list).slice(0, 8),
+    });
+    setCencored({
+      ...data.censored,
+      list: uniqueByCode(data.censored.list).slice(0, 8),
+    });
+    setUncencored({
+      ...data.uncensored,
+      list: uniqueByCode(data.uncensored.list).slice(0, 8),
+    });
+    setUncencoredLeaked({
+      ...data.uncensoredLeaked,
+      list: uniqueByCode(data.uncensoredLeaked.list).slice(0, 8),
+    });
+    setChinese({
+      ...data.chinese,
+      list: uniqueByCode(data.chinese.list).slice(0, 8),
+    });
+  };
+
+  const uniqueByCode = (arr: any[]) =>
+    Array.from(new Map(arr.map((item) => [item.movie_code, item])).values());
 
   useEffect(() => {
     getMovies();
     getAll();
     generateDaily();
-    window.scrollTo({
-      left: 0,
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
   }, []);
 
   const containerVariants = {
@@ -144,6 +170,7 @@ const HomePage = () => {
       initial="hidden"
       animate="visible"
       exit={{ opacity: 0 }}
+      transition={{ duration: 0.75 }}
     >
       {/* Welcome Banner with Gradient */}
       <motion.div

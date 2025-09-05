@@ -11,6 +11,7 @@ export interface HistoryItem {
   type: "avdb" | "xxvn" | "other" | "old";
   otherData?: Post;
   stayIn?: number;
+  content?: string;
 }
 
 interface HistoryState {

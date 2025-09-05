@@ -28,7 +28,7 @@ const DailyCard = () => {
               <div className="justify-end card-actions">
                 <Link
                   to={"/vietsub-detail/" + video.id}
-                  className="btn btn-primary"
+                  className="btn btn-primary btn-sm mt-6"
                 >
                   Xem ngay
                 </Link>

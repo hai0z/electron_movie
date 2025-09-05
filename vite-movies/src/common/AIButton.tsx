@@ -225,7 +225,7 @@ export default function AIButton() {
                   <p className="text-2xl font-bold my-4 text-white">
                     Video dành cho bạn
                   </p>
-                  <motion.div className="flex flex-row flex-wrap gap-4">
+                  <motion.div className="flex flex-row flex-wrap gap-4 justify-center items-center">
                     {randomPost.map((post) => (
                       <OtherCard
                         key={post.post_id}

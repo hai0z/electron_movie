@@ -22,19 +22,15 @@ export default function HentaiCard({ channel, chap, position }: Props) {
         <img
           src={channel.image.url}
           alt={channel.name}
-          className="w-full h-auto rounded-lg object-cover shadow-md"
+          className="h-auto rounded-lg object-cover shadow-md aspect-[9/16]"
           style={{
             height: channel.image.height,
             width: channel.image.width,
           }}
         />
-        {channel.label?.text && (
-          <div className="absolute top-2 left-2 badge badge-primary">
-            {channel.label.text}
-          </div>
-        )}
+
         {chap! >= 0 && (
-          <div className="absolute bottom-2 left-2 badge badge-secondary">
+          <div className="absolute bottom-2 left-2 badge badge-secondary badge-sm">
             Chap {chap! + 1} | vị trí: {position}
           </div>
         )}

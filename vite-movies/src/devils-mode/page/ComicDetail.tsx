@@ -125,6 +125,7 @@ const ComicDetailPage = () => {
 
   useEffect(() => {
     getContents();
+    window.scrollTo({ top: 0, behavior: "smooth" });
     if (location?.state?.channel) {
       updateChap(location?.state?.channel.id, currentIndex, 0);
     }

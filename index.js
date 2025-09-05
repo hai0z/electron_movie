@@ -56,6 +56,11 @@ function createMainWindow() {
     win.webContents.send("tiktok", data);
   });
 
+  ipcMain.on("load-more-tiktok", async (_) => {
+    const data = await movieService.getTikTok();
+    win.webContents.send("load-more-tiktok-data", data);
+  });
+
   ipcMain.on("get-devil-home", async () => {
     const data = await getHomeData();
     win.webContents.send("home-data", data);
@@ -64,6 +69,10 @@ function createMainWindow() {
   ipcMain.on("get-old", async (_, page = 1) => {
     const data = await movieService.getAllOld(page);
     win.webContents.send("old-data", data);
+  });
+  ipcMain.on("get-eporn", async (_, params) => {
+    const data = await movieService.getEporn(params);
+    win.webContents.send("eporn", data);
   });
 
   ipcMain.on("get-movie-detail", async (_, id) => {

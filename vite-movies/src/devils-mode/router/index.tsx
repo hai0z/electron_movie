@@ -27,6 +27,7 @@ import ComicDetailPage from "../page/ComicDetail";
 import AIButton from "../../common/AIButton";
 import OldScreen from "../page/Old";
 import OldMovieDetail from "../page/OldMovieDetail";
+import EpornScreen from "../page/Eporn";
 
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
@@ -165,6 +166,14 @@ const router = createHashRouter([
       {
         path: "/stories",
         element: <Stories />,
+      },
+      {
+        path: "/old",
+        element: <OldScreen />,
+      },
+      {
+        path: "/eporn",
+        element: <EpornScreen />,
       },
       {
         path: "/old",

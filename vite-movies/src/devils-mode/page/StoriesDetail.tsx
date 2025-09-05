@@ -117,7 +117,9 @@ const StoriesDetail = () => {
 
   useEffect(() => {
     getContents();
+
     window.scrollTo({ top: 0, behavior: "smooth" });
+
     if (location?.state?.channel) {
       updateChap(location?.state?.channel.id, currentIndex, 0);
     }
@@ -192,6 +194,7 @@ const StoriesDetail = () => {
             className=" leading-relaxed"
             style={{
               fontSize: textSize,
+              lineHeight: 2,
             }}
           ></p>
         </div>
