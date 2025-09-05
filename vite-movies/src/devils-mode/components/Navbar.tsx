@@ -18,6 +18,7 @@ import {
   TvMinimalPlay,
   Search,
   Radio,
+  VideoIcon,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -81,11 +82,11 @@ const SidebarNavbar = () => {
 
           <li>
             <details>
-              <summary className="flex items-center gap-2">
+              <summary className="">
                 <Crown className="w-5 h-5 text-yellow-500" />
-                VIP
+                Viet Sub
               </summary>
-              <ul className="ml-6 mt-1 flex flex-col gap-1">
+              <ul>
                 <li>
                   <Link
                     to="/vietsub"
@@ -101,7 +102,7 @@ const SidebarNavbar = () => {
                       isActive("/search-offline") ? "active font-bold" : ""
                     }
                   >
-                    Tìm kiếm xxvn
+                    Tìm kiếm XXVN
                   </Link>
                 </li>
                 <li>
@@ -156,50 +157,78 @@ const SidebarNavbar = () => {
           </li>
 
           <li>
-            <Link
-              to="/category/0/Censored/null"
-              className={isActive("/category/0/") ? "active font-bold" : ""}
-            >
-              <Camera className="w-5 h-5 text-purple-500" />
-              Có che
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/category/1/Uncencored/null"
-              className={isActive("/category/1/") ? "active font-bold" : ""}
-            >
-              <CameraOff className="w-5 h-5 text-green-500" />
-              Không che
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/category/2/Uncensored Leaked/null"
-              className={isActive("/category/2/") ? "active font-bold" : ""}
-            >
-              <Video className="w-5 h-5 text-cyan-500" />
-              Bị rò rỉ
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/category/3/Chinese AV/null"
-              className={isActive("/category/3/") ? "active font-bold" : ""}
-            >
-              <Film className="w-5 h-5 text-blue-500" />
-              Trung Quốc
-            </Link>
-          </li>
-
-          <li>
-            <Link
-              to="/category/7/Amateur/null"
-              className={isActive("/category/7/") ? "active font-bold" : ""}
-            >
-              <User className="w-5 h-5 text-orange-500" />
-              Nghiệp dư
-            </Link>
+            <details open>
+              <summary>
+                <VideoIcon className="w-5 h-5 text-blue-500" />
+                AVDB
+              </summary>
+              <ul>
+                <li>
+                  <Link
+                    to="/category/0/Censored/null"
+                    className={
+                      isActive("/category/0/") ? "active font-bold" : ""
+                    }
+                  >
+                    <Camera className="w-5 h-5 text-purple-500" />
+                    Có che
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/category/1/Uncencored/null"
+                    className={
+                      isActive("/category/1/") ? "active font-bold" : ""
+                    }
+                  >
+                    <CameraOff className="w-5 h-5 text-green-500" />
+                    Không che
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/category/2/Uncensored Leaked/null"
+                    className={
+                      isActive("/category/2/") ? "active font-bold" : ""
+                    }
+                  >
+                    <Video className="w-5 h-5 text-cyan-500" />
+                    Bị rò rỉ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/category/3/Chinese AV/null"
+                    className={
+                      isActive("/category/3/") ? "active font-bold" : ""
+                    }
+                  >
+                    <Film className="w-5 h-5 text-blue-500" />
+                    Trung Quốc
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/category/7/Amateur/null"
+                    className={
+                      isActive("/category/7/") ? "active font-bold" : ""
+                    }
+                  >
+                    <User className="w-5 h-5 text-orange-500" />
+                    Nghiệp dư
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/old"
+                    className={isActive("/old") ? "active font-bold" : ""}
+                  >
+                    <FileVideoCamera className="w-5 h-5 text-amber-500" />
+                    Video cũ
+                  </Link>
+                </li>
+              </ul>
+            </details>
           </li>
 
           <li>
@@ -211,15 +240,7 @@ const SidebarNavbar = () => {
               Video Ngắn
             </Link>
           </li>
-          <li>
-            <Link
-              to="/old"
-              className={isActive("/old") ? "active font-bold" : ""}
-            >
-              <FileVideoCamera className="w-5 h-5 text-amber-500" />
-              Video cổ
-            </Link>
-          </li>
+
           <li
             onClick={() => {
               (document.getElementById("video_modal_2") as any)?.showModal();
@@ -231,7 +252,7 @@ const SidebarNavbar = () => {
               Video ngẫu nhiên
             </div>
           </li>
-
+          <div className="w-full bg-base-200 h-[1px]"></div>
           <li>
             <Link
               to="stories"
