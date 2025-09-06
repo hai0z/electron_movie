@@ -28,6 +28,7 @@ const Setting = () => {
 
   const { setIsAppModeChange } = useAppContext();
 
+  const [msg, setMsg] = useState("");
   const [restoreId, setRestoreId] = useState("");
 
   const electron = (window as any).electron;
@@ -146,12 +147,12 @@ const Setting = () => {
       if (data.success) {
         setBackupData(data.data);
       } else {
-        toast("Không có dữ liệu");
+        setMsg(data.message);
       }
     });
 
     electron.ipcRenderer.on("backup-data-respone", () => {
-      toast("Sao lưu thành công");
+      toast.success("Sao lưu thành công");
       localStorage.setItem("last-backup", JSON.stringify(new Date()));
       setLastBackupState(Date.now());
     });
@@ -333,6 +334,7 @@ const Setting = () => {
             placeholder="Nhập Device ID..."
             className="input input-bordered w-full"
           />
+          <p className="text-error my-1">{msg}</p>
           {backupData?.length >= 1 ? (
             <div className="my-4">
               <p className="text-lg font-bold mb-2">📦 Dữ liệu hiện có</p>
@@ -383,7 +385,8 @@ const Setting = () => {
                             )?.close();
                             setBackupData(null);
                             setRestoreId("");
-                            alert("Khôi phục thành công");
+                            setMsg("");
+                            toast.success("Khôi phục thành công");
                           }}
                         >
                           🔄 Khôi phục
@@ -407,6 +410,7 @@ const Setting = () => {
                 onClick={() => {
                   setBackupData(null);
                   setRestoreId("");
+                  setMsg("");
                 }}
               >
                 Đóng

@@ -130,7 +130,8 @@ async function createMainWindow() {
       })
       .limit(4)
       .lean();
-    if (!UserData) {
+    console.log("hheee", data);
+    if (data.length == 0) {
       win.webContents.send("restore-data-respone", {
         message: "device_id không tồn tại",
         success: false,
