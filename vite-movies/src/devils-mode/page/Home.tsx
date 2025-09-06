@@ -6,6 +6,8 @@ import { HomeResult } from "../types";
 import Loading from "../../common/Loading";
 import React from "react";
 import { VietSubResult } from "../types/vietsub";
+import LZString from "lz-string";
+
 import {
   Film,
   ShieldCheck,
@@ -41,7 +43,7 @@ const HomePage = () => {
       // check cache
       const cache = localStorage.getItem(CACHE_KEY_VIETSUB);
       if (cache) {
-        const parsed = JSON.parse(cache);
+        const parsed = JSON.parse(LZString.decompress(cache));
         if (Date.now() - parsed.timestamp < CACHE_TTL) {
           setAll(parsed.data);
           setLoading(false);
@@ -54,10 +56,21 @@ const HomePage = () => {
         "https://xxvnapi.com/api/phim-moi-cap-nhat?page=1"
       );
       const data = await res.json();
-      setAll(data);
+      setAll({
+        ...data,
+        movies: data.movies.slice(0, 8),
+      });
       localStorage.setItem(
         CACHE_KEY_VIETSUB,
-        JSON.stringify({ data, timestamp: Date.now() })
+        LZString.compress(
+          JSON.stringify({
+            data: {
+              ...data,
+              movies: data.movies.slice(0, 8),
+            },
+            timestamp: Date.now(),
+          })
+        )
       );
     } catch (err) {
       console.error("Lỗi load vietsub:", err);
@@ -68,7 +81,7 @@ const HomePage = () => {
     // check cache
     const cache = localStorage.getItem(CACHE_KEY_HOME);
     if (cache) {
-      const parsed = JSON.parse(cache);
+      const parsed = JSON.parse(LZString.decompress(cache));
       if (Date.now() - parsed.timestamp < CACHE_TTL) {
         setDataFromHome(parsed.data);
         setLoading(false);
@@ -89,7 +102,7 @@ const HomePage = () => {
         setDataFromHome(data);
         localStorage.setItem(
           CACHE_KEY_HOME,
-          JSON.stringify({ data, timestamp: Date.now() })
+          LZString.compress(JSON.stringify({ data, timestamp: Date.now() }))
         );
         setTimeout(() => setLoading(false), 500);
       }
@@ -234,7 +247,7 @@ const HomePage = () => {
           </div>
 
           <div className="flex flex-wrap flex-row gap-4 mt-2">
-            {all?.movies?.slice(0, 8)?.map((item) => (
+            {all?.movies?.map((item) => (
               <MediaListVietSub m={item as any} key={item.slug} />
             ))}
           </div>

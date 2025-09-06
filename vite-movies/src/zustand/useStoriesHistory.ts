@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { Channel } from "../devils-mode/types/Story";
+import zustandStorage from "./storage";
 
 export interface HistoryItem {
   channel: Channel;
@@ -58,6 +59,7 @@ export const useStoriesHistory = create<HistoryState>()(
     }),
     {
       name: "story-history", // lưu vào localStorage
+      storage: createJSONStorage(() => zustandStorage),
     }
   )
 );

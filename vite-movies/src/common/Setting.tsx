@@ -321,8 +321,8 @@ const Setting = () => {
                 className="btn btn-xs btn-info shadow-sm"
               >
                 💾 Sao lưu ngay
-                <span className="text-xs ml-1 opacity-70">
-                  (
+                <span className="text-xs">
+                  (lần cuối:{" "}
                   {lastBackupState !== ""
                     ? new Date(lastBackupState).toLocaleString("vi-VN")
                     : "chưa có"}

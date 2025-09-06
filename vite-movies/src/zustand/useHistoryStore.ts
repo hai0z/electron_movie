@@ -1,7 +1,8 @@
 // stores/useHistoryStore.ts
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { Post } from "../devils-mode/types/other";
+import zustandStorage from "./storage";
 
 export interface HistoryItem {
   id: string;
@@ -45,7 +46,8 @@ export const useHistoryStore = create<HistoryState>()(
       clearHistory: () => set({ history: [] }),
     }),
     {
-      name: "watch_history", // key trong localStorage
+      name: "watch_history",
+      storage: createJSONStorage(() => zustandStorage),
     }
   )
 );

@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { HistoryItem } from "./useHistoryStore"; // hoặc type video bạn đã có
 import { Movie } from "../devils-mode/types/vietsub";
+import zustandStorage from "./storage";
 
 interface DailyState {
   dailyVideos: Omit<HistoryItem, "watchedAt">[]; // Thay đổi thành array
@@ -66,6 +67,9 @@ export const useDailyStore = create<DailyState>()(
         }
       },
     }),
-    { name: "daily-video-store" }
+    {
+      name: "daily-video-store",
+      storage: createJSONStorage(() => zustandStorage),
+    }
   )
 );

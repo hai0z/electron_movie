@@ -15,8 +15,6 @@ import {
   Notebook,
   BookOpenText,
   FileVideoCamera,
-  TvMinimalPlay,
-  Search,
   Radio,
   VideoIcon,
 } from "lucide-react"; // icon đẹp

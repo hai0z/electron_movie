@@ -63,7 +63,16 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         history: data.readHistory,
       }));
 
-      localStorage.setItem("user", JSON.stringify(data));
+      const { name, userUid, lastSync } = data;
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name,
+          userUid,
+          lastSync,
+        })
+      );
     });
 
     const interval = setInterval(() => {
