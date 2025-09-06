@@ -7,6 +7,8 @@ import { useStoriesHistory } from "../zustand/useStoriesHistory";
 import { useHistoryStore } from "../zustand/useHistoryStore";
 import toast from "react-hot-toast";
 
+const ONE_HOUR = 60 * 1000 * 60;
+
 const Setting = () => {
   const theme = useAppStore((state) => state.theme);
   const setTheme = useAppStore((state) => state.setTheme);
@@ -120,8 +122,11 @@ const Setting = () => {
     reader.readAsText(file);
   };
 
+  console.log(Date.now() - lastBackup);
   const handleBackUp = () => {
-    console.log("ádsdf");
+    if (Date.now() - lastBackup < ONE_HOUR) {
+      return;
+    }
     const appData = useAppStore.getState();
     const watchHistory = useHistoryStore.getState().history;
     const readHistory = useStoriesHistory.getState().history;
@@ -153,7 +158,7 @@ const Setting = () => {
 
     electron.ipcRenderer.on("backup-data-respone", () => {
       toast.success("Sao lưu thành công");
-      localStorage.setItem("last-backup", JSON.stringify(new Date()));
+      localStorage.setItem("last-backup", JSON.stringify(Date.now()));
       setLastBackupState(Date.now());
     });
   }, []);
@@ -232,38 +237,43 @@ const Setting = () => {
 
       {/* Export / Import */}
       {appMode == "devil" && (
-        <div className="bg-base-200 rounded-box px-4 mt-4 py-4">
-          <p className="text-lg font-bold">Sao lưu và khôi phục</p>
-          <p>Đồng bộ lần cuối: {new Date(lastSync).toLocaleString("vi-VN")}</p>
-          <div className="alert alert-success flex flex-col items-start gap-2 mt-2 text-success-content">
-            <span className="font-semibold">📦 Export dữ liệu</span>
-            <p className="text-sm">
+        <div className="bg-base-200 rounded-2xl px-6 py-6 mt-6 shadow-md border border-base-300">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            ⚙️ Sao lưu & Khôi phục
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Đồng bộ lần cuối:{" "}
+            <span className="font-medium">
+              {new Date(lastSync).toLocaleString("vi-VN")}
+            </span>
+          </p>
+
+          {/* Export / Import */}
+          <div className="mt-4">
+            <h3 className="font-semibold">📦 Export dữ liệu</h3>
+            <p className="text-sm text-gray-500">
               Xuất toàn bộ dữ liệu cấu hình, lịch sử và thông tin ứng dụng thành
               một file <code>.json</code>. Bạn có thể lưu trữ file này để khôi
               phục sau.
             </p>
 
-            <span className="font-semibold">📂 Import dữ liệu</span>
-            <p className="text-sm">
+            <h3 className="mt-3 font-semibold">📂 Import dữ liệu</h3>
+            <p className="text-sm text-gray-500">
               Chọn file <code>.json</code> đã được export trước đó để khôi phục
-              lại dữ liệu. Hãy chắc chắn rằng file đúng định dạng, nếu không sẽ
-              không thể nhập được.
+              lại dữ liệu. <span className="font-medium">⚠️ Lưu ý:</span> Dữ
+              liệu hiện tại sẽ bị ghi đè khi import.
             </p>
 
-            <p className="text-xs text-success-content">
-              ⚠️ Lưu ý: Dữ liệu hiện tại sẽ bị ghi đè khi import.
-            </p>
-
-            <div className="mt-6 flex gap-4">
+            <div className="mt-4 flex flex-wrap gap-3">
               <button
                 onClick={handleExport}
-                className="btn btn-sm btn-primary shadow-md"
+                className="btn btn-sm btn-primary shadow-sm"
               >
-                Export Dữ liệu
+                ⬇️ Export dữ liệu
               </button>
 
-              <label className="btn btn-sm btn-secondary cursor-pointer">
-                Import Dữ liệu
+              <label className="btn btn-sm btn-secondary cursor-pointer shadow-sm">
+                ⬆️ Import dữ liệu
                 <input
                   type="file"
                   accept="application/json"
@@ -274,22 +284,24 @@ const Setting = () => {
             </div>
           </div>
 
-          <div className="alert alert-info flex flex-col items-start gap-2 mt-4 text-info-content">
-            <span className="font-bold">Device ID của bạn</span>
-            <span className="text-sm break-all">{deviceId}</span>
-            <span className="text-xs ">
-              Hãy ghi lại Device ID này để có thể backup/khôi phục dữ liệu khi
-              chuyển thiết bị khác.
-            </span>
-            <span className="text-xs ">
-              Ấn vào sao lưu dữ liệu ngay để ghi lại dữ liệu hiện tại.
-            </span>
-            <div className="flex gap-2">
+          {/* Device ID */}
+          <div className="mt-6 border-t border-base-300 pt-4">
+            <h3 className="font-semibold">🔑 Device ID của bạn</h3>
+            <p className="text-sm break-all bg-base-100 p-2 rounded-md mt-1 border border-base-300">
+              {deviceId}
+            </p>
+            <p className="text-xs text-gray-500 mt-2">
+              Hãy ghi lại Device ID này để backup/khôi phục dữ liệu khi chuyển
+              thiết bị khác. <br />
+              Bạn chỉ có thể sao lưu 1 lần mỗi giờ.
+            </p>
+
+            <div className="flex flex-wrap gap-2 mt-3">
               <button
                 onClick={handleCopy}
-                className="btn btn-xs btn-outline mt-2"
+                className="btn btn-xs btn-outline shadow-sm"
               >
-                Copy Device ID
+                📋 Copy Device ID
               </button>
               <button
                 onClick={() =>
@@ -299,19 +311,23 @@ const Setting = () => {
                     ) as HTMLDialogElement
                   )?.showModal()
                 }
-                className="btn btn-xs btn-warning mt-2"
+                className="btn btn-xs btn-warning shadow-sm"
               >
-                Khôi phục bằng device_id
+                🔄 Khôi phục bằng Device ID
               </button>
               <button
+                disabled={Date.now() - lastBackup < ONE_HOUR}
                 onClick={handleBackUp}
-                className="btn btn-xs btn-error mt-2"
+                className="btn btn-xs btn-info shadow-sm"
               >
-                Sao lưu dữ liệu ngay (lần cuối lúc:{" "}
-                {lastBackupState !== ""
-                  ? new Date(lastBackupState).toLocaleString("vn-VN")
-                  : "no data"}
-                )
+                💾 Sao lưu ngay
+                <span className="text-xs ml-1 opacity-70">
+                  (
+                  {lastBackupState !== ""
+                    ? new Date(lastBackupState).toLocaleString("vi-VN")
+                    : "chưa có"}
+                  )
+                </span>
               </button>
             </div>
           </div>
