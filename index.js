@@ -4,6 +4,8 @@ const Movie = require("./model/movie.schema.js");
 
 const UserData = require("./model/userData.schema.js");
 
+const BackUp = require("./model/backup.schema.js");
+
 const os = require("os");
 
 const { randomUUID } = require("crypto");
@@ -118,23 +120,41 @@ async function createMainWindow() {
     win.webContents.send("user-data", user._doc);
   });
 
-  ipcMain.on("backup-data", async (_, deviceId) => {
+  ipcMain.on("restore-data", async (_, deviceId) => {
     await connectDB();
-    const user = await UserData.findOne({
+    const data = await BackUp.find({
       userUid: String(deviceId),
-    });
-    if (!user) {
-      win.webContents.send("backup-data-respone", {
+    })
+      .sort({
+        lastSync: -1,
+      })
+      .limit(4)
+      .lean();
+    if (!UserData) {
+      win.webContents.send("restore-data-respone", {
         message: "device_id không tồn tại",
         success: false,
       });
     } else {
-      win.webContents.send("backup-data-respone", {
-        message: "Khôi phục thành công từ " + user.name,
-        data: user._doc,
+      win.webContents.send("restore-data-respone", {
+        message: "Dữ liệu backup hiện có",
+        data: data,
         success: true,
       });
     }
+  });
+  ipcMain.on("backup-data", async (_, clientData) => {
+    await connectDB();
+    await BackUp.create({
+      userUid: getAppUniqueId(),
+      lastSync: new Date(),
+      ...JSON.parse(clientData),
+    });
+
+    win.webContents.send("backup-data-respone", {
+      message: "Sao lưu dữ liệu thành công ",
+      success: true,
+    });
   });
 
   ipcMain.on("sync-data", async (_, clientData) => {

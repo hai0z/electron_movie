@@ -5,6 +5,7 @@ import { darkThemes, lightThemes } from "../constants/theme";
 import { useEffect, useState } from "react";
 import { useStoriesHistory } from "../zustand/useStoriesHistory";
 import { useHistoryStore } from "../zustand/useHistoryStore";
+import toast from "react-hot-toast";
 
 const Setting = () => {
   const theme = useAppStore((state) => state.theme);
@@ -13,9 +14,16 @@ const Setting = () => {
 
   const deviceId = JSON.parse(localStorage.getItem("user")!).userUid;
 
-  const [message, setMessage] = useState("");
+  const [backupData, setBackupData] = useState<any>(null);
+
   const lastSync = JSON.parse(localStorage.getItem("user")!).lastSync;
+
+  const lastBackup = JSON.parse(localStorage.getItem("last-backup")!) ?? "";
+
+  const [lastBackupState, setLastBackupState] = useState(lastBackup);
+
   const setAppMode = useAppStore((state) => state.setAppMode);
+
   const appMode = useAppStore((state) => state.appMode);
 
   const { setIsAppModeChange } = useAppContext();
@@ -36,9 +44,9 @@ const Setting = () => {
       const cleanId = deviceId?.replace(/^"|"$/g, "") || "";
 
       await navigator.clipboard.writeText(cleanId);
-      alert("✅ Đã copy device_id vào clipboard");
+      toast("✅ Đã copy device_id vào clipboard");
     } catch (err) {
-      alert("❌ Không thể copy device_id");
+      toast("❌ Không thể copy device_id");
     }
   };
 
@@ -103,40 +111,49 @@ const Setting = () => {
           history: imported.readHistory,
         }));
 
-        alert("✅ Import thành công!");
+        toast("✅ Import thành công!");
       } catch (error) {
-        alert("❌ File không hợp lệ hoặc bị lỗi!");
+        toast("❌ File không hợp lệ hoặc bị lỗi!");
       }
     };
     reader.readAsText(file);
   };
 
+  const handleBackUp = () => {
+    console.log("ádsdf");
+    const appData = useAppStore.getState();
+    const watchHistory = useHistoryStore.getState().history;
+    const readHistory = useStoriesHistory.getState().history;
+    const backupData = {
+      appData,
+      watchHistory,
+      readHistory,
+    };
+    electron.ipcRenderer.send("backup-data", JSON.stringify(backupData));
+  };
+
   // ✅ Khôi phục bằng Device ID cũ
   const handleRestore = () => {
     if (!restoreId.trim()) {
-      alert("⚠️ Vui lòng nhập Device ID hợp lệ");
+      toast("⚠️ Vui lòng nhập Device ID hợp lệ");
       return;
     }
-    electron.ipcRenderer.send("backup-data", restoreId);
+    electron.ipcRenderer.send("restore-data", restoreId);
   };
 
   useEffect(() => {
-    electron.ipcRenderer.on("backup-data-respone", (data: any) => {
-      setMessage(data.message);
+    electron.ipcRenderer.on("restore-data-respone", (data: any) => {
       if (data.success) {
-        useAppStore.setState((state) => ({
-          ...state,
-          ...data.data.appData,
-        }));
-        useHistoryStore.setState((state) => ({
-          ...state,
-          history: data.data.watchHistory ?? [],
-        }));
-        useStoriesHistory.setState((state) => ({
-          ...state,
-          history: data.data.readHistory ?? [],
-        }));
+        setBackupData(data.data);
+      } else {
+        toast("Không có dữ liệu");
       }
+    });
+
+    electron.ipcRenderer.on("backup-data-respone", () => {
+      toast("Sao lưu thành công");
+      localStorage.setItem("last-backup", JSON.stringify(new Date()));
+      setLastBackupState(Date.now());
     });
   }, []);
 
@@ -216,7 +233,7 @@ const Setting = () => {
       {appMode == "devil" && (
         <div className="bg-base-200 rounded-box px-4 mt-4 py-4">
           <p className="text-lg font-bold">Sao lưu và khôi phục</p>
-          <p>Đồng bộ lần cuối: {new Date(lastSync).toLocaleString()}</p>
+          <p>Đồng bộ lần cuối: {new Date(lastSync).toLocaleString("vi-VN")}</p>
           <div className="alert alert-success flex flex-col items-start gap-2 mt-2 text-success-content">
             <span className="font-semibold">📦 Export dữ liệu</span>
             <p className="text-sm">
@@ -263,6 +280,9 @@ const Setting = () => {
               Hãy ghi lại Device ID này để có thể backup/khôi phục dữ liệu khi
               chuyển thiết bị khác.
             </span>
+            <span className="text-xs ">
+              Ấn vào sao lưu dữ liệu ngay để ghi lại dữ liệu hiện tại.
+            </span>
             <div className="flex gap-2">
               <button
                 onClick={handleCopy}
@@ -282,6 +302,16 @@ const Setting = () => {
               >
                 Khôi phục bằng device_id
               </button>
+              <button
+                onClick={handleBackUp}
+                className="btn btn-xs btn-error mt-2"
+              >
+                Sao lưu dữ liệu ngay (lần cuối lúc:{" "}
+                {lastBackupState !== ""
+                  ? new Date(lastBackupState).toLocaleString("vn-VN")
+                  : "no data"}
+                )
+              </button>
             </div>
           </div>
         </div>
@@ -297,18 +327,90 @@ const Setting = () => {
           </p>
           <input
             type="text"
+            autoFocus
             value={restoreId}
             onChange={(e) => setRestoreId(e.target.value)}
             placeholder="Nhập Device ID..."
             className="input input-bordered w-full"
           />
-          <p className="text-success">{message}</p>
+          {backupData?.length >= 1 ? (
+            <div className="my-4">
+              <p className="text-lg font-bold mb-2">📦 Dữ liệu hiện có</p>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                {backupData?.map((data: any) => (
+                  <div
+                    key={data._id}
+                    className="card bg-base-200 shadow-md rounded-xl border border-base-300"
+                  >
+                    <div className="card-body p-4 flex flex-col justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Lần sao lưu gần nhất
+                        </p>
+                        <p className="font-semibold text-base">
+                          {new Date(data.lastSync).toLocaleString("vi-VN", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+
+                      <div className="mt-3 flex justify-end">
+                        <button
+                          className="btn btn-sm btn-primarys rounded-lg"
+                          onClick={() => {
+                            useAppStore.setState((state) => ({
+                              ...state,
+                              ...data.appData,
+                            }));
+                            useHistoryStore.setState((state) => ({
+                              ...state,
+                              history: data.watchHistory ?? [],
+                            }));
+                            useStoriesHistory.setState((state) => ({
+                              ...state,
+                              history: data.readHistory ?? [],
+                            }));
+
+                            (
+                              document.getElementById(
+                                "restore_modal"
+                              ) as HTMLDialogElement
+                            )?.close();
+                            setBackupData(null);
+                            setRestoreId("");
+                            alert("Khôi phục thành công");
+                          }}
+                        >
+                          🔄 Khôi phục
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
           <div className="modal-action">
             <button className="btn btn-success" onClick={handleRestore}>
-              Xác nhận
+              Kiểm tra
             </button>
             <form method="dialog">
-              <button className="btn">Đóng</button>
+              <button
+                className="btn"
+                onClick={() => {
+                  setBackupData(null);
+                  setRestoreId("");
+                }}
+              >
+                Đóng
+              </button>
             </form>
           </div>
         </div>

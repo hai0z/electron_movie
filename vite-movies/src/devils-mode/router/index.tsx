@@ -29,7 +29,7 @@ import OldScreen from "../page/Old";
 import OldMovieDetail from "../page/OldMovieDetail";
 import EpornScreen from "../page/OfflineSearch";
 import Live from "../page/Live";
-
+import { Toaster } from "react-hot-toast";
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
   const lightOff = useAppStore((state) => state.lightOff);
@@ -93,6 +93,7 @@ const MainLayout = () => {
           lightOff ? "bg-black" : "bg-base-100"
         } `}
       >
+        <Toaster position="top-center" />
         <ScrollToTopButton />
         <AIButton />
         <div className={`${lightOff && "invisible"}`}>
