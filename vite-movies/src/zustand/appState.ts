@@ -28,7 +28,7 @@ interface AppStore {
 export const useAppStore = create<AppStore>()(
   persist(
     (set) => ({
-      theme: "autumn",
+      theme: "lemonade",
       setTheme: (theme) => set({ theme }),
       likeVideos: [],
       setLikeVideos: (likeVideos) => set({ likeVideos }),

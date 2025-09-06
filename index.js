@@ -2,7 +2,16 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 
 const Movie = require("./model/movie.schema.js");
 
+const UserData = require("./model/userData.schema.js");
+
+const os = require("os");
+
+const { randomUUID } = require("crypto");
+
+const fs = require("fs");
+
 const path = require("path");
+
 const {
   getHomeData,
   movieService,
@@ -11,7 +20,54 @@ const {
 } = require("./devil.js");
 const { connectDB } = require("./config/db.js");
 
-function createMainWindow() {
+async function initUser(userUid) {
+  await connectDB();
+
+  let user = await UserData.findOne({
+    userUid,
+  });
+  if (user) {
+    return user;
+  }
+  user = await UserData.create({
+    userUid,
+    name: os.userInfo().username,
+    appData: {},
+    readHistory: {},
+    watchHistory: {},
+  });
+}
+
+function getAppUniqueId() {
+  const idFile = path.join(app.getPath("userData"), "uuid.txt");
+
+  let deviceId;
+  if (fs.existsSync(idFile)) {
+    // Đã có ID -> đọc ra
+    deviceId = fs.readFileSync(idFile, "utf-8");
+  } else {
+    // Tạo mới lần đầu
+    deviceId = randomUUID();
+    fs.writeFileSync(idFile, deviceId);
+  }
+
+  return deviceId;
+}
+
+function resetAppUuid() {
+  const idFile = path.join(app.getPath("userData"), "uuid.txt");
+
+  if (fs.existsSync(idFile)) {
+    fs.unlinkSync(idFile);
+    console.log("UUID app đã được reset");
+  } else {
+    console.log("UUID chưa tồn tại, không cần xóa");
+  }
+}
+
+async function createMainWindow() {
+  initUser(getAppUniqueId());
+  // resetAppUuid();
   const win = new BrowserWindow({
     minWidth: 1366,
     minHeight: 768,
@@ -49,6 +105,57 @@ function createMainWindow() {
 
   ipcMain.on("close", (_) => {
     win.close();
+  });
+
+  ipcMain.on("get-user-data", async () => {
+    await connectDB();
+
+    const userUid = getAppUniqueId();
+
+    const user = await UserData.findOne({
+      userUid,
+    });
+    win.webContents.send("user-data", user._doc);
+  });
+
+  ipcMain.on("backup-data", async (_, deviceId) => {
+    await connectDB();
+    const user = await UserData.findOne({
+      userUid: String(deviceId),
+    });
+    if (!user) {
+      win.webContents.send("backup-data-respone", {
+        message: "device_id không tồn tại",
+        success: false,
+      });
+    } else {
+      win.webContents.send("backup-data-respone", {
+        message: "Khôi phục thành công từ " + user.name,
+        data: user._doc,
+        success: true,
+      });
+    }
+  });
+
+  ipcMain.on("sync-data", async (_, clientData) => {
+    await connectDB();
+
+    const userUid = getAppUniqueId();
+
+    const user = await UserData.findOneAndUpdate(
+      { userUid }, // filter
+      {
+        $set: {
+          appData: clientData.appData,
+          readHistory: clientData.readHistory,
+          watchHistory: clientData.watchHistory,
+          lastSync: new Date(),
+        },
+      }, // update operator
+      { new: true } // trả về document sau khi update
+    );
+
+    win.webContents.send("synced-data", user._doc);
   });
 
   ipcMain.on("offline-search", async (_, query) => {

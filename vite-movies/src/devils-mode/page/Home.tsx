@@ -31,6 +31,7 @@ const HomePage = () => {
   const [chinese, setChinese] = useState({} as HomeResult);
   const [loading, setLoading] = useState(false);
   const [all, setAll] = React.useState({} as VietSubResult);
+  const userName = JSON.parse(localStorage.getItem("user")!).name;
 
   const { generateDaily } = useDailyStore();
   const electron = (window as any).electron;
@@ -180,7 +181,7 @@ const HomePage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-base-content mb-2">
-              Chào mừng trở lại! 🎬
+              Chào mừng {userName} trở lại! 🎬
             </h1>
             <p className="text-base-content/70 text-lg">
               Khám phá thế giới điện ảnh với những bộ phim mới nhất
