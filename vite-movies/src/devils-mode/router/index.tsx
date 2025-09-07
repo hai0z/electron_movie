@@ -30,9 +30,12 @@ import OldMovieDetail from "../page/OldMovieDetail";
 import EpornScreen from "../page/OfflineSearch";
 import Live from "../page/Live";
 import { Toaster } from "react-hot-toast";
+import { motion } from "framer-motion";
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
+
   const lightOff = useAppStore((state) => state.lightOff);
+
   useEffect(() => {
     document.getElementsByTagName("html")[0].setAttribute("data-theme", theme);
   }, []);
@@ -51,7 +54,12 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="w-full h-full">
+    <motion.div
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 120, damping: 15 }}
+      className="w-full h-full"
+    >
       <div
         className="w-full flex flex-row items-center justify-end backdrop-blur-md"
         style={{
@@ -103,7 +111,7 @@ const MainLayout = () => {
           <Outlet />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

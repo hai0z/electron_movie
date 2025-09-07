@@ -46,14 +46,6 @@ const StoriesPage = () => {
     setSearchParams({ q: keyword, page: "1" });
   };
 
-  if (loading) {
-    return (
-      <div className="h-full w-full flex justify-center items-center">
-        <Loading />
-      </div>
-    );
-  }
-
   return (
     <div className="pb-20 w-full h-full">
       {/* Search box */}
@@ -95,20 +87,24 @@ const StoriesPage = () => {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col px-4 gap-4 pt-4">
-        {data?.channels.map((stories) => {
-          const inHistory = history.find((i) => i.channel.id === stories.id);
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="flex flex-col px-4 gap-4 pt-4">
+          {data?.channels.map((stories) => {
+            const inHistory = history.find((i) => i.channel.id === stories.id);
 
-          return (
-            <ChannelCard
-              key={stories.id}
-              channel={stories}
-              chap={inHistory?.lastChap}
-              position={inHistory?.position}
-            />
-          );
-        })}
-      </div>
+            return (
+              <ChannelCard
+                key={stories.id}
+                channel={stories}
+                chap={inHistory?.lastChap}
+                position={inHistory?.position}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

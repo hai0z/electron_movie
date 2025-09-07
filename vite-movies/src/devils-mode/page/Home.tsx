@@ -21,6 +21,7 @@ import {
 import { useDailyStore } from "../../zustand/dailyVideoStore";
 import DailyCard from "../components/DailyCard";
 import NotificationBell from "../components/NotiBell";
+import RestoreModal from "../components/RestoreModal";
 
 const CACHE_KEY_HOME = "home_cache";
 const CACHE_KEY_VIETSUB = "vietsub_cache";
@@ -188,6 +189,7 @@ const HomePage = () => {
       transition={{ duration: 0.75 }}
     >
       {/* Welcome Banner with Gradient */}
+      <RestoreModal />
       <motion.div
         className="bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl p-6 mb-6 border border-primary/10"
         variants={sectionVariants}

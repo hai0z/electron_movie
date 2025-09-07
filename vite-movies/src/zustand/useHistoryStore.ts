@@ -35,7 +35,7 @@ export const useHistoryStore = create<HistoryState>()(
         const updated = [newItem, ...get().history]
           // loại bỏ trùng id (chỉ giữ mới nhất)
           .filter((v, i, arr) => arr.findIndex((x) => x.id === v.id) === i)
-          .slice(0, 100); // giới hạn 100 video
+          .slice(0, 50); // giới hạn 50 video
         set({ history: updated });
       },
 

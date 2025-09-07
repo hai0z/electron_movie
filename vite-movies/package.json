@@ -16,6 +16,7 @@
     "@tanstack/react-query": "^5.83.0",
     "@types/react-window": "^1.8.8",
     "axios": "^1.7.3",
+    "crypto-js": "^4.2.0",
     "dayjs": "^1.11.12",
     "framer-motion": "^11.3.24",
     "html-entities": "^2.5.2",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
+    "@types/crypto-js": "^4.2.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

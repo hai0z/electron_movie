@@ -51,7 +51,7 @@ const VietSubDetails = () => {
       fetch("https://xxvnapi.com/api/phim/" + params.id),
       fetch(
         "https://xxvnapi.com/api/phim-moi-cap-nhat?page=" +
-          Math.floor(Math.random() * 160 + 1)
+          Math.floor(Math.random() * 350 + 1)
       ),
     ]).finally(() => setLoading(false));
 
@@ -59,7 +59,7 @@ const VietSubDetails = () => {
     const data1: VietSubResult = await res1.json();
     setMovie(data.movie as any);
     setEp(data.movie.episodes[0].server_data[0]);
-    setRelatedMovies(data1.movies.slice(0, 10));
+    setRelatedMovies(data1.movies.slice(0, 8));
     movieDataRef.current = {
       id: String(data.movie.slug),
       thumbnail: data.movie.thumb_url,

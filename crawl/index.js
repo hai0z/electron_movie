@@ -134,8 +134,8 @@ const crawlLatest = async () => {
       await notifyAllUsers(movie);
     }
     // trả về danh sách mới
-  } finally {
-    mongoose.connection.close();
+  } catch (err) {
+    consloe.log(err);
   }
 };
 

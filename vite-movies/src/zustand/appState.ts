@@ -23,6 +23,7 @@ interface AppStore {
   setLightOff: (lightOff: boolean) => void;
   otherLike: Post[];
   setOtherLike: (likeVideos: Post[]) => void;
+  hydrated: boolean;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -44,10 +45,15 @@ export const useAppStore = create<AppStore>()(
       setLightOff: (lightOff) => set({ lightOff }),
       otherLike: [],
       setOtherLike: (otherLike) => set({ otherLike }),
+      hydrated: false,
     }),
     {
       name: "app-state",
       storage: createJSONStorage(() => zustandStorage),
+      onRehydrateStorage: () => (state) => {
+        console.log(state);
+        if (state) state.hydrated = true;
+      },
     }
   )
 );

@@ -36,7 +36,7 @@ export const useStoriesHistory = create<HistoryState>()(
           ...filtered,
         ];
 
-        set({ history: updated });
+        set({ history: updated.slice(0, 50) });
       },
 
       updateChap: (channelId, chap, position) => {

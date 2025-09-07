@@ -21,10 +21,13 @@ const {
   getMovieDetail,
   getMovieDetailOld,
 } = require("./devil.js");
+
 const { connectDB } = require("./config/db.js");
 const { crawlLatest } = require("./crawl/index.js");
-const { timeStamp } = require("console");
+const { logUserOpen } = require("./model/userDaily.schema.js");
 
+const idFile = path.join(app.getPath("userData"), "uuid.txt");
+const flagFile = path.join(app.getPath("userData"), "restore.json");
 async function initUser(userUid) {
   await connectDB();
 
@@ -43,9 +46,19 @@ async function initUser(userUid) {
   });
 }
 
+function setDeviceId(newId) {
+  fs.writeFileSync(idFile, newId, "utf-8");
+  return newId;
+}
+function checkRestoreFlag() {
+  if (fs.existsSync(flagFile)) {
+    const data = JSON.parse(fs.readFileSync(flagFile, "utf-8"));
+    fs.unlinkSync(flagFile); // xoá luôn để chỉ hiện 1 lần
+    return data.restored === true;
+  }
+  return false;
+}
 function getAppUniqueId() {
-  const idFile = path.join(app.getPath("userData"), "uuid.txt");
-
   let deviceId;
   if (fs.existsSync(idFile)) {
     // Đã có ID -> đọc ra
@@ -71,7 +84,9 @@ function resetAppUuid() {
 }
 
 async function createMainWindow() {
-  await connectDB().then(() => crawlLatest());
+  crawlLatest();
+
+  logUserOpen(getAppUniqueId());
 
   initUser(getAppUniqueId());
 
@@ -98,7 +113,11 @@ async function createMainWindow() {
 
   win.loadURL("http://localhost:5173");
   // win.loadFile(path.join(__dirname, "./vite-movies/dist/index.html"));
-
+  if (checkRestoreFlag()) {
+    win.webContents.once("did-finish-load", () => {
+      win.webContents.send("restore-success");
+    });
+  }
   ipcMain.on("minimize", (_) => {
     win.minimize();
   });
@@ -138,8 +157,6 @@ async function createMainWindow() {
   });
 
   ipcMain.on("get-user-data", async () => {
-    await connectDB();
-
     const userUid = getAppUniqueId();
 
     const user = await UserData.findOne({
@@ -148,33 +165,46 @@ async function createMainWindow() {
     win.webContents.send("user-data", user._doc);
   });
 
-  ipcMain.on("restore-data", async (_, deviceId) => {
-    await connectDB();
+  ipcMain.on("set-device-id", async (_, deviceId) => {
+    setDeviceId(deviceId);
+    fs.writeFileSync(flagFile, JSON.stringify({ restored: true }));
+    app.relaunch();
+    app.exit(0);
+  });
 
+  ipcMain.on("restore-data", async (_, deviceId) => {
     const data = await BackUp.find({
       userUid: String(deviceId),
     })
       .sort({
         lastSync: -1,
       })
-      .limit(4)
+      .limit(8)
       .lean();
-    console.log("hheee", data);
     if (data.length == 0) {
       win.webContents.send("restore-data-respone", {
         message: "device_id không tồn tại",
         success: false,
       });
     } else {
+      const itemsWithSize = data.map((item) => {
+        const jsonString = JSON.stringify(item);
+        const sizeInBytes = new TextEncoder().encode(jsonString).length;
+        const sizeKB = sizeInBytes / 1024;
+        return {
+          ...item,
+          _sizeKB: sizeKB.toFixed(2), // thêm field sizeKB
+        };
+      });
+
       win.webContents.send("restore-data-respone", {
         message: "Dữ liệu backup hiện có",
-        data: data,
+        data: itemsWithSize,
         success: true,
       });
     }
   });
   ipcMain.on("backup-data", async (_, clientData) => {
-    await connectDB();
     await BackUp.create({
       userUid: getAppUniqueId(),
       lastSync: new Date(),
@@ -188,8 +218,6 @@ async function createMainWindow() {
   });
 
   ipcMain.on("sync-data", async (_, clientData) => {
-    await connectDB();
-
     const userUid = getAppUniqueId();
 
     const user = await UserData.findOneAndUpdate(
@@ -209,8 +237,6 @@ async function createMainWindow() {
   });
 
   ipcMain.on("offline-search", async (_, query) => {
-    await connectDB();
-
     const { q } = query;
     const page = parseInt(query.page) || 1;
 
@@ -299,5 +325,7 @@ async function createMainWindow() {
 }
 
 app.whenReady().then(() => {
-  createMainWindow();
+  connectDB().then(() => {
+    createMainWindow();
+  });
 });

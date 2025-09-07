@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppStore } from "../../zustand/appState";
 import { MediaListVietSub, MediaList } from "../components/MediaList";
 import OtherCard from "../components/OtherCard";
@@ -38,6 +38,12 @@ const FavouriteScreen = () => {
     );
   }
 
+  useEffect(() => {
+    window.scroll({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [activeTab]);
   return (
     <div className="min-h-screen flex flex-col w-full">
       {/* Tabs header */}

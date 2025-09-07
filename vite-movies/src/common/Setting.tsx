@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useStoriesHistory } from "../zustand/useStoriesHistory";
 import { useHistoryStore } from "../zustand/useHistoryStore";
 import toast from "react-hot-toast";
-
+import CryptoJS from "crypto-js";
 const ONE_HOUR = 60 * 1000 * 60;
 
 const Setting = () => {
@@ -70,13 +70,19 @@ const Setting = () => {
       readHistory,
     };
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: "application/json",
-    });
+    // Chuyển sang string
+    const jsonString = JSON.stringify(exportData);
+
+    // Mã hoá AES
+    const secretKey = "MOVIEHUB";
+    const encrypted = CryptoJS.AES.encrypt(jsonString, secretKey).toString();
+
+    // Xuất file
+    const blob = new Blob([encrypted], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "app_data.json";
+    a.download = "app_data.enc";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -89,9 +95,13 @@ const Setting = () => {
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const imported = JSON.parse(event.target?.result as string);
+        const bytes = CryptoJS.AES.decrypt(
+          event.target?.result as string,
+          "MOVIEHUB"
+        );
+        const originalText = bytes.toString(CryptoJS.enc.Utf8);
+        const imported = JSON.parse(originalText);
 
-        // ✅ Kiểm tra cấu trúc cơ bản
         if (
           !imported.appData ||
           !Array.isArray(imported.watchHistory) ||
@@ -122,7 +132,6 @@ const Setting = () => {
     reader.readAsText(file);
   };
 
-  console.log(Date.now() - lastBackup);
   const handleBackUp = () => {
     if (Date.now() - lastBackup < ONE_HOUR) {
       return;
@@ -237,7 +246,7 @@ const Setting = () => {
 
       {/* Export / Import */}
       {appMode == "devil" && (
-        <div className="bg-base-200 rounded-2xl px-6 py-6 mt-6 shadow-md border border-base-300">
+        <div className="bg-base-200 rounded-2xl px-6 py-6 mt-6 ">
           <h2 className="text-xl font-bold flex items-center gap-2">
             ⚙️ Sao lưu & Khôi phục
           </h2>
@@ -253,13 +262,13 @@ const Setting = () => {
             <h3 className="font-semibold">📦 Export dữ liệu</h3>
             <p className="text-sm text-gray-500">
               Xuất toàn bộ dữ liệu cấu hình, lịch sử và thông tin ứng dụng thành
-              một file <code>.json</code>. Bạn có thể lưu trữ file này để khôi
-              phục sau.
+              một file mã hoá <code>.enc</code>. Bạn có thể lưu trữ file này để
+              khôi phục sau.
             </p>
 
             <h3 className="mt-3 font-semibold">📂 Import dữ liệu</h3>
             <p className="text-sm text-gray-500">
-              Chọn file <code>.json</code> đã được export trước đó để khôi phục
+              Chọn file <code>.enc</code> đã được export trước đó để khôi phục
               lại dữ liệu. <span className="font-medium">⚠️ Lưu ý:</span> Dữ
               liệu hiện tại sẽ bị ghi đè khi import.
             </p>
@@ -276,7 +285,7 @@ const Setting = () => {
                 ⬆️ Import dữ liệu
                 <input
                   type="file"
-                  accept="application/json"
+                  accept=".enc"
                   onChange={handleImport}
                   hidden
                 />
@@ -299,7 +308,7 @@ const Setting = () => {
             <div className="flex flex-wrap gap-2 mt-3">
               <button
                 onClick={handleCopy}
-                className="btn btn-xs btn-outline shadow-sm"
+                className="btn btn-sm btn-outline shadow-sm"
               >
                 📋 Copy Device ID
               </button>
@@ -311,14 +320,14 @@ const Setting = () => {
                     ) as HTMLDialogElement
                   )?.showModal()
                 }
-                className="btn btn-xs btn-warning shadow-sm"
+                className="btn btn-sm btn-warning shadow-sm"
               >
                 🔄 Khôi phục bằng Device ID
               </button>
               <button
                 disabled={Date.now() - lastBackup < ONE_HOUR}
                 onClick={handleBackUp}
-                className="btn btn-xs btn-info shadow-sm"
+                className="btn btn-sm btn-info shadow-sm"
               >
                 💾 Sao lưu ngay
                 <span className="text-xs">
@@ -335,87 +344,101 @@ const Setting = () => {
       )}
 
       {/* ✅ Modal khôi phục */}
-      <dialog id="restore_modal" className="modal">
-        <div className="modal-box">
+      <dialog id="restore_modal" className="modal ">
+        <div className="modal-box ">
           <h3 className="font-bold text-lg">Khôi phục dữ liệu</h3>
 
           <p className="py-2 text-sm">
             Nhập Device ID cũ để khôi phục dữ liệu.
           </p>
-          <input
-            type="text"
-            autoFocus
-            value={restoreId}
-            onChange={(e) => setRestoreId(e.target.value)}
-            placeholder="Nhập Device ID..."
-            className="input input-bordered w-full"
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              autoFocus
+              value={restoreId}
+              onChange={(e) => setRestoreId(e.target.value)}
+              placeholder="Nhập Device ID..."
+              className="input input-bordered w-full"
+            />
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const text = await navigator.clipboard.readText();
+                  setRestoreId(text);
+                } catch (err) {
+                  toast.error("Không thể đọc clipboard");
+                }
+              }}
+              className="btn btn-primary"
+            >
+              Paste
+            </button>
+          </div>
           <p className="text-error my-1">{msg}</p>
-          {backupData?.length >= 1 ? (
-            <div className="my-4">
-              <p className="text-lg font-bold mb-2">📦 Dữ liệu hiện có</p>
+          <div>
+            {backupData?.length >= 1 ? (
+              <div className="my-4">
+                <p className="text-lg font-bold mb-2">📦 Dữ liệu hiện có</p>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                {backupData?.map((data: any) => (
-                  <div
-                    key={data._id}
-                    className="card bg-base-200 shadow-md rounded-xl border border-base-300"
-                  >
-                    <div className="card-body p-4 flex flex-col justify-between">
-                      <div>
-                        <p className="text-sm text-gray-500">
-                          Lần sao lưu gần nhất
-                        </p>
-                        <p className="font-semibold text-base">
-                          {new Date(data.lastSync).toLocaleString("vi-VN", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                      </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {backupData?.map((data: any) => (
+                    <div
+                      key={data._id}
+                      className="card bg-base-200 shadow-md rounded-xl border border-base-300"
+                    >
+                      <div className="card-body p-4 flex flex-col justify-between">
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Lần sao lưu gần nhất
+                          </p>
+                          <p className="font-semibold text-base">
+                            {new Date(data.lastSync).toLocaleString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                          <p>Kích thước: {data._sizeKB} KB</p>
+                        </div>
 
-                      <div className="mt-3 flex justify-end">
-                        <button
-                          className="btn btn-sm btn-primarys rounded-lg"
-                          onClick={() => {
-                            useAppStore.setState((state) => ({
-                              ...state,
-                              ...data.appData,
-                            }));
-                            useHistoryStore.setState((state) => ({
-                              ...state,
-                              history: data.watchHistory ?? [],
-                            }));
-                            useStoriesHistory.setState((state) => ({
-                              ...state,
-                              history: data.readHistory ?? [],
-                            }));
+                        <div className="mt-3 flex justify-end">
+                          <button
+                            className="btn btn-sm btn-primary rounded-lg"
+                            onClick={() => {
+                              useAppStore.setState((state) => ({
+                                ...state,
+                                ...data.appData,
+                              }));
+                              useHistoryStore.setState((state) => ({
+                                ...state,
+                                history: data.watchHistory ?? [],
+                              }));
+                              useStoriesHistory.setState((state) => ({
+                                ...state,
+                                history: data.readHistory ?? [],
+                              }));
 
-                            (
-                              document.getElementById(
-                                "restore_modal"
-                              ) as HTMLDialogElement
-                            )?.close();
-                            setBackupData(null);
-                            setRestoreId("");
-                            setMsg("");
-                            toast.success("Khôi phục thành công");
-                          }}
-                        >
-                          🔄 Khôi phục
-                        </button>
+                              electron.ipcRenderer.send(
+                                "set-device-id",
+                                restoreId
+                              );
+                            }}
+                          >
+                            🔄 Khôi phục
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : (
-            ""
-          )}
+            ) : (
+              ""
+            )}
+          </div>
           <div className="modal-action">
             <button className="btn btn-success" onClick={handleRestore}>
               Kiểm tra

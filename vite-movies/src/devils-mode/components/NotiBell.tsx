@@ -75,9 +75,10 @@ export default function NotificationBell() {
       >
         <div className="card-body">
           <span className="font-bold text-lg">
-            {notifications.length} Thông báo
+            {notifications.length} Thông báo mới nhất
           </span>
           <span>Video mới phát hành</span>
+          <div className="w-full h-[1px] bg-base-300"></div>
           <div className="divide-y divide-base-300 max-h-80 overflow-y-auto">
             {notifications?.length > 0 ? (
               notifications?.map((n, index) => (
@@ -88,9 +89,10 @@ export default function NotificationBell() {
                   }`}
                 >
                   <img
+                    loading="lazy"
                     src={n.content.thumb_url}
                     alt={n.content.name}
-                    className="w-12 h-16 object-cover rounded"
+                    className="w-16 h-12 object-cover rounded"
                   />
                   <div className="flex-1">
                     <Link
@@ -106,7 +108,7 @@ export default function NotificationBell() {
 
                   {/* Hiển thị chấm đỏ nếu chưa đọc */}
                   {!n.isRead && (
-                    <span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+                    <span className="w-2 h-2 rounded-full bg-red-500 inline-block mr-2"></span>
                   )}
                 </div>
               ))
@@ -116,6 +118,10 @@ export default function NotificationBell() {
           </div>
           <div className="card-actions">
             <button
+              disabled={
+                notifications.length === 0 ||
+                notifications.every((n) => n.isRead)
+              }
               className="btn btn-sm btn-primary w-full"
               onClick={markAllRead}
             >

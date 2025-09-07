@@ -58,7 +58,7 @@ const HistoryPage = () => {
           .map((item) => (
             <div
               key={item.id}
-              className="card card-side bg-base-200 shadow-sm hover:shadow-md transition hover:ring-1 ring-primary w-full my-4"
+              className="card card-side bg-base-200 shadow-sm hover:shadow-md transition hover:ring-1 ring-primarys w-full my-4"
             >
               <figure>
                 <img

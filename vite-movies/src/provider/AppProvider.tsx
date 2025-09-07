@@ -2,6 +2,7 @@ import React, { Fragment, useEffect } from "react";
 import { useAppStore } from "../zustand/appState";
 import { useHistoryStore } from "../zustand/useHistoryStore";
 import { useStoriesHistory } from "../zustand/useStoriesHistory";
+import { motion } from "framer-motion";
 interface AppProviderProps {
   children: React.ReactNode;
 }
@@ -19,6 +20,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const setLightOff = useAppStore((state) => state.setLightOff);
 
   const electron = (window as any).electron;
+
+  const hydrated = useAppStore((state) => state.hydrated);
 
   const getUserData = () => {
     electron.ipcRenderer.send("get-user-data");
@@ -82,6 +85,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // cleanup khi component unmount
     return () => clearInterval(interval);
   }, []);
+
+  if (!hydrated) return null;
 
   return (
     <AppContext.Provider
