@@ -1,7 +1,9 @@
-const connectDB = require("../config/db.js");
 const axios = require("axios");
 const mongoose = require("mongoose");
 const Movie = require("../model/movie.schema.js");
+const Noti = require("../model/noti.schema.js");
+const User = require("../model/userData.schema.js");
+const { connectDB } = require("../config/db.js");
 
 const API_URL = "https://xxvnapi.com/api/phim-moi-cap-nhat?page=";
 const BATCH_SIZE = 10; // số request song song mỗi lần
@@ -64,23 +66,79 @@ const crawl = async () => {
   }
 };
 
-export const crawlLatest = async (req, res) => {
+async function notifyAllUsers(newVideo) {
   try {
-    await connectDB();
-    console.log("✅ MongoDB connected!");
+    // Lấy toàn bộ user
+    const users = await User.find({}, { userUid: 1 }).lean();
 
-    await crawlPage(1);
+    if (users.length === 0) return;
 
-    console.log("🎉 Crawl toàn bộ xong!");
-    return res.json({
-      success: true,
-    });
+    const ops = users.map((u) => ({
+      insertOne: {
+        document: {
+          userUid: u.userUid,
+          content: {
+            type: "new_video",
+            ...newVideo,
+          },
+          timestamp: new Date(),
+        },
+      },
+    }));
+
+    await Noti.bulkWrite(ops);
+
+    console.log(`Đã gửi thông báo cho ${users.length} user`);
   } catch (err) {
-    console.error("❌ Error:", err.message);
+    console.error("Lỗi gửi thông báo:", err);
+  }
+}
+const crawlLatest = async () => {
+  try {
+    const page = 1;
+    const res = await axios.get(API_URL + page);
+    const data = res.data;
+
+    if (!data.status) {
+      console.error(`loi khi crawl ${page}:`, data.msg);
+      return;
+    }
+
+    const newMovies = data.movies;
+
+    // Lấy toàn bộ id trong batch crawl
+    const ids = newMovies.map((m) => m.id);
+
+    // Tìm xem trong DB đã có movie nào với id này chưa
+    const existing = await Movie.find({ id: { $in: ids } }, { id: 1 }).lean();
+    const existingIds = new Set(existing.map((m) => m.id));
+
+    // Lọc ra những movie chưa có
+    const freshMovies = newMovies.filter((m) => !existingIds.has(m.id));
+
+    console.log(`Co ${freshMovies.length} movie moi`);
+
+    // Lưu tất cả movie vào DB (update hoặc insert)
+    const ops = newMovies.map((movie) => ({
+      updateOne: {
+        filter: { id: movie.id },
+        update: { $set: movie },
+        upsert: true,
+      },
+    }));
+
+    if (ops.length > 0) {
+      await Movie.bulkWrite(ops);
+    }
+    for (const movie of freshMovies) {
+      await notifyAllUsers(movie);
+    }
+    // trả về danh sách mới
   } finally {
     mongoose.connection.close();
   }
 };
+
 module.exports = {
   crawl,
   crawlLatest,

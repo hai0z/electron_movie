@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useDailyStore } from "../../zustand/dailyVideoStore";
 import DailyCard from "../components/DailyCard";
+import NotificationBell from "../components/NotiBell";
 
 const CACHE_KEY_HOME = "home_cache";
 const CACHE_KEY_VIETSUB = "vietsub_cache";
@@ -200,8 +201,11 @@ const HomePage = () => {
               Khám phá thế giới điện ảnh với những bộ phim mới nhất
             </p>
           </div>
-          <div className="hidden md:block">
-            <Sparkles className="w-16 h-16 text-primarys animate-pulse" />
+          <div className="flex items-center gap-4">
+            <NotificationBell />
+            <div className="hidden md:block">
+              <Sparkles className="w-16 h-16 text-primarys animate-pulse" />
+            </div>
           </div>
         </div>
       </motion.div>

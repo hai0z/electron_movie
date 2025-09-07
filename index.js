@@ -5,6 +5,7 @@ const Movie = require("./model/movie.schema.js");
 const UserData = require("./model/userData.schema.js");
 
 const BackUp = require("./model/backup.schema.js");
+const Noti = require("./model/noti.schema.js");
 
 const os = require("os");
 
@@ -21,6 +22,8 @@ const {
   getMovieDetailOld,
 } = require("./devil.js");
 const { connectDB } = require("./config/db.js");
+const { crawlLatest } = require("./crawl/index.js");
+const { timeStamp } = require("console");
 
 async function initUser(userUid) {
   await connectDB();
@@ -68,7 +71,10 @@ function resetAppUuid() {
 }
 
 async function createMainWindow() {
+  await connectDB().then(() => crawlLatest());
+
   initUser(getAppUniqueId());
+
   // resetAppUuid();
   const win = new BrowserWindow({
     minWidth: 1366,
@@ -109,6 +115,28 @@ async function createMainWindow() {
     win.close();
   });
 
+  ipcMain.on("get-noti", async () => {
+    const userUid = getAppUniqueId();
+    const noti = await Noti.find({
+      userUid,
+    })
+      .sort({
+        timestamp: -1,
+      })
+      .limit(10)
+      .lean();
+    win.webContents.send("noti-data", noti);
+  });
+  ipcMain.on("read-noti", async () => {
+    const userUid = getAppUniqueId();
+    await Noti.updateMany(
+      {
+        userUid,
+      },
+      { $set: { isRead: true } }
+    );
+  });
+
   ipcMain.on("get-user-data", async () => {
     await connectDB();
 
@@ -122,6 +150,7 @@ async function createMainWindow() {
 
   ipcMain.on("restore-data", async (_, deviceId) => {
     await connectDB();
+
     const data = await BackUp.find({
       userUid: String(deviceId),
     })
@@ -243,10 +272,6 @@ async function createMainWindow() {
   ipcMain.on("get-old", async (_, page = 1) => {
     const data = await movieService.getAllOld(page);
     win.webContents.send("old-data", data);
-  });
-  ipcMain.on("get-eporn", async (_, params) => {
-    const data = await movieService.getEporn(params);
-    win.webContents.send("eporn", data);
   });
 
   ipcMain.on("get-movie-detail", async (_, id) => {
