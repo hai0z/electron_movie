@@ -44,6 +44,8 @@ const MovieDetail = () => {
           thumbnail: data.details.list[0].thumb_url,
           type: "avdb",
           title: data.details.list[0].origin_name,
+          actor: data.details.list[0].actor.join(","),
+          tag: data.details.list[0].category.join(","),
         };
         addToHistory(movieDataRef.current as any);
       }

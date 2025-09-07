@@ -21,6 +21,8 @@ const RandomModal = ({
         thumbnail: data.thumb_url,
         type: "xxvn",
         title: data.name,
+        actor: data.actors.join(","),
+        tag: data.categories.map((c) => c.slug).join(","),
       });
     }
   }, [data, addToHistory]);
@@ -39,6 +41,8 @@ const RandomModal = ({
         type: "xxvn",
         title: data.name,
         stayIn: timerRef.current,
+        actor: data.actors.join(","),
+        tag: data.categories.map((c) => c.slug).join(","),
       });
     }, 1000);
 

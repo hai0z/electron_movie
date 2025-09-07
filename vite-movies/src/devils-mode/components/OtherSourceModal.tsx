@@ -35,6 +35,8 @@ const OtherSourceModal = ({
         type: "other",
         title: post.post_title,
         otherData: post,
+        actor: post.post_actor,
+        tag: post.post_tag,
       });
     }
   }, [post, addToHistory]);
@@ -54,6 +56,8 @@ const OtherSourceModal = ({
         title: post.post_title,
         otherData: post,
         stayIn: timerRef.current,
+        actor: post.post_actor,
+        tag: post.post_tag,
       });
     }, 1000);
 

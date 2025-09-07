@@ -13,6 +13,8 @@ export interface HistoryItem {
   otherData?: Post;
   stayIn?: number;
   content?: string;
+  tag: string;
+  actor: string;
 }
 
 interface HistoryState {

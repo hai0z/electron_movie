@@ -65,6 +65,8 @@ const VietSubDetails = () => {
       thumbnail: data.movie.thumb_url,
       type: "xxvn",
       title: data.movie.name,
+      actor: data.movie.actors.join(","),
+      tag: data.movie.categories.map((c: any) => c.slug).join(","),
     };
     addToHistory(movieDataRef.current as any);
   };
