@@ -17,6 +17,7 @@ import {
   FileVideoCamera,
   Radio,
   VideoIcon,
+  Sprout,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -49,7 +50,7 @@ const SidebarNavbar = () => {
       className={`fixed top-0 left-0 h-screen w-64  border-r border-base-200 z-50 flex flex-col`}
     >
       {/* Logo */}
-      <div className="px-6 border-b border-base-200 pt-10 py-8">
+      <div className="px-6 border-b border-base-200 pt-10 pb-3">
         <Link
           to="/"
           className="flex items-center gap-2 text-2xl font-bold text-primarys"
@@ -60,7 +61,7 @@ const SidebarNavbar = () => {
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 overflow-y-auto px-4 py-3">
+      <nav className="flex-1 overflow-y-auto px-4 pt-4">
         <ul className="menu flex flex-col gap-2 menu-sm 2xl:menu-md">
           <li>
             <Link to="/" className={pathName === "/" ? "active font-bold" : ""}>
@@ -212,7 +213,7 @@ const SidebarNavbar = () => {
                       isActive("/category/7/") ? "active font-bold" : ""
                     }
                   >
-                    <User className="w-5 h-5 text-orange-500" />
+                    <Sprout className="w-5 h-5 text-green-500" />
                     Nghiệp dư
                   </Link>
                 </li>
@@ -250,6 +251,17 @@ const SidebarNavbar = () => {
               Video ngẫu nhiên
             </div>
           </li>
+
+          <li>
+            <Link
+              to="/actor"
+              className={isActive("/actor") ? "active font-bold" : ""}
+            >
+              <User className="w-5 h-5 text-orange-500" />
+              Diễn viên
+            </Link>
+          </li>
+
           <div className="w-full bg-base-200 h-[1px]"></div>
           <li>
             <Link
@@ -273,7 +285,7 @@ const SidebarNavbar = () => {
       </nav>
 
       {/* Bottom actions */}
-      <div className="px-6 py-2 border-t border-base-200 flex flex-col gap-4">
+      <div className="px-6 py-2 border-t border-base-200 flex flex-col gap-3">
         <Link
           to="/favourite"
           className={`flex items-center gap-2 ${

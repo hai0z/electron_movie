@@ -22,6 +22,7 @@ import { useDailyStore } from "../../zustand/dailyVideoStore";
 import DailyCard from "../components/DailyCard";
 import NotificationBell from "../components/NotiBell";
 import RestoreModal from "../components/RestoreModal";
+import MaybeYouLike from "../components/MaybeYouLike";
 
 const CACHE_KEY_HOME = "home_cache";
 const CACHE_KEY_VIETSUB = "vietsub_cache";
@@ -37,7 +38,7 @@ const HomePage = () => {
   const [all, setAll] = React.useState({} as VietSubResult);
   const userName = JSON.parse(localStorage.getItem("user")!).name;
 
-  const { generateDaily } = useDailyStore();
+  const { generateDaily, generateMaybeLike } = useDailyStore();
   const electron = (window as any).electron;
 
   const getAll = async () => {
@@ -147,6 +148,7 @@ const HomePage = () => {
     getMovies();
     getAll();
     generateDaily();
+    generateMaybeLike();
     window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
   }, []);
 
@@ -224,6 +226,8 @@ const HomePage = () => {
         </div>
         <DailyCard />
       </motion.div>
+      {/* maybe like */}
+      <MaybeYouLike />
 
       <div>
         <motion.div className="mb-12" variants={sectionVariants}>

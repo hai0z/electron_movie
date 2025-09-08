@@ -40,14 +40,16 @@ function MovieService() {
   this.getOtherCate = function (data) {
     return api2
       .get(
-        `/xxx/api-posts?cate_ids=${data.cate_ids}&source=${data.source}&limit=99999`
+        `/xxx/api-posts?cate_ids=${data.cate_ids}&source=${
+          data.source
+        }&limit=99999${this.getRandomParam()}`
       )
       .then((res) => res.data);
   };
 
   this.getTikTok = function () {
     return api3
-      .get(`/avrebo-api/v1/video/listRandom?limit=50`)
+      .get(`/avrebo-api/v1/video/listRandom?limit=50${this.getRandomParam()}`)
       .then((res) => res.data);
   };
 

@@ -127,7 +127,7 @@ export default function AIButton() {
                   transition={{ duration: 1 }}
                 >
                   <p className="text-2xl font-bold my-4 text-white">
-                    Video dành cho bạn
+                    Video dành cho bạn (dựa trên lịch sử xem)
                   </p>
                   <motion.div className="flex flex-row flex-wrap gap-4 justify-center items-center">
                     {all.map((post) => (

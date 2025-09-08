@@ -123,6 +123,41 @@ class IpcHandler {
       const data = await MovieService.getAllOld(page);
       WindowManager.getMainWindow().webContents.send("old-data", data);
     });
+
+    // 1. Lấy danh sách actor
+    ipcMain.on("get-actors", async (_, query) => {
+      const result = await MovieService.getActor(query);
+      WindowManager.getMainWindow().webContents.send(
+        "get-actors-result",
+        JSON.stringify(result)
+      );
+    });
+
+    // 2. Lấy movie của 1 actor
+    ipcMain.on("get-actor-movies", async (_, query) => {
+      const result = await MovieService.getActorMovie(query);
+      WindowManager.getMainWindow().webContents.send(
+        "get-actor-movies-result",
+        JSON.stringify(result)
+      );
+    });
+
+    // 3. Tìm actor theo tên
+    ipcMain.on("search-actors", async (_, query) => {
+      const result = await MovieService.searchActors(query);
+      WindowManager.getMainWindow().webContents.send(
+        "search-actors-result",
+        JSON.stringify(result)
+      );
+    });
+    //maybeLike
+    ipcMain.on("get-maybeLike", async () => {
+      const result = await MovieService.getMaybeLike();
+      WindowManager.getMainWindow().webContents.send(
+        "get-maybeLike-result",
+        JSON.stringify(result)
+      );
+    });
   }
 
   static setupBackupHandlers() {

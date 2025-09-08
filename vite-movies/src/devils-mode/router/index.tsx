@@ -31,6 +31,8 @@ import EpornScreen from "../page/OfflineSearch";
 import Live from "../page/Live";
 import { Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
+import ActorPage from "../page/Actor";
+import ActorMovie from "../page/ActorMovie";
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
 
@@ -123,6 +125,14 @@ const router = createHashRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/actor",
+        element: <ActorPage />,
+      },
+      {
+        path: "/actor-movie",
+        element: <ActorMovie />,
       },
 
       {

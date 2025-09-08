@@ -3,27 +3,41 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { HistoryItem } from "./useHistoryStore"; // hoặc type video bạn đã có
 import { Movie } from "../devils-mode/types/vietsub";
 import zustandStorage from "./storage";
+import { Actor } from "../devils-mode/page/Actor";
+
+interface MaybeLike {
+  movies: Movie[];
+  actors: Actor[];
+}
+interface MaybeLike {
+  movies: Movie[];
+  actors: Actor[];
+}
 
 interface DailyState {
-  dailyVideos: Omit<HistoryItem, "watchedAt">[]; // Thay đổi thành array
-  lastGenerated: string; // yyyy-mm-dd
+  dailyVideos: Omit<HistoryItem, "watchedAt">[];
+  lastGenerated: string; // yyyy-mm-dd cho daily
+  lastMaybeLikeGenerated: number; // timestamp (ms) cho mayBelike
   generateDaily: () => void;
+  generateMaybeLike: () => void;
+  mayBelike: MaybeLike;
 }
 
 export const useDailyStore = create<DailyState>()(
   persist(
     (set, get) => ({
-      dailyVideos: [], // Khởi tạo array rỗng
+      dailyVideos: [],
+      mayBelike: {} as MaybeLike,
       lastGenerated: "",
+      lastMaybeLikeGenerated: 0,
+
       generateDaily: async () => {
         const today = new Date().toISOString().split("T")[0];
-
-        if (get().lastGenerated === today) return; // đã random hôm nay
+        if (get().lastGenerated === today) return;
 
         try {
           const videos: Omit<HistoryItem, "watchedAt">[] = [];
 
-          // Generate 3 random videos
           for (let i = 0; i < 3; i++) {
             const randomPage = Math.floor(Math.random() * 354 + 1);
             const res = await fetch(
@@ -37,7 +51,6 @@ export const useDailyStore = create<DailyState>()(
               );
               const random: Movie = data.movies[randomIndex];
 
-              // Kiểm tra xem video đã tồn tại trong array chưa (tránh duplicate)
               const isDuplicate = videos.some(
                 (video) => video.id === random.slug
               );
@@ -49,6 +62,8 @@ export const useDailyStore = create<DailyState>()(
                   title: random.name,
                   type: "xxvn",
                   content: random.content,
+                  actor: "",
+                  tag: "",
                 });
               } else {
                 i--;
@@ -64,6 +79,29 @@ export const useDailyStore = create<DailyState>()(
           });
         } catch (error) {
           console.error("Error generating daily videos:", error);
+        }
+      },
+
+      generateMaybeLike: async () => {
+        const now = Date.now();
+        const thirtyMinutes = 30 * 60 * 1000;
+
+        if (now - get().lastMaybeLikeGenerated < thirtyMinutes) {
+          return; // chưa đủ 30 phút thì không gọi lại
+        }
+
+        try {
+          const ipc = (window as any).electron.ipcRenderer;
+          ipc.send("get-maybeLike");
+
+          ipc.once("get-maybeLike-result", (_: any, result: string) => {
+            set({
+              mayBelike: JSON.parse(result),
+              lastMaybeLikeGenerated: now,
+            });
+          });
+        } catch (error) {
+          console.error("Error generating maybe like data:", error);
         }
       },
     }),
