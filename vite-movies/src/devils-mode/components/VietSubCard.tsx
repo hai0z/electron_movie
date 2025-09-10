@@ -4,6 +4,7 @@ import { VietSubResult } from "../types/vietsub";
 import { decode } from "html-entities";
 import { useAppStore } from "../../zustand/appState";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 function VietSubCard({ m }: { m: VietSubResult["movies"][0] }) {
   const likeVietSubs = useAppStore((state) => state.likeVietSubs);
@@ -14,8 +15,10 @@ function VietSubCard({ m }: { m: VietSubResult["movies"][0] }) {
   const toggleLike = () => {
     if (isLike) {
       setLikeVietSubs(likeVietSubs.filter((i) => i.id !== m.id));
+      toast.error("Đã xoá khỏi yêu thích");
     } else {
       setLikeVietSubs([m, ...likeVietSubs]);
+      toast.success("Đã thêm vào yêu thích");
     }
   };
   return (
@@ -29,7 +32,7 @@ function VietSubCard({ m }: { m: VietSubResult["movies"][0] }) {
       }}
       key={m.slug}
       transition={{ duration: 0.5 }}
-      className="transition-all duration-300 rounded-lg shadow-md cursor-pointer w-[23%] bg-base-200 hover:ring-1 hover:ring-primarys hover:scale-[1.01] hover:shadow-primarys group card my-1 hover:bg-acshadow-primarys/10 card-compact"
+      className="transition-all duration-300 rounded-lg shadow-md cursor-pointer w-[23.5%] 2xl:w-[16.6%] bg-base-200 hover:ring-1 hover:ring-primarys hover:scale-[1.01] hover:shadow-primarys group card my-1 hover:bg-acshadow-primarys/10 card-compact"
     >
       <figure className="overflow-hidden rounded-t-lg">
         <Link to={"/vietsub-detail/" + m.slug}>

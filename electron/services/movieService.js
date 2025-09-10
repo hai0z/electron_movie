@@ -108,14 +108,12 @@ class MovieService {
     };
   }
 
-  static async getMaybeLike() {
-    const data = await recommendFromDB(DeviceIdManager.getAppUniqueId());
+  static async getMaybeLike(watchHistory) {
+    const data = await recommendFromDB(watchHistory);
 
-    const actors = data
-      .map((actor) => actor.actors.join())
-      .sort(() => Math.random() - 0.5);
+    const actors = data.map((actor) => actor.actors.join());
 
-    const movies = data.sort(() => Math.random() - 0.5).slice(0, 4);
+    const movies = data.slice(0, 4);
 
     const actorResult = await Actor.find({
       name: { $in: actors },

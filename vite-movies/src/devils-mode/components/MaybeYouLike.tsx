@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import { useDailyStore } from "../../zustand/dailyVideoStore";
 import { VietSubCard } from "./VietSubCard";
-import { Link } from "react-router-dom";
+import { ActorCard } from "../page/Actor";
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -16,7 +16,7 @@ const sectionVariants = {
 const MaybeYouLike = () => {
   const { mayBelike } = useDailyStore();
 
-  if (mayBelike.actors.length === 0 && mayBelike.movies.length === 0)
+  if (mayBelike?.actors?.length === 0 && mayBelike?.movies?.length === 0)
     return null;
   return (
     <motion.div className="mb-8" variants={sectionVariants}>
@@ -29,32 +29,11 @@ const MaybeYouLike = () => {
         </h2>
       </div>
       <div className="flex flex-wrap flex-row gap-4">
-        {mayBelike.movies.map((video) => {
+        {mayBelike?.movies?.map((video) => {
           return <VietSubCard m={video} key={video.id} />;
         })}
-        {mayBelike.actors.map((actor) => {
-          return (
-            <Link
-              to={"/actor-movie?actor=" + actor.name}
-              key={actor.id}
-              className="transition-all duration-300 rounded-lg shadow-md cursor-pointer w-[23%] bg-base-200 hover:ring-1 hover:ring-primarys hover:scale-[1.01] hover:shadow-primarys group card my-1 hover:bg-acshadow-primarys/10 card-compact"
-            >
-              <figure>
-                <img
-                  src={
-                    actor.image.url.includes("default")
-                      ? "https://cdn-icons-png.flaticon.com/128/1814/1814294.png"
-                      : actor.image.url
-                  }
-                  alt={actor.name}
-                  className="rounded-full object-cover transition-all duration-300 h-40 w-40 hover:scale-110 "
-                />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{actor.name}</h2>
-              </div>
-            </Link>
-          );
+        {mayBelike?.actors?.map((actor) => {
+          return <ActorCard actor={actor} key={actor.id} />;
         })}
       </div>
     </motion.div>

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
 import { Movie } from "../devils-mode/types/vietsub";
 import { VietSubCard } from "../devils-mode/components/VietSubCard";
+import { useHistoryStore } from "../zustand/useHistoryStore";
 
 export default function AIButton() {
   const location = useLocation();
@@ -30,7 +31,10 @@ export default function AIButton() {
     setLoading(true);
     setAll([]);
     try {
-      electron.ipcRenderer.send("recommend");
+      electron.ipcRenderer.send(
+        "recommend",
+        JSON.stringify(useHistoryStore.getState().history)
+      );
 
       electron.ipcRenderer.on("recommend-data", (data: Movie[]) => {
         setAll(data);

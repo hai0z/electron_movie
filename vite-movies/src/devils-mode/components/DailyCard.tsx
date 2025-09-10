@@ -8,7 +8,7 @@ const DailyCard = () => {
 
   return (
     <div className="flex flex-wrap flex-row gap-4">
-      {dailyVideos.map((video) => {
+      {dailyVideos?.map((video) => {
         return (
           <div
             className="card bg-base-100 image-full w-[32%] shadow-xl"

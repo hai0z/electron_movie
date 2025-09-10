@@ -37,7 +37,7 @@ export default function Rell() {
       const windowHeight = window.innerHeight;
       const fullHeight = document.body.scrollHeight;
 
-      const atBottom = scrollTop + windowHeight >= fullHeight - 20;
+      const atBottom = scrollTop + windowHeight >= fullHeight - 100;
 
       if (atBottom && !isAtBottom) {
         handleLoadMore();

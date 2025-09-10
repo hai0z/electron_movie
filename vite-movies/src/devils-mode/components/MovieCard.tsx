@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { decode } from "html-entities";
 import { useAppStore } from "../../zustand/appState";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 function MovieCard2({ m }: { m: List }) {
   return (
@@ -60,8 +61,10 @@ function MovieCard1({ m, type }: { m: List; type?: string }) {
   const toggleLike = () => {
     if (isLike) {
       setlikeVideos(likeVideos.filter((i) => i.id !== m.id));
+      toast.error("Đã xoá khỏi yêu thích");
     } else {
       setlikeVideos([m, ...likeVideos]);
+      toast.success("Đã thêm vào yêu thích");
     }
   };
   return (
@@ -76,7 +79,7 @@ function MovieCard1({ m, type }: { m: List; type?: string }) {
       key={m.slug}
       transition={{ duration: 0.5 }}
       layout
-      className="transition-all duration-300 rounded-lg shadow-md cursor-pointer w-[23%] bg-base-200 hover:ring-1 hover:ring-primarys hover:scale-[1.01] hover:shadow-primarys group card my-1 hover:bg-accent/10 card-compact"
+      className="transition-all duration-300 rounded-lg shadow-md cursor-pointer w-[23.5%] 2xl:w-[16.6%] bg-base-200 hover:ring-1 hover:ring-primarys hover:scale-[1.01] hover:shadow-primarys group card my-1 hover:bg-accent/10 card-compact"
     >
       <figure className="overflow-hidden rounded-t-lg">
         <Link

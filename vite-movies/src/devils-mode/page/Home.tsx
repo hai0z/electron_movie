@@ -387,8 +387,6 @@ const HomePage = () => {
           </div>
         </motion.div>
       </div>
-
-      {/* Footer CTA */}
     </motion.div>
   );
 };

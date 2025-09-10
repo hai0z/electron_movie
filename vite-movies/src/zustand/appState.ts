@@ -5,6 +5,7 @@ import { Movie } from "../angle-mode/types/movieDetail";
 import { List } from "../devils-mode/types/movieDetail";
 import { Movie as MovieVietSub } from "../devils-mode/types/vietsub";
 import { Post } from "../devils-mode/types/other";
+import { Actor } from "../devils-mode/page/Actor";
 
 interface AppStore {
   theme: string;
@@ -24,6 +25,8 @@ interface AppStore {
   otherLike: Post[];
   setOtherLike: (likeVideos: Post[]) => void;
   hydrated: boolean;
+  likeActor: Actor[];
+  setLikeActor: (actors: Actor[]) => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -32,6 +35,11 @@ export const useAppStore = create<AppStore>()(
       theme: "lemonade",
       setTheme: (theme) => set({ theme }),
       likeVideos: [],
+      likeActor: [],
+      setLikeActor: (actors) =>
+        set({
+          likeActor: actors,
+        }),
       setLikeVideos: (likeVideos) => set({ likeVideos }),
       appMode: "angle",
       setAppMode: (appMode) => set({ appMode }),

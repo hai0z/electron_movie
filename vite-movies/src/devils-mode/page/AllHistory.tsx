@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import HistoryPage from "./History";
 import StoriesHistory from "./StoriesHistory";
 import { useSearchParams } from "react-router-dom";
@@ -6,6 +7,10 @@ const AllHistory = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const tab = searchParams.get("tab") || "watch";
+
+  useEffect(() => {
+    window.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+  }, [tab]);
   return (
     <div className="w-full flex flex-col">
       {/* Header Tabs */}

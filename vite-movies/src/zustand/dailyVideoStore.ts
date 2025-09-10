@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { HistoryItem } from "./useHistoryStore"; // hoặc type video bạn đã có
+import { HistoryItem, useHistoryStore } from "./useHistoryStore"; // hoặc type video bạn đã có
 import { Movie } from "../devils-mode/types/vietsub";
 import zustandStorage from "./storage";
 import { Actor } from "../devils-mode/page/Actor";
@@ -36,46 +36,25 @@ export const useDailyStore = create<DailyState>()(
         if (get().lastGenerated === today) return;
 
         try {
-          const videos: Omit<HistoryItem, "watchedAt">[] = [];
+          const ipc = (window as any).electron.ipcRenderer;
+          ipc.send(
+            "recommend",
+            JSON.stringify(useHistoryStore.getState().history)
+          );
 
-          for (let i = 0; i < 3; i++) {
-            const randomPage = Math.floor(Math.random() * 354 + 1);
-            const res = await fetch(
-              `https://www.xxvnapi.com/api/phim-moi-cap-nhat?page=${randomPage}`
-            );
-            const data = await res.json();
-
-            if (data.movies && data.movies.length > 0) {
-              const randomIndex = Math.floor(
-                Math.random() * Math.min(data.movies.length, 49)
-              );
-              const random: Movie = data.movies[randomIndex];
-
-              const isDuplicate = videos.some(
-                (video) => video.id === random.slug
-              );
-
-              if (!isDuplicate) {
-                videos.push({
-                  id: random.slug,
-                  thumbnail: random.thumb_url,
-                  title: random.name,
-                  type: "xxvn",
-                  content: random.content,
-                  actor: "",
-                  tag: "",
-                });
-              } else {
-                i--;
-              }
-            } else {
-              i--;
-            }
-          }
-
-          set({
-            dailyVideos: videos,
-            lastGenerated: today,
+          ipc.on("recommend-data", (result: Movie[]) => {
+            set({
+              dailyVideos: result.slice(0, 3).map((random) => ({
+                id: random.slug,
+                thumbnail: random.thumb_url,
+                title: random.name,
+                type: "xxvn",
+                content: random.content,
+                actor: "",
+                tag: "",
+              })) as Omit<HistoryItem, "watchedAt">[],
+              lastGenerated: today,
+            });
           });
         } catch (error) {
           console.error("Error generating daily videos:", error);
@@ -84,17 +63,20 @@ export const useDailyStore = create<DailyState>()(
 
       generateMaybeLike: async () => {
         const now = Date.now();
-        const thirtyMinutes = 30 * 60 * 1000;
+        const tenMinutes = 10 * 60 * 1000;
 
-        if (now - get().lastMaybeLikeGenerated < thirtyMinutes) {
-          return; // chưa đủ 30 phút thì không gọi lại
+        if (now - get().lastMaybeLikeGenerated < tenMinutes) {
+          return; // chưa đủ 10 phút thì không gọi lại
         }
 
         try {
           const ipc = (window as any).electron.ipcRenderer;
-          ipc.send("get-maybeLike");
+          ipc.send(
+            "get-maybeLike",
+            JSON.stringify(useHistoryStore.getState().history)
+          );
 
-          ipc.once("get-maybeLike-result", (_: any, result: string) => {
+          ipc.on("get-maybeLike-result", (result: string) => {
             set({
               mayBelike: JSON.parse(result),
               lastMaybeLikeGenerated: now,

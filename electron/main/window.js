@@ -27,8 +27,11 @@ class WindowManager {
     });
 
     // Load the app
-    this.mainWindow.loadURL("http://localhost:5173");
-    // For production: this.mainWindow.loadFile(path.join(__dirname, '../../vite-movies/dist/index.html'));
+    // this.mainWindow.loadURL("http://localhost:5173");
+    // For production:
+    this.mainWindow.loadFile(
+      path.join(__dirname, "../../vite-movies/dist/index.html")
+    );
 
     // Check restore flag
     if (DeviceIdManager.checkRestoreFlag()) {

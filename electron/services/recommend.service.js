@@ -6,27 +6,23 @@ const HistoryItem = require("../../model/userData.schema");
 const Actor = require("../../model/actor.schema");
 
 // Định nghĩa đường dẫn lưu model
-async function recommendFromDB(userUid) {
-  const userHistory = await HistoryItem.findOne({
-    userUid,
-  }).lean();
-
+async function recommendFromDB(watchHistory) {
   let watchedIds;
 
-  if (userHistory.watchHistory?.length <= 0) {
+  if (watchHistory?.length <= 0) {
     watchedIds = await Video.aggregate([
       { $match: { actors: { $exists: true, $ne: [] } } }, // mảng có phần tử
       { $sample: { size: 10 } },
     ]);
   }
 
-  watchedIds = userHistory.watchHistory.map((h) => h.id);
+  watchedIds = watchHistory.map((h) => h.id);
 
   let allActors;
 
   allActors = [
     ...new Set(
-      userHistory.watchHistory
+      watchHistory
         .filter((i) => i.id !== undefined)
         .flatMap((h) => h.actor?.split(",").map((a) => a.trim()))
     ),
@@ -35,8 +31,8 @@ async function recommendFromDB(userUid) {
     name: { $in: allActors },
   });
 
-  if (allActors.length <= 0 || actorHasInDb.length <= 4) {
-    const allActorsDocs = await Actor.aggregate([{ $sample: { size: 10 } }]);
+  if (allActors.length <= 0 || actorHasInDb.length <= 3) {
+    const allActorsDocs = await Actor.aggregate([{ $sample: { size: 4 } }]);
 
     allActors = [...allActors, ...allActorsDocs.map((actor) => actor.name)];
   }

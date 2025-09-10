@@ -6,23 +6,31 @@ import { Post } from "../types/other";
 import { HeartOff } from "lucide-react";
 import OtherSourceModal from "../components/OtherSourceModal";
 import { useSearchParams } from "react-router-dom";
+import { ActorCard } from "./Actor";
 
 const FavouriteScreen = () => {
-  const { likeVideos, likeVietSubs, otherLike } = useAppStore();
+  const { likeVideos, likeVietSubs, otherLike, likeActor } = useAppStore();
   const [post, setPost] = useState<Post>();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  console.log(likeActor);
   // tab mặc định là VIP nếu không có trong URL
   const activeTab = (searchParams.get("tab") || "VIP") as
     | "VIP"
     | "AVDB"
-    | "OTHER";
+    | "OTHER"
+    | "ACTOR";
 
-  const handleTabChange = (tab: "VIP" | "AVDB" | "OTHER") => {
+  const handleTabChange = (tab: "VIP" | "AVDB" | "OTHER" | "ACTOR") => {
     setSearchParams({ tab });
   };
 
-  if (!likeVideos?.length && !likeVietSubs?.length && !otherLike?.length) {
+  if (
+    !likeVideos?.length &&
+    !likeVietSubs?.length &&
+    !otherLike?.length &&
+    !likeActor?.length
+  ) {
     return (
       <div className="flex flex-col items-center justify-center w-full min-h-[80vh]">
         <div className="flex flex-col items-center justify-center mt-20">
@@ -78,6 +86,16 @@ const FavouriteScreen = () => {
         >
           OTHER SOURCE
         </button>
+        <button
+          onClick={() => handleTabChange("ACTOR")}
+          className={`px-4 py-2 font-semibold ${
+            activeTab === "ACTOR"
+              ? "border-b-2 border-primarys text-primarys"
+              : "text-gray-500"
+          }`}
+        >
+          DIỄN VIÊN
+        </button>
       </div>
 
       {/* Tab content */}
@@ -112,6 +130,13 @@ const FavouriteScreen = () => {
         </div>
       )}
 
+      {activeTab === "ACTOR" && likeActor && likeActor.length > 0 && (
+        <div className="flex flex-row flex-wrap gap-4 px-6">
+          {likeActor.map((item) => (
+            <ActorCard actor={item} key={item.id} />
+          ))}
+        </div>
+      )}
       <OtherSourceModal post={post} onClose={() => setPost(undefined)} />
     </div>
   );

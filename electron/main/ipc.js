@@ -18,8 +18,9 @@ class IpcHandler {
   }
 
   static setupRecommend() {
-    ipcMain.on("recommend", async () => {
-      const data = await recommendFromDB(DeviceIdManager.getAppUniqueId());
+    ipcMain.on("recommend", async (_, watchHistory) => {
+      const parsed = JSON.parse(watchHistory);
+      const data = await recommendFromDB(parsed);
 
       WindowManager.getMainWindow().webContents.send("recommend-data", data);
     });
@@ -151,8 +152,8 @@ class IpcHandler {
       );
     });
     //maybeLike
-    ipcMain.on("get-maybeLike", async () => {
-      const result = await MovieService.getMaybeLike();
+    ipcMain.on("get-maybeLike", async (_, watchHistory) => {
+      const result = await MovieService.getMaybeLike(JSON.parse(watchHistory));
       WindowManager.getMainWindow().webContents.send(
         "get-maybeLike-result",
         JSON.stringify(result)

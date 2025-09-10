@@ -181,7 +181,7 @@ const Viet69 = () => {
         <span className="text-3xl font-bold">VIET69</span>
 
         <select
-          className="select select-bordered select-sm w-full max-w-40"
+          className="select select-bordered select-sm w-full max-w-40 my-2"
           defaultValue={theLoai}
           onChange={(e) => handleChangeTheLoai(e.target.value)}
         >

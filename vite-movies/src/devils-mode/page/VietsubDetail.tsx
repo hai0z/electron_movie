@@ -232,9 +232,7 @@ const VietSubDetails = () => {
                       {movie?.actors?.map((name, idx) => (
                         <Link
                           key={idx}
-                          to={`/search-offline?q=${encodeURIComponent(
-                            name
-                          )}&action=1`}
+                          to={`/actor-movie?actor=${name}`}
                           className="text-blue-500 hover:underline"
                         >
                           {name},

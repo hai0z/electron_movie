@@ -2,12 +2,12 @@ import React, { Fragment, useEffect } from "react";
 import { useAppStore } from "../zustand/appState";
 import { useHistoryStore } from "../zustand/useHistoryStore";
 import { useStoriesHistory } from "../zustand/useStoriesHistory";
-import { motion } from "framer-motion";
 interface AppProviderProps {
   children: React.ReactNode;
 }
 
 const ONE_MINUTE = 60_000;
+
 interface IAppContext {
   isAppModeChange: boolean;
   setIsAppModeChange: React.Dispatch<React.SetStateAction<boolean>>;
