@@ -18,6 +18,7 @@ import {
   Radio,
   VideoIcon,
   Sprout,
+  ChartPie,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -61,7 +62,7 @@ const SidebarNavbar = () => {
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 overflow-y-auto px-4 pt-4">
+      <nav className="flex-1 overflow-y-auto px-4 mt-4">
         <ul className="menu flex flex-col gap-2 menu-sm 2xl:menu-md">
           <li>
             <Link to="/" className={pathName === "/" ? "active font-bold" : ""}>
@@ -285,7 +286,7 @@ const SidebarNavbar = () => {
       </nav>
 
       {/* Bottom actions */}
-      <div className="px-6 py-2 border-t border-base-200 flex flex-col gap-3">
+      <div className="px-6 py-2 border-t border-base-200 grid grid-cols-2 gap-3">
         <Link
           to="/favourite"
           className={`flex items-center gap-2 ${
@@ -307,6 +308,15 @@ const SidebarNavbar = () => {
           <Clock className="w-5 h-5" />
           <span className="text-sm">Lịch sử</span>
         </Link>
+        <Link
+          to="/stats"
+          className={`flex items-center gap-2 ${
+            isActive("/stats") ? "text-info" : ""
+          }`}
+        >
+          <ChartPie className="w-5 h-5" />
+          <span className="text-sm">Thống kê</span>
+        </Link>
 
         <Link
           to="/setting"
@@ -317,7 +327,8 @@ const SidebarNavbar = () => {
           <Settings className="w-5 h-5" />
           <span className="text-sm">Cài đặt</span>
         </Link>
-
+      </div>
+      <div className="px-6 my-2">
         <SearchInput />
       </div>
 

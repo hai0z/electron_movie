@@ -1,11 +1,12 @@
 const { app } = require("electron");
 const fs = require("fs");
 const path = require("path");
-const { randomUUID } = require("crypto");
+const { randomUUID, createHash } = require("crypto");
 
 const idFile = path.join(app.getPath("userData"), "uuid.txt");
 const flagFile = path.join(app.getPath("userData"), "restore.json");
-
+const passFile = path.join(app.getPath("userData"), "pass.json");
+const isLockedFile = path.join(app.getPath("userData"), "isLocked.json");
 class DeviceIdManager {
   static getAppUniqueId() {
     let deviceId;

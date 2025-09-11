@@ -24,4 +24,5 @@ async function logUserOpen(userId) {
 module.exports = UserDaily;
 module.exports = {
   logUserOpen,
+  UserDaily,
 };

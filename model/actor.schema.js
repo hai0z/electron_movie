@@ -14,4 +14,6 @@ const ActorSchema = new mongoose.Schema({
   image: { type: ImageSchema, required: true },
 });
 
+ActorSchema.index({ name: "text" });
+
 module.exports = mongoose.model("actor", ActorSchema);

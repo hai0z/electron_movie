@@ -1,7 +1,7 @@
 const os = require("os");
 const UserData = require("../../model/userData.schema.js");
 const { connectDB } = require("../../config/db.js");
-const { logUserOpen } = require("../../model/userDaily.schema.js");
+const { logUserOpen, UserDaily } = require("../../model/userDaily.schema.js");
 const DeviceIdManager = require("../utils/deviceId");
 
 class UserService {
@@ -47,6 +47,11 @@ class UserService {
   static async logAppOpen() {
     const userUid = DeviceIdManager.getAppUniqueId();
     return logUserOpen(userUid);
+  }
+  static async getOpenApp() {
+    const userUid = DeviceIdManager.getAppUniqueId();
+    const data = await UserDaily.find({ userUid }).lean();
+    return data;
   }
 }
 

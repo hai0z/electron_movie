@@ -57,6 +57,11 @@ class IpcHandler {
       const syncedData = await UserService.syncUserData(userUid, clientData);
       WindowManager.getMainWindow().webContents.send("synced-data", syncedData);
     });
+
+    ipcMain.on("get-open-app", async () => {
+      const data = await UserService.getOpenApp();
+      WindowManager.getMainWindow().webContents.send("open-app-data", data);
+    });
   }
 
   static setupMovieHandlers() {

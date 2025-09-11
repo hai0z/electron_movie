@@ -11,7 +11,7 @@ const DailyCard = () => {
       {dailyVideos?.map((video) => {
         return (
           <div
-            className="card bg-base-100 image-full w-[32%] shadow-xl"
+            className="card bg-base-100 image-full w-[32%] 2xl:w[23%] shadow-xl"
             key={video.id}
           >
             <figure>

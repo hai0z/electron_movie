@@ -33,6 +33,7 @@ import { Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
 import ActorPage from "../page/Actor";
 import ActorMovie from "../page/ActorMovie";
+import StatisticsPage from "../page/Stats";
 const MainLayout = () => {
   const theme = useAppStore((state) => state.theme);
 
@@ -57,9 +58,8 @@ const MainLayout = () => {
 
   return (
     <motion.div
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 120, damping: 15 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       className="w-full h-full"
     >
       <div
@@ -226,6 +226,10 @@ const router = createHashRouter([
       {
         path: "/setting",
         element: <Setting />,
+      },
+      {
+        path: "/stats",
+        element: <StatisticsPage />,
       },
     ],
     errorElement: <Error />,

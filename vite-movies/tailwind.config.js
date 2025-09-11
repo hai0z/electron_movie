@@ -10,6 +10,7 @@ export default {
     extend: {
       colors: {
         primarys: "oklch(var(--p))",
+        secondarys: "oklch(var(--s))",
       },
     },
   },

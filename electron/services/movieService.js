@@ -61,16 +61,15 @@ class MovieService {
     const { page = 1, limit = 30, name } = query;
     const skip = (page - 1) * limit;
 
-    // Tìm các movie mà mảng actors chứa tên này
+    // Cần tạo text index trước: db.movies.createIndex({ actors: "text" })
     const movies = await Movie.find({
-      actors: name, // <-- đây là key
+      $text: { $search: name },
     })
       .skip(skip)
       .limit(limit);
 
-    // Tính tổng số actor (hoặc có thể tính tổng movie nếu muốn)
     const total = await Movie.countDocuments({
-      actors: name,
+      $text: { $search: name },
     });
 
     return {
@@ -81,7 +80,7 @@ class MovieService {
         total,
         last_page: Math.ceil(total / limit),
       },
-      movies, // trả về movies thay vì actors
+      movies,
     };
   }
 
@@ -89,12 +88,15 @@ class MovieService {
     const { page = 1, limit = 30, name } = query;
     const skip = (page - 1) * limit;
 
-    // Tìm actor theo tên gần đúng (case-insensitive)
-    const filter = name ? { name: { $regex: name, $options: "i" } } : {};
+    const actors = await Actor.find({
+      $text: { $search: name },
+    })
+      .skip(skip)
+      .limit(limit);
 
-    const actors = await Actor.find(filter).skip(skip).limit(limit);
-
-    const total = await Actor.countDocuments(filter);
+    const total = await Actor.countDocuments({
+      $text: { $search: name },
+    });
 
     return {
       status: true,

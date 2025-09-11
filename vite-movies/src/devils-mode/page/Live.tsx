@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { LiveRespone, Daum } from "../types/Live";
 import ReactPlayer from "react-player";
 import Loading from "../../common/Loading";
+
 const Live = () => {
   const electron = (window as any).electron;
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ const Live = () => {
 
   if (loading) {
     return (
-      <div className="flex w-full items-center justify-center h-full">
+      <div className="flex justify-center items-center h-full w-full">
         <Loading />
       </div>
     );
@@ -32,50 +33,51 @@ const Live = () => {
 
   if (!data || data.data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
-        😢 Không có stream nào đang online
+      <div className="text-center p-8">
+        <p className="text-lg">Không có stream nào đang online</p>
+        <button className="btn btn-primary mt-4" onClick={getData}>
+          Tải lại
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="px-6 w-full h-full">
-      <h2 className="text-xl font-bold mb-4">
-        🎥 Live đang phát ({data.size} streams)
-      </h2>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">🔴 Live ({data.size})</h1>
+        <button className="btn btn-sm" onClick={getData}>
+          🔄 Tải lại
+        </button>
+      </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
         {data.data.map((item: Daum) => (
-          <div
-            key={item.id}
-            className="card bg-base-200 shadow-sm rounded-2xl overflow-hidden"
-          >
-            <figure className="relative">
+          <div key={item.id} className="card bg-base-100 shadow">
+            <figure>
               <img
                 src={item.cover_image_url}
                 alt={item.title}
                 className="w-full h-40 object-cover"
               />
-              <span className="absolute bottom-2 right-2 bg-black/60 text-white  text-xs px-2 py-1 rounded-lg">
-                👀 {item.viewer_count}
-              </span>
             </figure>
-            <div className="card-body p-4">
-              <h3 className="font-semibold text-sm line-clamp-2">
+            <div className="card-body p-3">
+              <h2 className="text-sm font-semibold line-clamp-2">
                 {item.title}
-              </h3>
+              </h2>
               <p className="text-xs text-gray-500">{item.nick_name}</p>
-              <div className="mt-2">
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-xs">👀 {item.viewer_count}</span>
                 <button
+                  className="btn btn-primary btn-xs"
                   onClick={() => {
                     setSelected(item);
                     (
                       document.getElementById("live_modal") as HTMLDialogElement
                     )?.showModal();
                   }}
-                  className="btn btn-primary btn-sm w-full rounded-xl"
                 >
-                  Xem ngay
+                  Xem
                 </button>
               </div>
             </div>
@@ -83,39 +85,33 @@ const Live = () => {
         ))}
       </div>
 
-      {/* Modal DaisyUI */}
+      {/* Modal */}
       <dialog id="live_modal" className="modal">
-        <div className="modal-box max-w-5xl">
+        <div className="modal-box max-w-4xl">
           <form method="dialog">
-            {/* nút đóng */}
-            <button
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              onClick={() => setSelected(null)}
-            >
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
           </form>
 
           {selected && (
-            <div className="flex flex-col gap-4">
-              <h3 className="font-bold text-lg">{selected.title}</h3>
-              <p className="text-sm text-gray-500">{selected.nick_name}</p>
+            <div>
+              <h3 className="font-bold text-lg mb-2">{selected.title}</h3>
+              <p className="text-sm mb-4">
+                {selected.nick_name} • 👀 {selected.viewer_count}
+              </p>
 
-              {/* Player video */}
-              <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
+              <div className="aspect-video bg-black rounded">
                 <ReactPlayer
                   url={selected.play_back_url}
-                  height={"100%"}
-                  width={"100%"}
+                  height="100%"
+                  width="100%"
                   playing
                 />
               </div>
             </div>
           )}
         </div>
-        <form method="dialog" className="modal-backdrop">
-          <button onClick={() => setSelected(null)}>Đóng</button>
-        </form>
       </dialog>
     </div>
   );
