@@ -7,6 +7,7 @@ import { useStoriesHistory } from "../zustand/useStoriesHistory";
 import { useHistoryStore } from "../zustand/useHistoryStore";
 import toast from "react-hot-toast";
 import CryptoJS from "crypto-js";
+import PinLock from "../devils-mode/components/PinLock";
 const ONE_HOUR = 60 * 1000 * 60;
 
 const Setting = () => {
@@ -244,6 +245,13 @@ const Setting = () => {
         </div>
       </div>
 
+      <div className="bg-base-200 rounded-2xl px-6 py-2 mt-6 ">
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          🔒 Bảo mật
+        </h2>
+
+        <PinLock />
+      </div>
       {/* Export / Import */}
       {appMode == "devil" && (
         <div className="bg-base-200 rounded-2xl px-6 py-6 mt-6 ">

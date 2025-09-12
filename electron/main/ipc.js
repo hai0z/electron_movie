@@ -6,7 +6,7 @@ const BackupService = require("../services/backupService");
 const NotificationService = require("../services/notificationService");
 const DeviceIdManager = require("../utils/deviceId");
 const { recommendFromDB } = require("../services/recommend.service");
-
+const path = require("path");
 class IpcHandler {
   static initialize() {
     this.setupWindowControls();
@@ -61,6 +61,66 @@ class IpcHandler {
     ipcMain.on("get-open-app", async () => {
       const data = await UserService.getOpenApp();
       WindowManager.getMainWindow().webContents.send("open-app-data", data);
+    });
+
+    ipcMain.on("set-lock-app", async () => {
+      await UserService.setLockApp();
+    });
+
+    ipcMain.on("unset-lock-app", async () => {
+      await UserService.unsetLockApp();
+    });
+
+    ipcMain.on("set-pin", async (_, pin) => {
+      const recoverKey = await UserService.setPin(pin);
+      WindowManager.getMainWindow().webContents.send("recover-key", recoverKey);
+    });
+
+    ipcMain.on("verifyPin", async (_, pin) => {
+      const isValid = await UserService.verifyPin(pin);
+      WindowManager.getMainWindow().webContents.send(
+        "verify-pin-result",
+        isValid
+      );
+    });
+
+    ipcMain.on("get-recovery-key", async () => {
+      const key = await UserService.getRecoverKey();
+      WindowManager.getMainWindow().webContents.send(
+        "get-recovery-key-result",
+        key
+      );
+    });
+
+    ipcMain.on("verify-success", async () => {
+      WindowManager.getMainWindow().loadFile(
+        path.join(__dirname, "../../vite-movies/dist/index.html")
+      );
+      // WindowManager.getMainWindow().loadURL("http://localhost:5173");
+    });
+
+    ipcMain.on("check-recover-key", async (_, recoverKey) => {
+      const isValid = await UserService.checkRecoverKey(recoverKey);
+      WindowManager.getMainWindow().webContents.send(
+        "check-recover-key-result",
+        isValid
+      );
+    });
+
+    ipcMain.on("forgot-pin", async (_, pin) => {
+      const isSuccess = await UserService.recoverPin(pin);
+      WindowManager.getMainWindow().webContents.send(
+        "forgot-pin-result",
+        isSuccess
+      );
+    });
+
+    ipcMain.on("change-pin", async (_, newPin) => {
+      const isSuccess = await UserService.changePin(newPin);
+      WindowManager.getMainWindow().webContents.send(
+        "change-pin-result",
+        isSuccess
+      );
     });
   }
 

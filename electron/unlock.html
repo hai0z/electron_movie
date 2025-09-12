@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unlock</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="flex items-center justify-center h-screen bg-base-200">
+    <!-- Unlock Card -->
+    <div class="card w-96 bg-base-100 card-bordered">
+      <div class="card-body items-center text-center">
+        <h2 class="card-title mb-4">Nhập mã pin</h2>
+
+        <!-- Input boxes -->
+        <div class="flex gap-3">
+          <input
+            type="password"
+            maxlength="1"
+            class="pin-input input input-bordered w-12 text-center text-xl"
+          />
+          <input
+            type="password"
+            maxlength="1"
+            class="pin-input input input-bordered w-12 text-center text-xl"
+          />
+          <input
+            type="password"
+            maxlength="1"
+            class="pin-input input input-bordered w-12 text-center text-xl"
+          />
+          <input
+            type="password"
+            maxlength="1"
+            class="pin-input input input-bordered w-12 text-center text-xl"
+          />
+        </div>
+
+        <!-- Loading state -->
+        <div id="loading" class="mt-4 hidden">
+          <span class="loading loading-spinner loading-lg"></span>
+          <p class="mt-2 text-sm">Đang xác thực...</p>
+        </div>
+        <p class="mt-4 text-sm">
+          Quên mã PIN?
+          <a href="recovery.html" class="link link-primary"
+            >Khôi phục tại đây</a
+          >
+        </p>
+        <p class="text-sm">
+          Hoặc
+          <a href="changePin.html" class="link link-primary">Đổi mã PIN</a>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const ipcRenderer = window.electron.ipcRenderer;
+
+      const inputs = document.querySelectorAll(".pin-input");
+      const loading = document.getElementById("loading");
+
+      // Đọc trạng thái từ localStorage
+      let failCount = parseInt(localStorage.getItem("failCount") || "0");
+      let lockUntil = parseInt(localStorage.getItem("lockUntil") || "0");
+
+      function resetInputs() {
+        inputs.forEach((inp) => (inp.value = ""));
+        inputs[0].focus();
+      }
+
+      function disableInputs(disabled) {
+        inputs.forEach((inp) => (inp.disabled = disabled));
+      }
+
+      function updateLockState() {
+        if (Date.now() < lockUntil) {
+          disableInputs(true);
+
+          const interval = setInterval(() => {
+            const remaining = Math.ceil((lockUntil - Date.now()) / 1000);
+            if (remaining > 0) {
+              document.querySelector(
+                ".card-title"
+              ).innerText = `Sai quá nhiều lần! Vui lòng thử lại sau ${remaining} giây.`;
+              document
+                .querySelector(".card-title")
+                .classList.add("text-red-500");
+            } else {
+              clearInterval(interval);
+              disableInputs(false);
+              resetInputs();
+              document.querySelector(".card-title").innerText =
+                "Enter Passcode";
+              document
+                .querySelector(".card-title")
+                .classList.remove("text-red-500");
+              localStorage.setItem("failCount", "0"); // reset
+              localStorage.setItem("lockUntil", "0");
+            }
+          }, 1000);
+        } else {
+          disableInputs(false);
+        }
+      }
+
+      inputs.forEach((input, index) => {
+        input.addEventListener("input", (e) => {
+          if (Date.now() < lockUntil) {
+            input.value = "";
+            return;
+          }
+
+          const value = e.target.value;
+
+          if (value && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+
+          if ([...inputs].every((inp) => inp.value)) {
+            loading.classList.remove("hidden");
+
+            setTimeout(() => {
+              const code = [...inputs].map((inp) => inp.value).join("");
+              ipcRenderer.send("verifyPin", code);
+
+              resetInputs();
+            }, 1000);
+          }
+        });
+
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && !input.value && index > 0) {
+            inputs[index - 1].focus();
+          }
+        });
+      });
+
+      inputs[0].focus();
+
+      ipcRenderer.on("verify-pin-result", (success) => {
+        loading.classList.add("hidden");
+
+        if (success) {
+          failCount = 0;
+          localStorage.setItem("failCount", "0");
+          localStorage.setItem("lockUntil", "0");
+
+          document
+            .querySelector(".card-title")
+            .classList.remove("text-red-500");
+          document.querySelector(".card-title").classList.add("text-green-500");
+          document.querySelector(".card-title").innerText =
+            "Xác thực thành công!";
+          disableInputs(true);
+          ipcRenderer.send("verify-success");
+        } else {
+          failCount++;
+          localStorage.setItem("failCount", failCount.toString());
+
+          document.querySelector(".card-title").classList.add("text-red-500");
+          document.querySelector(".card-title").innerText =
+            "Mã PIN không hợp lệ! Vui lòng thử lại.";
+
+          if (failCount % 5 === 0) {
+            const waitSeconds = (failCount / 5) * 10; // 5 lần = 10s, 10 lần = 20s ...
+            lockUntil = Date.now() + waitSeconds * 1000;
+            localStorage.setItem("lockUntil", lockUntil.toString());
+
+            updateLockState();
+          }
+        }
+
+        resetInputs();
+      });
+
+      // Khi mở app lên thì check lại trạng thái
+      updateLockState();
+    </script>
+  </body>
+</html>

@@ -66,7 +66,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         history: data.readHistory,
       }));
 
-      const { name, userUid, lastSync } = data;
+      const { name, userUid, lastSync, lockApp, havedPin } = data;
 
       localStorage.setItem(
         "user",
@@ -74,6 +74,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           name,
           userUid,
           lastSync,
+          lockApp,
+          havedPin,
         })
       );
     });

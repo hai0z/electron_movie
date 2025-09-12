@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đổi PIN</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="flex items-center justify-center h-screen bg-base-200 w-full">
+    <div class="card bg-base-100 card-bordered">
+      <div class="card-body space-y-4 text-center">
+        <div class="flex justify-between items-center">
+          <h2 class="card-title">Đổi PIN</h2>
+          <a href="unlock.html" class="btn btn-sm btn-ghost">Quay lại</a>
+        </div>
+
+        <!-- Step indicator -->
+        <ul class="steps w-full" id="stepIndicator">
+          <li class="step step-primary">PIN cũ</li>
+          <li class="step">PIN mới</li>
+          <li class="step">Xác nhận PIN</li>
+        </ul>
+
+        <!-- Bước 1: nhập pin cũ -->
+        <div id="step1">
+          <div class="flex justify-center gap-2">
+            <input
+              maxlength="1"
+              class="old-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="old-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="old-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="old-pin input input-bordered w-12 text-center text-lg"
+            />
+          </div>
+          <button id="btnVerifyOldPin" class="btn btn-primary w-full mt-4">
+            Xác minh
+          </button>
+        </div>
+
+        <!-- Bước 2: nhập pin mới -->
+        <div id="step2" class="hidden">
+          <div class="flex justify-center gap-2">
+            <input
+              maxlength="1"
+              class="new-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="new-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="new-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="new-pin input input-bordered w-12 text-center text-lg"
+            />
+          </div>
+          <button id="btnSetPin" class="btn btn-primary w-full mt-4">
+            Tiếp tục
+          </button>
+        </div>
+
+        <!-- Bước 3: xác nhận pin mới -->
+        <div id="step3" class="hidden">
+          <div class="flex justify-center gap-2">
+            <input
+              maxlength="1"
+              class="confirm-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="confirm-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="confirm-pin input input-bordered w-12 text-center text-lg"
+            />
+            <input
+              maxlength="1"
+              class="confirm-pin input input-bordered w-12 text-center text-lg"
+            />
+          </div>
+          <button id="btnConfirmPin" class="btn btn-success w-full mt-4">
+            Xác nhận
+          </button>
+        </div>
+
+        <!-- Thông báo -->
+        <p id="errorMsg" class="text-red-500"></p>
+      </div>
+    </div>
+
+    <script>
+      const ipcRenderer = window.electron.ipcRenderer;
+
+      const stepIndicator = document.getElementById("stepIndicator").children;
+      const step1 = document.getElementById("step1");
+      const step2 = document.getElementById("step2");
+      const step3 = document.getElementById("step3");
+      const errorMsg = document.getElementById("errorMsg");
+
+      const btnVerifyOldPin = document.getElementById("btnVerifyOldPin");
+      const btnSetPin = document.getElementById("btnSetPin");
+      const btnConfirmPin = document.getElementById("btnConfirmPin");
+
+      const oldPinInputs = document.querySelectorAll(".old-pin");
+      const newPinInputs = document.querySelectorAll(".new-pin");
+      const confirmPinInputs = document.querySelectorAll(".confirm-pin");
+
+      // Helper: update steps UI
+      function setStep(activeIndex) {
+        Array.from(stepIndicator).forEach((li, i) => {
+          if (i < activeIndex) li.classList.add("step-primary");
+          else li.classList.remove("step-primary");
+        });
+      }
+
+      // Helper: ghép 4 input thành PIN string
+      function getPin(inputs) {
+        return Array.from(inputs)
+          .map((inp) => inp.value)
+          .join("");
+      }
+
+      // Auto move cursor
+      function setupAutoTab(inputs) {
+        inputs.forEach((inp, idx) => {
+          inp.addEventListener("input", () => {
+            if (inp.value && idx < inputs.length - 1) {
+              inputs[idx + 1].focus();
+            }
+          });
+          inp.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && !inp.value && idx > 0) {
+              inputs[idx - 1].focus();
+            }
+          });
+        });
+      }
+      setupAutoTab(oldPinInputs);
+      setupAutoTab(newPinInputs);
+      setupAutoTab(confirmPinInputs);
+
+      // Bước 1: xác minh pin cũ
+      btnVerifyOldPin.addEventListener("click", () => {
+        const oldPin = getPin(oldPinInputs);
+
+        if (oldPin.length !== 4 || !/^\d+$/.test(oldPin)) {
+          errorMsg.innerText = "PIN cũ phải là 4 chữ số!";
+          return;
+        }
+
+        ipcRenderer.on("verify-pin-result", (success) => {
+          if (success) {
+            errorMsg.innerText = "";
+            step1.classList.add("hidden");
+            step2.classList.remove("hidden");
+            setStep(2);
+            newPinInputs[0].focus();
+          } else {
+            errorMsg.innerText = "PIN cũ không đúng!";
+          }
+        });
+
+        ipcRenderer.send("verifyPin", oldPin);
+      });
+
+      // Bước 2: nhập pin mới
+      btnSetPin.addEventListener("click", () => {
+        const pin = getPin(newPinInputs);
+
+        if (pin.length !== 4 || !/^\d+$/.test(pin)) {
+          errorMsg.innerText = "PIN mới phải là 4 chữ số!";
+          return;
+        }
+
+        errorMsg.innerText = "";
+        step2.classList.add("hidden");
+        step3.classList.remove("hidden");
+        setStep(3);
+        confirmPinInputs[0].focus();
+      });
+
+      // Bước 3: xác nhận pin mới
+      btnConfirmPin.addEventListener("click", () => {
+        const pin = getPin(newPinInputs);
+        const confirm = getPin(confirmPinInputs);
+
+        if (pin !== confirm) {
+          errorMsg.innerText = "Mã PIN mới không trùng khớp!";
+          return;
+        }
+
+        ipcRenderer.on("change-pin-result", (success) => {
+          if (success) {
+            errorMsg.classList.remove("text-red-500");
+            errorMsg.classList.add("text-green-500");
+            errorMsg.innerText = "Đổi PIN thành công.";
+            step3.classList.add("hidden");
+          } else {
+            errorMsg.innerText = "Có lỗi xảy ra, thử lại sau.";
+          }
+        });
+
+        ipcRenderer.send("change-pin", pin);
+      });
+    </script>
+  </body>
+</html>
