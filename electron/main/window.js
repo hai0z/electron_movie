@@ -6,29 +6,10 @@ class WindowManager {
   static mainWindow = null;
   static lockWindow = null;
   static verifyWindow = null;
-
-  static createVerifyWindow() {
-    this.verifyWindow = new BrowserWindow({
-      width: 400,
-      height: 200,
-      alwaysOnTop: true,
-      autoHideMenuBar: true,
-      center: true,
-      show: true,
-      resizable: false,
-      frame: false,
-      webPreferences: {
-        preload: path.join(__dirname, "../preload/preload.js"),
-        devTools: true,
-        contextIsolation: true,
-        nodeIntegration: false,
-      },
-      icon: path.join(__dirname, "../../assets/fire.ico"),
-    });
-    return this.verifyWindow;
-  }
+  static theme = DeviceIdManager.getThemePreference();
 
   static async createMainWindow() {
+    console.log(this.theme);
     this.mainWindow = new BrowserWindow({
       minWidth: 1366,
       minHeight: 768,
@@ -36,6 +17,7 @@ class WindowManager {
       height: 768,
       alwaysOnTop: false,
       title: "Movies Hub",
+      backgroundColor: this.theme.bgColor,
       autoHideMenuBar: true,
       center: true,
       show: true,

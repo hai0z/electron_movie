@@ -93,10 +93,10 @@ class IpcHandler {
     });
 
     ipcMain.on("verify-success", async () => {
-      WindowManager.getMainWindow().loadFile(
-        path.join(__dirname, "../../vite-movies/dist/index.html")
-      );
-      // WindowManager.getMainWindow().loadURL("http://localhost:5173");
+      // WindowManager.getMainWindow().loadFile(
+      //   path.join(__dirname, "../../vite-movies/dist/index.html")
+      // );
+      WindowManager.getMainWindow().loadURL("http://localhost:5173");
     });
 
     ipcMain.on("check-recover-key", async (_, recoverKey) => {
@@ -121,6 +121,15 @@ class IpcHandler {
         "change-pin-result",
         isSuccess
       );
+    });
+
+    ipcMain.on("apply-theme", async (_, theme) => {
+      DeviceIdManager.saveThemePreference(theme);
+    });
+
+    ipcMain.on("get-theme", async () => {
+      const theme = DeviceIdManager.getThemePreference();
+      WindowManager.getMainWindow().webContents.send("theme-data", theme);
     });
   }
 

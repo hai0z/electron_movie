@@ -1,12 +1,12 @@
 const { app } = require("electron");
 const fs = require("fs");
 const path = require("path");
-const { randomUUID, createHash } = require("crypto");
+const { randomUUID } = require("crypto");
 
 const idFile = path.join(app.getPath("userData"), "uuid.txt");
 const flagFile = path.join(app.getPath("userData"), "restore.json");
-const passFile = path.join(app.getPath("userData"), "pass.json");
-const isLockedFile = path.join(app.getPath("userData"), "isLocked.json");
+const themeFile = path.join(app.getPath("userData"), "theme.json");
+
 class DeviceIdManager {
   static getAppUniqueId() {
     let deviceId;
@@ -40,6 +40,16 @@ class DeviceIdManager {
       return true;
     }
     return false;
+  }
+  static saveThemePreference(theme) {
+    fs.writeFileSync(themeFile, JSON.stringify(theme), "utf-8");
+  }
+  static getThemePreference() {
+    if (fs.existsSync(themeFile)) {
+      const data = JSON.parse(fs.readFileSync(themeFile, "utf-8"));
+      return data;
+    }
+    return { name: "light", bgColor: "#ffffff" };
   }
 }
 

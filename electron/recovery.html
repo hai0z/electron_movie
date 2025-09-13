@@ -205,6 +205,13 @@
 
         ipcRenderer.send("forgot-pin", pin);
       });
+      ipcRenderer.send("get-theme");
+
+      ipcRenderer.on("theme-data", (theme) => {
+        document
+          .getElementsByTagName("html")[0]
+          .setAttribute("data-theme", theme.name);
+      });
     </script>
   </body>
 </html>

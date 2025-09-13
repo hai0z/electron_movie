@@ -8,8 +8,19 @@ import { useHistoryStore } from "../zustand/useHistoryStore";
 import toast from "react-hot-toast";
 import CryptoJS from "crypto-js";
 import PinLock from "../devils-mode/components/PinLock";
+import { oklch2hex } from "colorizr";
 const ONE_HOUR = 60 * 1000 * 60;
 
+function parseOklchString(str: string) {
+  const [Lraw, Craw, Hraw] = str.trim().split(/\s+/);
+
+  const L = parseFloat(Lraw.replace("%", "")) / 100;
+
+  const C = parseFloat(Craw);
+  const H = parseFloat(Hraw);
+
+  return { L, C, H };
+}
 const Setting = () => {
   const theme = useAppStore((state) => state.theme);
   const setTheme = useAppStore((state) => state.setTheme);
@@ -41,6 +52,18 @@ const Setting = () => {
     document
       .getElementsByTagName("html")[0]
       ?.setAttribute("data-theme", themeName);
+
+    const { L, C, H } = parseOklchString(
+      getComputedStyle(document.documentElement).getPropertyValue("--b1")
+    );
+    electron.ipcRenderer.send("apply-theme", {
+      name: themeName,
+      bgColor: oklch2hex({
+        l: L,
+        c: C,
+        h: H,
+      }),
+    });
   }
 
   const handleCopy = async () => {

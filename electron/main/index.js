@@ -28,7 +28,9 @@ async function initialize() {
 }
 
 // App startup
-app.whenReady().then(initialize);
+app.whenReady().then(() => {
+  initialize();
+});
 
 // Quit when all windows are closed
 app.on("window-all-closed", () => {
