@@ -1,4 +1,4 @@
-const { ipcMain } = require("electron");
+const { ipcMain, Notification } = require("electron");
 const WindowManager = require("./window");
 const UserService = require("../services/userService");
 const MovieService = require("../services/movieService");
@@ -8,7 +8,10 @@ const DeviceIdManager = require("../utils/deviceId");
 const { recommendFromDB } = require("../services/recommend.service");
 const Store = require("electron-store");
 
-const store = new Store();
+const store = new Store({
+  encryptionKey: "anhemminhcuthethoihehehe",
+  name: "app-data",
+});
 
 const path = require("path");
 class IpcHandler {
@@ -98,10 +101,10 @@ class IpcHandler {
     });
 
     ipcMain.on("verify-success", async () => {
-      WindowManager.getMainWindow().loadFile(
-        path.join(__dirname, "../../vite-movies/dist/index.html")
-      );
-      // WindowManager.getMainWindow().loadURL("http://localhost:5173");
+      // WindowManager.getMainWindow().loadFile(
+      //   path.join(__dirname, "../../vite-movies/dist/index.html")
+      // );
+      WindowManager.getMainWindow().loadURL("http://localhost:5173");
     });
 
     ipcMain.on("check-recover-key", async (_, recoverKey) => {
@@ -199,6 +202,10 @@ class IpcHandler {
       WindowManager.getMainWindow().webContents.send("old-data", data);
     });
 
+    ipcMain.on("get-random-video", async () => {
+      const data = await MovieService.getRandom();
+      WindowManager.getMainWindow().webContents.send("random-data", data);
+    });
     // 1. Lấy danh sách actor
     ipcMain.on("get-actors", async (_, query) => {
       const result = await MovieService.getActor(query);

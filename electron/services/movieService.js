@@ -8,7 +8,6 @@ const {
   getMovieDetail,
   getMovieDetailOld,
 } = require("./main.service.js");
-const DeviceIdManager = require("../utils/deviceId.js");
 const { recommendFromDB } = require("./recommend.service.js");
 
 class MovieService {
@@ -38,6 +37,13 @@ class MovieService {
     };
   }
 
+  static async getRandom() {
+    const movie = await Movie.aggregate([
+      { $match: { actors: { $exists: true, $ne: [] } } }, // actor tồn tại và không rỗng
+      { $sample: { size: 1 } }, // lấy ngẫu nhiên 1
+    ]);
+    return movie[0];
+  }
   static async getActor(query) {
     const { page = 1, limit = 30 } = query;
     const skip = (page - 1) * limit;

@@ -22,7 +22,6 @@ export default function ActorMovie() {
 
   const navigate = useNavigate();
 
-  console.log(query);
   const loadActors = () => {
     ipcRenderer.send("get-actor-movies", { page, limit, name: query });
   };

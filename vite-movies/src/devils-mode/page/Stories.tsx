@@ -90,7 +90,7 @@ const StoriesPage = () => {
       {loading ? (
         <Loading />
       ) : (
-        <div className="flex flex-col px-4 gap-4 pt-4">
+        <div className="flex flex-col pr-6 gap-4 pt-4">
           {data?.channels.map((stories) => {
             const inHistory = history.find((i) => i.channel.id === stories.id);
 

@@ -146,7 +146,7 @@ const ComicDetailPage = () => {
             {location?.state?.channel.name}
           </p>
           {/* Nút tăng giảm chiều rộng */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 mr-4">
             <button
               className="btn btn-sm btn-outline"
               onClick={() => setContentWidth((w) => Math.max(40, w - 5))}
@@ -199,8 +199,8 @@ const ComicDetailPage = () => {
       {loading ? (
         <Loading />
       ) : (
-        <div className="container mx-auto flex justify-center">
-          <div className="mt-16" style={{ width: `${contentWidth}%` }}>
+        <div className="container  flex justify-center ">
+          <div className="mt-16 mr-6" style={{ width: `${contentWidth}%` }}>
             {contents?.files.map((img) => {
               return (
                 <img

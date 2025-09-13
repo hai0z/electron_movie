@@ -87,6 +87,7 @@ const StatisticsPage = () => {
     ipcRenderer.on("open-app-data", (result: any) => {
       setOpenAppData(result);
     });
+    window.scrollTo(0, 0);
   }, []);
 
   const formatTime = (seconds = 0) => {
@@ -202,10 +203,10 @@ const StatisticsPage = () => {
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-1">
                         <Link
-                          to={`/actor-movie?actor=${actor}`}
+                          to={`${actor ? `/actor-movie?actor=${actor}` : "#"}`}
                           className="font-semibold text-base hover:underline"
                         >
-                          {actor}
+                          {actor || "Unknown"}
                         </Link>
                         <span className="badge badge-primary badge-lg">
                           {count}

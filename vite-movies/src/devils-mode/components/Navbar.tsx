@@ -34,16 +34,16 @@ const SidebarNavbar = () => {
   const [data, setData] = useState<Movie>();
   const [loading, setLoading] = useState(true);
 
+  const ipcRenderer = (window as any).electron.ipcRenderer;
+
   const getRandomVideo = async () => {
     setLoading(true);
-    const res = await fetch(
-      `https://xxvnapi.com/api/chuyen-muc/jav-hd?page=${Math.floor(
-        Math.random() * 48 + 1
-      )}`
-    );
-    const data = await res.json();
-    setData(data.movies[Math.floor(Math.random() * 49)]);
-    setLoading(false);
+    ipcRenderer.send("get-random-video");
+    ipcRenderer.on("random-data", (data: any) => {
+      setData(data);
+      console.log(data);
+      setLoading(false);
+    });
   };
 
   return (

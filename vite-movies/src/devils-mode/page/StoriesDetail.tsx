@@ -138,7 +138,7 @@ const StoriesDetail = () => {
           <p className="text-center text-lg font-bold">
             {location?.state?.channel.name}
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mr-4">
             <button
               className="btn btn-sm btn-outline"
               onClick={() => setTextSize((w) => Math.max(24, w - 5))}
@@ -188,10 +188,10 @@ const StoriesDetail = () => {
 
       {/* Nội dung */}
       {!loading ? (
-        <div className="mt-16">
+        <div className="mt-16 mr-6 ">
           <p
             dangerouslySetInnerHTML={{ __html: contents }}
-            className=" leading-relaxed"
+            className="leading-relaxed text-justify"
             style={{
               fontSize: textSize,
               lineHeight: 2,
