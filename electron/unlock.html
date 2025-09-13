@@ -10,6 +10,10 @@
       type="text/css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Lấy theme từ preload
+      document.documentElement.setAttribute("data-theme", window.theme.value);
+    </script>
   </head>
 
   <body class="flex items-center justify-center h-screen bg-base-200">
@@ -182,14 +186,7 @@
 
       // Khi mở app lên thì check lại trạng thái
       updateLockState();
-
-      ipcRenderer.send("get-theme");
-
-      ipcRenderer.on("theme-data", (theme) => {
-        document
-          .getElementsByTagName("html")[0]
-          .setAttribute("data-theme", theme.name);
-      });
+      console.log(window.theme.value);
     </script>
   </body>
 </html>

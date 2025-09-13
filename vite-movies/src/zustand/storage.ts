@@ -1,16 +1,24 @@
-import { StateStorage } from "zustand/middleware";
-import LZString from "lz-string";
-const zustandStorage: StateStorage = {
-  getItem(name) {
-    const value = localStorage.getItem(name);
-    return LZString.decompress(value!) ?? null;
-  },
-  setItem(name, value) {
-    localStorage.setItem(name, LZString.compress(value));
-  },
-  removeItem(name) {
-    localStorage.removeItem(name);
-  },
-};
+import { PersistStorage, StorageValue } from "zustand/middleware";
+export function createElectronStorage<S>(): PersistStorage<S> {
+  return {
+    getItem: async (name) => {
+      const str = await (window as any).electronStore.get(name);
+      if (!str) return null;
 
-export default zustandStorage;
+      try {
+        return JSON.parse(str) as StorageValue<S>;
+      } catch {
+        return null;
+      }
+    },
+    setItem: async (name, value) => {
+      await (window as any).electronStore.set({
+        key: name,
+        value: JSON.stringify(value),
+      });
+    },
+    removeItem: async (name) => {
+      await (window as any).electronStore.remove(name);
+    },
+  };
+}

@@ -1,5 +1,10 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+const themeArg = process.argv.find((arg) => arg.startsWith("--theme="));
+const theme = themeArg ? themeArg.replace("--theme=", "") : "light";
+
+contextBridge.exposeInMainWorld("theme", { value: theme });
+
 // Utility function to update version info in DOM
 function updateVersionInfo() {
   const replaceText = (selector, text) => {
@@ -22,4 +27,9 @@ contextBridge.exposeInMainWorld("electron", {
     on: (channel, func) =>
       ipcRenderer.on(channel, (event, ...args) => func(...args)),
   },
+});
+contextBridge.exposeInMainWorld("electronStore", {
+  get: (key) => ipcRenderer.invoke("store:get", key),
+  set: (key, value) => ipcRenderer.invoke("store:set", key, value),
+  remove: (key) => ipcRenderer.invoke("store:remove", key),
 });

@@ -16,12 +16,11 @@ const AppContext = React.createContext({} as IAppContext);
 
 const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isAppModeChange, setIsAppModeChange] = React.useState(false);
+  const theme = useAppStore((state) => state.theme);
 
   const setLightOff = useAppStore((state) => state.setLightOff);
 
   const electron = (window as any).electron;
-
-  const hydrated = useAppStore((state) => state.hydrated);
 
   const getUserData = () => {
     electron.ipcRenderer.send("get-user-data");
@@ -48,6 +47,10 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setLightOff(false);
     getUserData();
     syncData();
+  }, []);
+
+  useEffect(() => {
+    document.getElementsByTagName("html")[0].setAttribute("data-theme", theme);
   }, []);
 
   useEffect(() => {
@@ -87,8 +90,6 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // cleanup khi component unmount
     return () => clearInterval(interval);
   }, []);
-
-  if (!hydrated) return null;
 
   return (
     <AppContext.Provider

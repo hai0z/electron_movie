@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 import { HistoryItem, useHistoryStore } from "./useHistoryStore"; // hoặc type video bạn đã có
 import { Movie } from "../devils-mode/types/vietsub";
-import zustandStorage from "./storage";
 import { Actor } from "../devils-mode/page/Actor";
+import { createElectronStorage } from "./storage";
 
 interface MaybeLike {
   movies: Movie[];
@@ -89,7 +89,8 @@ export const useDailyStore = create<DailyState>()(
     }),
     {
       name: "daily-video-store",
-      storage: createJSONStorage(() => zustandStorage),
+      storage: createElectronStorage<DailyState>(),
+      version: 2,
     }
   )
 );

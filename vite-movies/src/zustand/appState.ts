@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
-import zustandStorage from "./storage";
+import { persist } from "zustand/middleware";
 import { Movie } from "../angle-mode/types/movieDetail";
 import { List } from "../devils-mode/types/movieDetail";
 import { Movie as MovieVietSub } from "../devils-mode/types/vietsub";
 import { Post } from "../devils-mode/types/other";
 import { Actor } from "../devils-mode/page/Actor";
+import { createElectronStorage } from "./storage";
 
 interface AppStore {
   theme: string;
@@ -57,11 +57,8 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: "app-state",
-      storage: createJSONStorage(() => zustandStorage),
-      onRehydrateStorage: () => (state) => {
-        console.log(state);
-        if (state) state.hydrated = true;
-      },
+      version: 2,
+      storage: createElectronStorage<AppStore>(),
     }
   )
 );

@@ -9,7 +9,6 @@ class WindowManager {
   static theme = DeviceIdManager.getThemePreference();
 
   static async createMainWindow() {
-    console.log(this.theme);
     this.mainWindow = new BrowserWindow({
       minWidth: 1366,
       minHeight: 768,
@@ -26,6 +25,7 @@ class WindowManager {
         devTools: true,
         contextIsolation: true,
         nodeIntegration: false,
+        additionalArguments: [`--theme=${this.theme.name}`],
       },
       frame: false,
       icon: path.join(__dirname, "../../assets/fire.ico"),

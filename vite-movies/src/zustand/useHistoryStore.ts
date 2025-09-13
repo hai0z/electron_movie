@@ -1,8 +1,8 @@
 // stores/useHistoryStore.ts
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 import { Post } from "../devils-mode/types/other";
-import zustandStorage from "./storage";
+import { createElectronStorage } from "./storage";
 
 export interface HistoryItem {
   id: string;
@@ -36,8 +36,8 @@ export const useHistoryStore = create<HistoryState>()(
         };
         const updated = [newItem, ...get().history]
           // loại bỏ trùng id (chỉ giữ mới nhất)
-          .filter((v, i, arr) => arr.findIndex((x) => x.id === v.id) === i)
-          .slice(0, 50); // giới hạn 50 video
+          .filter((v, i, arr) => arr.findIndex((x) => x.id === v.id) === i);
+
         set({ history: updated });
       },
 
@@ -49,7 +49,8 @@ export const useHistoryStore = create<HistoryState>()(
     }),
     {
       name: "watch_history",
-      storage: createJSONStorage(() => zustandStorage),
+      storage: createElectronStorage<HistoryState>(),
+      version: 2,
     }
   )
 );

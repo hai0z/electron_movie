@@ -1,7 +1,6 @@
 import { BiWindowClose, BiWindows } from "react-icons/bi";
 import { createHashRouter, Outlet } from "react-router-dom";
 import { useAppStore } from "../../zustand/appState";
-import { useEffect } from "react";
 import { FaRegWindowMinimize } from "react-icons/fa6";
 import MovieDetail from "../page/MovieDetail";
 import Search from "../page/Search";
@@ -35,13 +34,7 @@ import ActorPage from "../page/Actor";
 import ActorMovie from "../page/ActorMovie";
 import StatisticsPage from "../page/Stats";
 const MainLayout = () => {
-  const theme = useAppStore((state) => state.theme);
-
   const lightOff = useAppStore((state) => state.lightOff);
-
-  useEffect(() => {
-    document.getElementsByTagName("html")[0].setAttribute("data-theme", theme);
-  }, []);
 
   const electron = (window as any).electron;
   const minimize = () => {

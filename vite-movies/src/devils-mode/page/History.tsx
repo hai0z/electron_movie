@@ -6,46 +6,88 @@ import { Post } from "../types/other";
 import OtherSourcemodal from "../components/OtherSourceModal";
 
 function formatTime(seconds: number) {
-  if (seconds < 60) {
-    return `${seconds}s`;
-  } else if (seconds < 3600) {
+  if (seconds < 60) return `${seconds}s`;
+  if (seconds < 3600) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
-  } else {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
   }
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
 }
 
 const HistoryPage = () => {
   const { history, clearHistory, removeFromHistory } = useHistoryStore();
 
   const [post, setPost] = useState<Post>();
-  const [confirmId, setConfirmId] = useState<string | null>(null); // id để xác nhận xoá
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<
+    "all" | "day" | "week" | "month" | "year"
+  >("all");
+
+  // Hàm lọc theo filter
+  const now = new Date();
+  const filteredHistory = history.filter((item) => {
+    const watchedDate = new Date(item.watchedAt);
+    switch (filter) {
+      case "day":
+        return watchedDate.toDateString() === now.toDateString();
+      case "week": {
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay()); // CN đầu tuần
+        startOfWeek.setHours(0, 0, 0, 0);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 7);
+        return watchedDate >= startOfWeek && watchedDate < endOfWeek;
+      }
+      case "month":
+        return (
+          watchedDate.getMonth() === now.getMonth() &&
+          watchedDate.getFullYear() === now.getFullYear()
+        );
+      case "year":
+        return watchedDate.getFullYear() === now.getFullYear();
+      default:
+        return true;
+    }
+  });
 
   return (
-    <div className="p-6  h-full my-4">
+    <div className="p-6 h-full my-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Clock className="w-6 h-6 text-primarys" />
           Lịch sử đã xem
         </h1>
-        {history.length > 0 && (
-          <button
-            onClick={() =>
-              (document.getElementById("clear_all_modal") as any)?.showModal()
-            }
-            className="btn btn-error btn-sm"
+        <div className="flex items-center gap-2">
+          {/* Dropdown filter */}
+          <select
+            className="select select-bordered select-sm"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as any)}
           >
-            Xoá tất cả
-          </button>
-        )}
+            <option value="all">Tất cả</option>
+            <option value="day">Hôm nay</option>
+            <option value="week">Tuần này</option>
+            <option value="month">Tháng này</option>
+            <option value="year">Năm nay</option>
+          </select>
+          {history.length > 0 && (
+            <button
+              onClick={() =>
+                (document.getElementById("clear_all_modal") as any)?.showModal()
+              }
+              className="btn btn-error btn-sm"
+            >
+              Xoá tất cả
+            </button>
+          )}
+        </div>
       </div>
       {/* Content */}
-      {history.length === 0 ? (
+      {filteredHistory.length === 0 ? (
         <div className="alert alert-info shadow-lg w-full">
           <div>
             <Clock className="w-5 h-5" />
@@ -53,7 +95,7 @@ const HistoryPage = () => {
           </div>
         </div>
       ) : (
-        history
+        filteredHistory
           .filter((item) => item.id !== undefined)
           .map((item) => (
             <div
@@ -126,7 +168,6 @@ const HistoryPage = () => {
             </div>
           ))
       )}
-
       {/* Modal xoá từng mục */}
       <dialog id="delete_modal" className="modal">
         <div className="modal-box">
@@ -146,7 +187,6 @@ const HistoryPage = () => {
             <button
               onClick={() => {
                 setConfirmId(null);
-
                 (document.getElementById("delete_modal") as any)?.close();
               }}
               className="btn btn-outline"
@@ -156,7 +196,6 @@ const HistoryPage = () => {
           </div>
         </div>
       </dialog>
-
       {/* Modal xoá tất cả */}
       <dialog id="clear_all_modal" className="modal">
         <div className="modal-box">
@@ -183,8 +222,6 @@ const HistoryPage = () => {
           </div>
         </div>
       </dialog>
-
-      {/* Modal khác */}
       <OtherSourcemodal post={post} onClose={() => setPost(undefined)} />
     </div>
   );

@@ -36,7 +36,7 @@ const HomePage = () => {
   const [chinese, setChinese] = useState({} as HomeResult);
   const [loading, setLoading] = useState(false);
   const [all, setAll] = React.useState({} as VietSubResult);
-  const userName = JSON.parse(localStorage.getItem("user")!).name;
+  const userName = JSON.parse(localStorage.getItem("user")!)?.name;
 
   const { generateDaily, generateMaybeLike } = useDailyStore();
   const electron = (window as any).electron;

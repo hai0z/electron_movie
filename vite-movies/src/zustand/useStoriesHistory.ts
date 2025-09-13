@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 import { Channel } from "../devils-mode/types/Story";
-import zustandStorage from "./storage";
+import { createElectronStorage } from "./storage";
 
 export interface HistoryItem {
   channel: Channel;
@@ -36,7 +36,7 @@ export const useStoriesHistory = create<HistoryState>()(
           ...filtered,
         ];
 
-        set({ history: updated.slice(0, 50) });
+        set({ history: updated });
       },
 
       updateChap: (channelId, chap, position) => {
@@ -59,7 +59,8 @@ export const useStoriesHistory = create<HistoryState>()(
     }),
     {
       name: "story-history", // lưu vào localStorage
-      storage: createJSONStorage(() => zustandStorage),
+      storage: createElectronStorage<HistoryState>(),
+      version: 2, // sử dụng electron store
     }
   )
 );

@@ -6,6 +6,10 @@ const BackupService = require("../services/backupService");
 const NotificationService = require("../services/notificationService");
 const DeviceIdManager = require("../utils/deviceId");
 const { recommendFromDB } = require("../services/recommend.service");
+const Store = require("electron-store");
+
+const store = new Store();
+
 const path = require("path");
 class IpcHandler {
   static initialize() {
@@ -15,6 +19,7 @@ class IpcHandler {
     this.setupBackupHandlers();
     this.setupNotificationHandlers();
     this.setupRecommend();
+    this.setupStoreHandlers();
   }
 
   static setupRecommend() {
@@ -93,10 +98,10 @@ class IpcHandler {
     });
 
     ipcMain.on("verify-success", async () => {
-      // WindowManager.getMainWindow().loadFile(
-      //   path.join(__dirname, "../../vite-movies/dist/index.html")
-      // );
-      WindowManager.getMainWindow().loadURL("http://localhost:5173");
+      WindowManager.getMainWindow().loadFile(
+        path.join(__dirname, "../../vite-movies/dist/index.html")
+      );
+      // WindowManager.getMainWindow().loadURL("http://localhost:5173");
     });
 
     ipcMain.on("check-recover-key", async (_, recoverKey) => {
@@ -125,11 +130,6 @@ class IpcHandler {
 
     ipcMain.on("apply-theme", async (_, theme) => {
       DeviceIdManager.saveThemePreference(theme);
-    });
-
-    ipcMain.on("get-theme", async () => {
-      const theme = DeviceIdManager.getThemePreference();
-      WindowManager.getMainWindow().webContents.send("theme-data", theme);
     });
   }
 
@@ -276,6 +276,17 @@ class IpcHandler {
     ipcMain.on("read-noti", async () => {
       const userUid = DeviceIdManager.getAppUniqueId();
       await NotificationService.markAllAsRead(userUid);
+    });
+  }
+  static setupStoreHandlers() {
+    ipcMain.handle("store:get", (_, key) => {
+      return store.get(key);
+    });
+    ipcMain.handle("store:set", (_, { key, value }) => {
+      store.set(key, value);
+    });
+    ipcMain.handle("store:remove", (_, key) => {
+      store.delete(key);
     });
   }
 }
