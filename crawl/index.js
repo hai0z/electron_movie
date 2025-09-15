@@ -4,6 +4,7 @@ const Movie = require("../model/movie.schema.js");
 const Noti = require("../model/noti.schema.js");
 const User = require("../model/userData.schema.js");
 const { connectDB } = require("../config/db.js");
+const { Notification } = require("electron");
 
 const API_URL = "https://xxvnapi.com/api/phim-moi-cap-nhat?page=";
 const BATCH_SIZE = 10; // số request song song mỗi lần
@@ -116,7 +117,13 @@ const crawlLatest = async () => {
     // Lọc ra những movie chưa có
     const freshMovies = newMovies.filter((m) => !existingIds.has(m.id));
 
-    console.log(`Co ${freshMovies.length} movie moi`);
+    if (freshMovies.length > 0) {
+      new Notification({
+        title: "Video mới cập nhật",
+        body: `Có ${freshMovies.length} video mới vừa được cập nhật!`,
+        silent: false,
+      }).show();
+    }
 
     // Lưu tất cả movie vào DB (update hoặc insert)
     const ops = newMovies.map((movie) => ({

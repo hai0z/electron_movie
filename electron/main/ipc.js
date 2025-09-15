@@ -1,10 +1,11 @@
-const { ipcMain, Notification } = require("electron");
+const { ipcMain } = require("electron");
 const WindowManager = require("./window");
 const UserService = require("../services/userService");
 const MovieService = require("../services/movieService");
 const BackupService = require("../services/backupService");
 const NotificationService = require("../services/notificationService");
 const DeviceIdManager = require("../utils/deviceId");
+const HentaiService = require("../services/hentai.service");
 const { recommendFromDB } = require("../services/recommend.service");
 const Store = require("electron-store");
 
@@ -23,6 +24,7 @@ class IpcHandler {
     this.setupNotificationHandlers();
     this.setupRecommend();
     this.setupStoreHandlers();
+    this.setupHentaiHandlers();
   }
 
   static setupRecommend() {
@@ -101,10 +103,10 @@ class IpcHandler {
     });
 
     ipcMain.on("verify-success", async () => {
-      // WindowManager.getMainWindow().loadFile(
-      //   path.join(__dirname, "../../vite-movies/dist/index.html")
-      // );
-      WindowManager.getMainWindow().loadURL("http://localhost:5173");
+      WindowManager.getMainWindow().loadFile(
+        path.join(__dirname, "../../vite-movies/dist/index.html")
+      );
+      // WindowManager.getMainWindow().loadURL("http://localhost:5173");
     });
 
     ipcMain.on("check-recover-key", async (_, recoverKey) => {
@@ -294,6 +296,20 @@ class IpcHandler {
     });
     ipcMain.handle("store:remove", (_, key) => {
       store.delete(key);
+    });
+  }
+  static setupHentaiHandlers() {
+    ipcMain.on("get-hentais", async (_, { page = 1, limit = 48 }) => {
+      const hentaiService = new HentaiService();
+      const data = await hentaiService.getHentais(page, limit);
+      WindowManager.getMainWindow().webContents.send(
+        "hentai-data",
+        JSON.stringify(data)
+      );
+    });
+    ipcMain.on("play-in-new-tab", async (_, link) => {
+      const newWin = WindowManager.createHentaiWindow(link);
+      newWin.show();
     });
   }
 }

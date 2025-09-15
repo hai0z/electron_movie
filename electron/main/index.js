@@ -5,6 +5,7 @@ const WindowManager = require("./window");
 const IpcHandler = require("./ipc");
 const UserService = require("../services/userService");
 const DeviceIdManager = require("../utils/deviceId");
+const { crawlLatestHentai } = require("../../crawl/hentai.js");
 
 async function initialize() {
   // Connect to database
@@ -19,7 +20,7 @@ async function initialize() {
 
   // Start crawling latest content
   crawlLatest();
-
+  crawlLatestHentai();
   // Create main window
   WindowManager.createMainWindow();
 

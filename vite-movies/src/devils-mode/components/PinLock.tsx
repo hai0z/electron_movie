@@ -237,7 +237,7 @@ const PinLock = () => {
             key này.
           </p>
           <div className="flex items-center gap-2 mb-4">
-            <div className="bg-gray-100 border rounded p-3 text-center font-mono text-lg flex-1">
+            <div className=" border rounded p-3 text-center font-mono text-lg flex-1">
               {recoverKey}
             </div>
             <button className="btn btn-outline btn-sm" onClick={copyRecoverKey}>

@@ -33,6 +33,7 @@ import { motion } from "framer-motion";
 import ActorPage from "../page/Actor";
 import ActorMovie from "../page/ActorMovie";
 import StatisticsPage from "../page/Stats";
+import Hentai from "../page/Hentai";
 const MainLayout = () => {
   const lightOff = useAppStore((state) => state.lightOff);
 
@@ -223,6 +224,10 @@ const router = createHashRouter([
       {
         path: "/stats",
         element: <StatisticsPage />,
+      },
+      {
+        path: "/hentai",
+        element: <Hentai />,
       },
     ],
     errorElement: <Error />,

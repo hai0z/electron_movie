@@ -1,14 +1,18 @@
 import React, { useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { HomeResult } from "../types";
 import { MovieCard1 } from "../components/MovieCard";
 import Pagination from "../components/Pagination";
 import SkeletonMovieCard from "../../common/SkeletonMovieCard";
+import { ChevronLeft } from "lucide-react";
 
 const Search = () => {
   const params = useParams();
 
+  const navigate = useNavigate();
+
   const electron = (window as any).electron;
+
   const page = useSearchParams()[0].get("page") || 1;
 
   const [loading, setLoading] = React.useState(true);
@@ -34,6 +38,12 @@ const Search = () => {
   return (
     <div>
       <div>
+        <button
+          onClick={() => navigate(-1)}
+          className="btn btn-circle btn-ghost"
+        >
+          <ChevronLeft />
+        </button>
         <div className="mt-4 justify-center flex items-center sticky top-[40px] z-10 w-full bg-base-100 bg-opacity-90 backdrop-blur-md py-2">
           <Pagination
             page={+page}

@@ -50,8 +50,8 @@ export const useDailyStore = create<DailyState>()(
                 title: random.name,
                 type: "xxvn",
                 content: random.content,
-                actor: "",
-                tag: "",
+                actor: random.actors.join(", "),
+                tag: random.categories.map((cat) => cat.slug).join(", "),
               })) as Omit<HistoryItem, "watchedAt">[],
               lastGenerated: today,
             });

@@ -85,7 +85,7 @@ const ComicDetailPage = () => {
 
   const getContents = async () => {
     setLoading(true);
-    const res = await fetch(streams[currentIndex].remote_data.url);
+    const res = await fetch(streams?.[currentIndex]?.remote_data.url);
     const dt = await res.json();
     setContents(dt);
     setLoading(false);
@@ -161,7 +161,7 @@ const ComicDetailPage = () => {
             </button>
           </div>
         </div>
-        <div className=" flex flex-row items-center gap-4">
+        <div className=" flex flex-row items-center gap-4 pr-4">
           <button
             onClick={() => {
               navigation(-1);

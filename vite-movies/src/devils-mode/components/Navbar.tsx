@@ -19,6 +19,7 @@ import {
   VideoIcon,
   Sprout,
   ChartPie,
+  Panda,
 } from "lucide-react"; // icon đẹp
 import SearchInput from "./SearchInput";
 import RandomModal from "./RandomModal";
@@ -41,7 +42,6 @@ const SidebarNavbar = () => {
     ipcRenderer.send("get-random-video");
     ipcRenderer.on("random-data", (data: any) => {
       setData(data);
-      console.log(data);
       setLoading(false);
     });
   };
@@ -253,6 +253,15 @@ const SidebarNavbar = () => {
             </div>
           </li>
 
+          <li>
+            <Link
+              to="/hentai"
+              className={isActive("/hentai") ? "active font-bold" : ""}
+            >
+              <Panda className="w-5 h-5 text-purple-500" />
+              Hentai
+            </Link>
+          </li>
           <li>
             <Link
               to="/actor"

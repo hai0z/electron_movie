@@ -6,6 +6,7 @@ import { Movie as MovieVietSub } from "../devils-mode/types/vietsub";
 import { Post } from "../devils-mode/types/other";
 import { Actor } from "../devils-mode/page/Actor";
 import { createElectronStorage } from "./storage";
+import { Hentai } from "../devils-mode/types/Hentai";
 
 interface AppStore {
   theme: string;
@@ -27,6 +28,8 @@ interface AppStore {
   hydrated: boolean;
   likeActor: Actor[];
   setLikeActor: (actors: Actor[]) => void;
+  likeHentais: Hentai[];
+  setLikeHentais: (hentais: Hentai[]) => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -54,6 +57,8 @@ export const useAppStore = create<AppStore>()(
       otherLike: [],
       setOtherLike: (otherLike) => set({ otherLike }),
       hydrated: false,
+      likeHentais: [],
+      setLikeHentais: (hentais) => set({ likeHentais: hentais }),
     }),
     {
       name: "app-state",

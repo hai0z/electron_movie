@@ -7,9 +7,11 @@ import { HeartOff } from "lucide-react";
 import OtherSourceModal from "../components/OtherSourceModal";
 import { useSearchParams } from "react-router-dom";
 import { ActorCard } from "./Actor";
+import { HentaiMovieCard } from "../components/HentaiMovieCard";
 
 const FavouriteScreen = () => {
-  const { likeVideos, likeVietSubs, otherLike, likeActor } = useAppStore();
+  const { likeVideos, likeVietSubs, otherLike, likeActor, likeHentais } =
+    useAppStore();
   const [post, setPost] = useState<Post>();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -19,9 +21,12 @@ const FavouriteScreen = () => {
     | "VIP"
     | "AVDB"
     | "OTHER"
-    | "ACTOR";
+    | "ACTOR"
+    | "HENTAI";
 
-  const handleTabChange = (tab: "VIP" | "AVDB" | "OTHER" | "ACTOR") => {
+  const handleTabChange = (
+    tab: "VIP" | "AVDB" | "OTHER" | "ACTOR" | "HENTAI"
+  ) => {
     setSearchParams({ tab });
   };
 
@@ -87,6 +92,16 @@ const FavouriteScreen = () => {
           OTHER SOURCE
         </button>
         <button
+          onClick={() => handleTabChange("HENTAI")}
+          className={`px-4 py-2 font-semibold ${
+            activeTab === "HENTAI"
+              ? "border-b-2 border-primarys text-primarys"
+              : "text-gray-500"
+          }`}
+        >
+          HENTAI
+        </button>
+        <button
           onClick={() => handleTabChange("ACTOR")}
           className={`px-4 py-2 font-semibold ${
             activeTab === "ACTOR"
@@ -126,6 +141,13 @@ const FavouriteScreen = () => {
                 (document.getElementById("video_modal") as any)?.showModal();
               }}
             />
+          ))}
+        </div>
+      )}
+      {activeTab === "HENTAI" && likeHentais && likeHentais.length > 0 && (
+        <div className="flex flex-row flex-wrap gap-4 px-6">
+          {likeHentais.map((item) => (
+            <HentaiMovieCard m={item} key={item.id} />
           ))}
         </div>
       )}

@@ -1,6 +1,5 @@
 const Movie = require("../../model/movie.schema.js");
 const Actor = require("../../model/actor.schema.js");
-const HistoryItem = require("../../model/userData.schema");
 
 const {
   getHomeData,
@@ -67,15 +66,20 @@ class MovieService {
     const { page = 1, limit = 30, name } = query;
     const skip = (page - 1) * limit;
 
-    // Cần tạo text index trước: db.movies.createIndex({ actors: "text" })
+    // Tách từ khóa người dùng nhập ra thành mảng
+    const keywords = name.split(" ").filter(Boolean);
+
+    // Tạo mảng regex (không phân biệt hoa thường)
+    const regexConditions = keywords.map((k) => new RegExp(k, "i"));
+
     const movies = await Movie.find({
-      $text: { $search: name },
+      actors: { $all: regexConditions }, // chứa hết các từ, không cần đúng thứ tự
     })
       .skip(skip)
       .limit(limit);
 
     const total = await Movie.countDocuments({
-      $text: { $search: name },
+      actors: { $all: regexConditions },
     });
 
     return {

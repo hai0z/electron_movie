@@ -6,6 +6,7 @@ class WindowManager {
   static mainWindow = null;
   static lockWindow = null;
   static verifyWindow = null;
+  static hentaiPlayerWindow = null;
   static theme = DeviceIdManager.getThemePreference();
 
   static async createMainWindow() {
@@ -51,6 +52,34 @@ class WindowManager {
     return this.mainWindow;
   }
 
+  static createHentaiWindow(link) {
+    const WIDTH = 800;
+    this.hentaiPlayerWindow = new BrowserWindow({
+      width: WIDTH,
+      height: 480,
+      alwaysOnTop: false,
+      title: "Hentai Player",
+      backgroundColor: this.theme.bgColor,
+      autoHideMenuBar: true,
+      resizable: false,
+      center: true,
+      webPreferences: {
+        preload: path.join(__dirname, "../preload/preload.js"),
+        devTools: true,
+        contextIsolation: true,
+        nodeIntegration: false,
+        additionalArguments: [`--theme=${this.theme.name}`],
+        devTools: false,
+      },
+      frame: true,
+      icon: path.join(__dirname, "../../assets/fire.ico"),
+    });
+    this.hentaiPlayerWindow.loadURL(link, {
+      userAgent:
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    });
+  }
   static getMainWindow() {
     return this.mainWindow;
   }
