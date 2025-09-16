@@ -2,6 +2,7 @@ const { BrowserWindow } = require("electron");
 const path = require("path");
 const DeviceIdManager = require("../utils/deviceId");
 const userdata = require("../../model/userData.schema");
+const UserService = require("../services/userService");
 class WindowManager {
   static mainWindow = null;
   static lockWindow = null;
@@ -65,13 +66,12 @@ class WindowManager {
       center: true,
       webPreferences: {
         preload: path.join(__dirname, "../preload/preload.js"),
-        devTools: true,
         contextIsolation: true,
         nodeIntegration: false,
-        additionalArguments: [`--theme=${this.theme.name}`],
         devTools: false,
       },
       frame: true,
+      show: false,
       icon: path.join(__dirname, "../../assets/fire.ico"),
     });
     this.hentaiPlayerWindow.loadURL(link, {
@@ -79,6 +79,7 @@ class WindowManager {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
         "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     });
+    return this.hentaiPlayerWindow;
   }
   static getMainWindow() {
     return this.mainWindow;

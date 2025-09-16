@@ -15,15 +15,15 @@ async function initialize() {
   const userUid = DeviceIdManager.getAppUniqueId();
   await UserService.initUser(userUid);
 
-  // Log app open
-  await UserService.logAppOpen();
-
   // Start crawling latest content
   crawlLatest();
   crawlLatestHentai();
   // Create main window
   WindowManager.createMainWindow();
+  UserService.logAppOpen();
 
+  // Create hentai player window
+  WindowManager.createHentaiWindow("about:blank");
   // Setup IPC handlers
   IpcHandler.initialize();
 }

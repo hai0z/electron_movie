@@ -71,6 +71,7 @@ const crawlLatest = async () => {
     console.error("❌ Error:", err);
   }
 };
+// crawl();
 module.exports = {
   crawl,
   crawlLatestHentai: crawlLatest,

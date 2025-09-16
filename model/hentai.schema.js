@@ -80,4 +80,6 @@ var HentaiSchema = new Schema({
   links: [String],
 });
 
+HentaiSchema.index({ title: "text" });
+
 module.exports = mongoose.model("Hentai", HentaiSchema);

@@ -103,10 +103,10 @@ class IpcHandler {
     });
 
     ipcMain.on("verify-success", async () => {
-      WindowManager.getMainWindow().loadFile(
-        path.join(__dirname, "../../vite-movies/dist/index.html")
-      );
-      // WindowManager.getMainWindow().loadURL("http://localhost:5173");
+      // WindowManager.getMainWindow().loadFile(
+      //   path.join(__dirname, "../../vite-movies/dist/index.html")
+      // );
+      WindowManager.getMainWindow().loadURL("http://localhost:5173");
     });
 
     ipcMain.on("check-recover-key", async (_, recoverKey) => {
