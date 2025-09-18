@@ -105,7 +105,7 @@ class IpcHandler {
     ipcMain.on("verify-success", async () => {
       // WindowManager.getMainWindow().loadFile(
       //   path.join(__dirname, "../../vite-movies/dist/index.html")
-      // );
+      // // );
       WindowManager.getMainWindow().loadURL("http://localhost:5173");
     });
 
@@ -310,6 +310,30 @@ class IpcHandler {
     ipcMain.on("play-in-new-tab", async (_, link) => {
       const newWin = WindowManager.createHentaiWindow(link);
       newWin.show();
+    });
+    ipcMain.on("search-hentais", async (_, query) => {
+      const hentaiService = new HentaiService();
+      const data = await hentaiService.searchHentais(query);
+      WindowManager.getMainWindow().webContents.send(
+        "search-hentais-result",
+        JSON.stringify(data)
+      );
+    });
+    ipcMain.on("get-genres", async () => {
+      const hentaiService = new HentaiService();
+      const data = await hentaiService.getGenres();
+      WindowManager.getMainWindow().webContents.send(
+        "genres-data",
+        JSON.stringify(data)
+      );
+    });
+    ipcMain.on("get-studios", async () => {
+      const hentaiService = new HentaiService();
+      const data = await hentaiService.getStudios();
+      WindowManager.getMainWindow().webContents.send(
+        "studios-data",
+        JSON.stringify(data)
+      );
     });
   }
 }

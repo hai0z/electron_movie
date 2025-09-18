@@ -12,8 +12,6 @@ import Home from "../page/Home";
 import Setting from "../../common/Setting";
 import Error from "../../common/Error";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import FootballIndex from "../page/football/FootballIndex";
-import WatchFootball from "../page/football/WatchFootball";
 
 const queryClient = new QueryClient();
 const MainLayout = () => {
@@ -93,14 +91,7 @@ const router = createHashRouter([
         path: "/",
         element: <Home />,
       },
-      {
-        path: "/football",
-        element: <FootballIndex />,
-      },
-      {
-        path: "/watch-football",
-        element: <WatchFootball />,
-      },
+
       {
         path: "/movie/:id",
         element: <MovieDetail />,

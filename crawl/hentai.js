@@ -1,4 +1,3 @@
-const axios = require("axios");
 const mongoose = require("mongoose");
 const { connectDB } = require("../config/db.js");
 const Hentai = require("../model/hentai.schema.js");

@@ -18,15 +18,15 @@ class HentaiService {
 
     const filter = {};
 
-    if (title) {
+    if (title && title.trim() !== "") {
       filter.$text = { $search: title };
     }
 
-    if (genres) {
+    if (genres && genres.length > 0) {
       filter["genres.id"] = { $in: Array.isArray(genres) ? genres : [genres] };
     }
 
-    if (studios) {
+    if (studios && studios.length > 0) {
       filter["studios.id"] = {
         $in: Array.isArray(studios) ? studios : [studios],
       };
@@ -55,7 +55,7 @@ class HentaiService {
       },
       { $replaceRoot: { newRoot: "$doc" } },
     ]);
-    console.log(uniqueGenres);
+    return uniqueGenres;
   }
   async getStudios() {
     const uniqueStudios = await Hentai.aggregate([
@@ -68,10 +68,8 @@ class HentaiService {
       },
       { $replaceRoot: { newRoot: "$doc" } },
     ]);
-    console.log(uniqueStudios);
+    return uniqueStudios;
   }
 }
 
-// const hentaiService = new HentaiService();
-// hentaiService.getStudios();
 module.exports = HentaiService;

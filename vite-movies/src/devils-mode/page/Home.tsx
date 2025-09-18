@@ -6,7 +6,6 @@ import { HomeResult } from "../types";
 import Loading from "../../common/Loading";
 import React from "react";
 import { VietSubResult } from "../types/vietsub";
-import LZString from "lz-string";
 
 import {
   Film,
@@ -26,7 +25,7 @@ import MaybeYouLike from "../components/MaybeYouLike";
 
 const CACHE_KEY_HOME = "home_cache";
 const CACHE_KEY_VIETSUB = "vietsub_cache";
-const CACHE_TTL = 1000 * 60 * 30; // cache 30 phút
+const CACHE_TTL = 1000 * 60 * 30;
 
 const HomePage = () => {
   const [_, setHome] = useState({} as HomeResult);
@@ -46,7 +45,7 @@ const HomePage = () => {
       // check cache
       const cache = localStorage.getItem(CACHE_KEY_VIETSUB);
       if (cache) {
-        const parsed = JSON.parse(LZString.decompress(cache));
+        const parsed = JSON.parse(cache);
         if (Date.now() - parsed.timestamp < CACHE_TTL) {
           setAll(parsed.data);
           setLoading(false);
@@ -65,15 +64,14 @@ const HomePage = () => {
       });
       localStorage.setItem(
         CACHE_KEY_VIETSUB,
-        LZString.compress(
-          JSON.stringify({
-            data: {
-              ...data,
-              movies: data.movies.slice(0, 8),
-            },
-            timestamp: Date.now(),
-          })
-        )
+
+        JSON.stringify({
+          data: {
+            ...data,
+            movies: data.movies.slice(0, 8),
+          },
+          timestamp: Date.now(),
+        })
       );
     } catch (err) {
       console.error("Lỗi load vietsub:", err);
@@ -84,7 +82,7 @@ const HomePage = () => {
     // check cache
     const cache = localStorage.getItem(CACHE_KEY_HOME);
     if (cache) {
-      const parsed = JSON.parse(LZString.decompress(cache));
+      const parsed = JSON.parse(cache);
       if (Date.now() - parsed.timestamp < CACHE_TTL) {
         setDataFromHome(parsed.data);
         setLoading(false);
@@ -105,7 +103,7 @@ const HomePage = () => {
         setDataFromHome(data);
         localStorage.setItem(
           CACHE_KEY_HOME,
-          LZString.compress(JSON.stringify({ data, timestamp: Date.now() }))
+          JSON.stringify({ data, timestamp: Date.now() })
         );
         setTimeout(() => setLoading(false), 500);
       }

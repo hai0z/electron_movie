@@ -22,8 +22,6 @@ async function initialize() {
   WindowManager.createMainWindow();
   UserService.logAppOpen();
 
-  // Create hentai player window
-  WindowManager.createHentaiWindow("about:blank");
   // Setup IPC handlers
   IpcHandler.initialize();
 }

@@ -7,7 +7,8 @@ interface Props {
   page: number;
   to?: string;
 }
-export default function App({ total, initialPage, page, to }: Props) {
+
+export default function Paginations({ total, initialPage, page, to }: Props) {
   const navigate = useNavigate();
   return (
     <Pagination
